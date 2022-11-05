@@ -25,29 +25,3 @@ module.exports = async (client, oldUser, newUser) => {
   // check if user exists on that guild
   //  if so send the notif to the registered channels 
 };
-
-/*
-user examples
-{
-  id: "996904431096451143",
-  bot: false,
-  system: false,
-  flags: {
-    bitfield: 0,
-  },
-  username: "devvvrim",
-  discriminator: "5078",
-  avatar: "8767d39291d2002d8bc4326d42bdb360",
-},
-{
-  id: "996904431096451143",
-  bot: false,
-  system: false,
-  flags: {
-    bitfield: 0,
-  },
-  username: "devrim",
-  discriminator: "5078",
-  avatar: "8767d39291d2002d8bc4326d42bdb360",
-}
-*/
