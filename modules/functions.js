@@ -1,6 +1,7 @@
 const logger = require("./logger.js");
 const config = require("../config.js");
 const { settings } = require("./settings.js");
+const {KEY_NICK_LOG_CHANNELS, KEY_GUILDS } = require("./constants.js")
 // Let's start by getting some useful functions that we'll use throughout
 // the bot, like logs and elevation features.
 
@@ -96,4 +97,17 @@ process.on("unhandledRejection", err => {
   console.error(err);
 });
 
-module.exports = { getSettings, permlevel, awaitReply, toProperCase };
+async function sendAMessageToNickLogChannels(client, guildId, message, channels=null){
+  const {db} = client
+
+  if(channels == null){
+    channels = await db.getNickLogChannels(guildId)  
+  }
+
+  channels.forEach(chId => {
+    client.channels.cache.get(chId).send(message)
+  });
+}
+
+
+module.exports = { getSettings, permlevel, awaitReply, toProperCase, sendAMessageToNickLogChannels};

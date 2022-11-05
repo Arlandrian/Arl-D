@@ -1,10 +1,14 @@
 const logger = require("../modules/logger.js");
-const { getSettings } = require("../modules/functions.js");
-// This event executes when a new member joins a server. Let's welcome them!
+const {sendAMessageToNickLogChannels} = require("../modules/functions")
 
 module.exports = (client, oldMember, newMember) => {
-  // Load the guild's settings
-  logger.log(oldMember, "log")
-  logger.log("|||||||||||||||", "log")
-  logger.log(newMember, "log")
+  // check if nickname changed
+  if(oldMember.nickname == newMember.nickname){
+    return
+  }
+
+  let optional = oldMember.nickname != null ? `The old nickname was ${oldMember.nickname}.`:'';
+  let message = `<@${oldMember.user.id}> id:"${oldMember.user.id}" changed their nickname to ${newMember.nickname}. ${optional}`
+  // send message to channels
+  sendAMessageToNickLogChannels(client, oldMember.guild.id, message)
 };

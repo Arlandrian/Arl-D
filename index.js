@@ -10,12 +10,14 @@ const { Client, Collection, Intents } = require("discord.js");
 const { readdirSync } = require("fs");
 const { intents, partials, permLevels } = require("./config.js");
 const logger = require("./modules/logger.js");
+const settings = require("./modules/settings.js");
+const db = { initdb, setNickLogChannels, getNickLogChannels, getAllNickLogChannels } = require("./modules/database.js");
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`,
 // or `bot.something`, this is what we're referring to. Your client.
 
 const client = new Client({intents, partials});
-
+client.db = db
 // Aliases, commands and slash commands are put in collections where they can be
 // read from, catalogued, listed, etc.
 const commands = new Collection();
@@ -72,7 +74,7 @@ const init = async () => {
     const eventName = file.split(".")[0];
     logger.log(`Loading Event: ${eventName}. 👌`, "log");
     const event = require(`./events/${file}`);
-    // Bind the client to any event, before the existing arguments
+    // Bind the client to any event, before the existing argumentsS
     // provided by the discord.js event. 
     // This line is awesome by the way. Just sayin'.
     client.on(eventName, event.bind(null, client));
@@ -83,10 +85,33 @@ const init = async () => {
   // the logic, throw this in it's own event file like the rest.
   client.on("threadCreate", (thread) => thread.join());
 
+  await initdb()
+
+  // runTest()
   // Here we login the client.
   client.login();
-
 // End top-level async/await function.
 };
 
 init();
+
+function FetchAllMembers(){
+  // MainGuild.members.fetch().then((members) => {
+  //   console.log(members);
+  //   // code...
+  //  });
+}
+
+function runTest(){
+  const testFunc = require(`./commands/nicklog.js`);
+  let ex = {
+    guild: {
+      id: "guild-id"
+    },
+    channel:{
+      id : "chan-id",
+      send: (msg) => console.log("sending message, content:"+ msg)
+    }
+  };
+  testFunc.run(client, ex, null, null);
+}
