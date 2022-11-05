@@ -7,7 +7,7 @@ module.exports = async (client, oldUser, newUser) => {
     return
   }
   const {db} = client
-  let message = `<@${newUser.id}> id:"${newUser.id}" changed their username from ${oldUser.username} to ${newUser.username}`
+  let message = `<@${newUser.id}> id:"__**${newUser.id}**__" changed their username from __**${oldUser.username}**__ to __**${newUser.username}**__`
 
   let guildsMap = await db.getAllNickLogChannels()
   let promises = []

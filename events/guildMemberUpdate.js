@@ -7,8 +7,8 @@ module.exports = (client, oldMember, newMember) => {
     return
   }
 
-  let optional = oldMember.nickname != null ? `The old nickname was ${oldMember.nickname}.`:'';
-  let message = `<@${oldMember.user.id}> id:"${oldMember.user.id}" changed their nickname to ${newMember.nickname}. ${optional}`
+  let optional = oldMember.nickname != null ? `The old nickname was __**${oldMember.nickname}**__.`:'';
+  let message = `<@${oldMember.user.id}> id:"__**${oldMember.user.id}**__" changed their nickname to __**${newMember.nickname}**__. ${optional}`
   // send message to channels
   sendAMessageToNickLogChannels(client, oldMember.guild.id, message)
 };
