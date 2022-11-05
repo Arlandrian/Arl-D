@@ -14,32 +14,6 @@ module.exports = async (client, message) => {
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
 
-  let ss = {
-    id: "996904431096451143",
-    bot: false,
-    system: false,
-    flags: {
-      bitfield: 0,
-    },
-    username: "devvvrim",
-    discriminator: "5078",
-    avatar: "8767d39291d2002d8bc4326d42bdb360",
-  }
-  let sss =
-  {
-    id: "996904431096451143",
-    bot: false,
-    system: false,
-    flags: {
-      bitfield: 0,
-    },
-    username: "devrim",
-    discriminator: "5078",
-    avatar: "8767d39291d2002d8bc4326d42bdb360",
-  }
-
-  await userUpdate(client, ss, sss)
-
   // Grab the settings for this server from Enmap.
   // If there is no guild, get default conf (DMs)
   const settings = message.settings = getSettings(message.guild);
