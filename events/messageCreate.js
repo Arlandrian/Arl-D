@@ -1,6 +1,7 @@
 const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
+const userUpdate = require("./userUpdate");
 
 // The MESSAGE event runs anytime a message is received
 // Note that due to the binding of client to every event, every event
@@ -12,6 +13,32 @@ module.exports = async (client, message) => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
+
+  let ss = {
+    id: "996904431096451143",
+    bot: false,
+    system: false,
+    flags: {
+      bitfield: 0,
+    },
+    username: "devvvrim",
+    discriminator: "5078",
+    avatar: "8767d39291d2002d8bc4326d42bdb360",
+  }
+  let sss =
+  {
+    id: "996904431096451143",
+    bot: false,
+    system: false,
+    flags: {
+      bitfield: 0,
+    },
+    username: "devrim",
+    discriminator: "5078",
+    avatar: "8767d39291d2002d8bc4326d42bdb360",
+  }
+
+  await userUpdate(client, ss, sss)
 
   // Grab the settings for this server from Enmap.
   // If there is no guild, get default conf (DMs)

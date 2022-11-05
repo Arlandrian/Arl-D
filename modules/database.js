@@ -30,7 +30,7 @@ async function getNickLogChannels(guildId) {
 
 async function getAllNickLogChannels(){
   let data = await client.hGetAll(nickLogHKey)
-  return Object.keys(data).map(key => ({ key, value: data[key] }))
+  return Object.keys(data).map(key => ({ key, value: JSON.parse(data[key]) }))
 }
 
 
