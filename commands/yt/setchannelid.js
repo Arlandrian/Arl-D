@@ -5,9 +5,9 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  let liveChatChannelId = getOptionalArgs(args)
+  let liveChatChannelId = args[0]
   let resp = await youtube.setLiveChatChannelId(liveChatChannelId);
-  if(resp.error != undefined){
+  if(resp != undefined && resp.error != undefined){
     const reply = `Failed! Error: ${resp.error}`
     message.channel.send(reply);
     return;
@@ -17,26 +17,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
   message.channel.send(reply);
 };
 
-const getOptionalArgs = (args) => {
-  let arg = null
-  if(args.length == 1){
-    arg = args[0];
-  }else if(args.length == 2){
-    arg = args[1];
-  }
-  return arg
-}
-
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["yt setmessage","ytsetmessage","ytsetmsg"],
+  aliases: ["ytsetchannelid","ytsetchid"],
   permLevel: "Administrator"
 };
 
 exports.help = {
-  name: "youtube set message",
+  name: "youtube set channel id",
   category: "Youtube Bot",
   description: "Set the youtube live chat bot active channel id.",
-  usage: "yt setchannelid"
+  usage: "ytsetchannelid 'channelid' (without quotes)"
 };

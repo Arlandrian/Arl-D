@@ -1,6 +1,7 @@
 const logger = require("../modules/logger.js");
 const { LiveChat } = require("youtube-chat")
-const youtubeService = require("./youtubeService")
+const youtubeService = require("./youtubeService");
+const { youtube } = require("googleapis/build/src/apis/youtube/index.js");
 const db = { getYoutubeBotConfig, setYoutubeBotConfig } = require("../modules/database.js")
 
 const defaultBotConfig = {
@@ -31,9 +32,11 @@ let currentLiveStreamId = null
 let currentLiveChatId = null
 let lastMessageSendDate = new Date()
 
+initLiveChatConfig()
+
 const StartMainLoop = async () => {
   working = true
-  logger.log("Started youtube bot with config: "+botConfig)
+  logger.log("Started youtube bot with config: "+JSON.stringify(botConfig))
   while (working) {
     await new Promise(r => setTimeout(r, 5000));
     switch (streamStatus) {
@@ -60,10 +63,14 @@ const OnAirState = async () => {
 
 const sendChatMessage = async (msg) => {
   if(currentLiveChatId == null){
+    if(currentLiveStreamId == null){
+      return
+    }
     currentLiveChatId = await youtubeService.getActiveLiveChatId(currentLiveStreamId)
   }
 
   await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
+  lastMessageSendDate = new Date()
 }
 
 const OffAirState = async () => {
@@ -76,7 +83,7 @@ const onStreamEnded = () => {
   currentLiveChatId = null
 }
 
-const initLiveChat = async () => {
+const initLiveChatEvents = async () => {
   // Emit at start of observation chat.
   // liveId: string
   liveChat.on("start", (liveId) => {
@@ -96,16 +103,16 @@ const initLiveChat = async () => {
 
   // Emit at receive chat.
   // chat: ChatItem
-  liveChat.on("chat", (chatItem) => {
-    /* Your code here! */
-    // logger.log(chatItem.message)
-  })
+  // liveChat.on("chat", (chatItem) => {
+  //   /* Your code here! */
+  //   // logger.log(chatItem.message)
+  // })
 
   // Emit when an error occurs
   // err: Error or any
   liveChat.on("error", (err) => {
     /* Your code here! */
-    if(err == "Live Stream was not found"){
+    if(err.message == "Live Stream was not found"){
       // this is expected
       if(streamStatus == StreamStatus.OnAir)
       {
@@ -113,16 +120,35 @@ const initLiveChat = async () => {
       }
       return;
     }
+
+    if(err.message == "Cannot read properties of undefined (reading '0')")
+    {
+      logger.error(err)
+      if(streamStatus == StreamStatus.OnAir){
+        logger.error("restarting live chat bot.")
+        liveChat.stop(err.message)
+      }
+    }
+
     logger.error(err)
   })
 }
 
-const initLiveChatConfig = async () => {
+async function initLiveChatConfig (){
   let config = await db.getYoutubeBotConfig()
   if(config == null){
     await db.setYoutubeBotConfig(defaultBotConfig)
+    config = JSON.parse(JSON.stringify(defaultBotConfig))
   }
-  botConfig = JSON.parse(JSON.stringify(defaultBotConfig))
+  botConfig = config
+  if(botConfig.enabled){
+    let resp = await toggleLiveChat()
+    if(resp.error != undefined){
+      const reply = `Live chat bot toggle failed. Error: ${resp.error}`
+      logger.error(reply)
+      return;
+    }
+  }
 }
 
 const startLiveChat = async () => {
@@ -130,24 +156,30 @@ const startLiveChat = async () => {
     return {error:"Live chat bot already working."}
   }
 
-  if(botConfig.liveChat == null){
+  if(botConfig.channelId == null){
     botConfig = await db.getYoutubeBotConfig()
     if(botConfig == null){
       await initLiveChatConfig()
     }
   }
 
-  if(botConfig.liveChat == null){
-    return {error:"Channel Id is not set, use yt setchannelid your-channel-id"}
+  if(botConfig.channelId == null){
+    return {error:"Channel Id is not set, use ytsetchannelid your-channel-id"}
   }
 
   if(botConfig.messageText == null){
-    return {error:"Chat Message is not set, use yt message your-channel-id"}
+    return {error:"Chat Message is not set, use ytsetmessage your-message"}
+  }
+
+  if(!youtubeService.validateChannelId(botConfig.channelId))
+  {
+    return {error:`Channel id \"${botConfig.channelId}\" could not found.`}
   }
 
   liveChat = new LiveChat({channelId: botConfig.channelId})
-  initLiveChat()
-  await StartMainLoop()
+  initLiveChatEvents()
+  /*DONT AWAIT await*/ StartMainLoop()
+  return {}
 }
 
 const stopLiveChat = async () => {
@@ -157,6 +189,7 @@ const stopLiveChat = async () => {
   StopMainLoop();
   liveChat.stop("Command");
   logger.log("Live chat bot stopped.")
+  return {}
 }
 
 const getLiveChatMessage = async () => {
@@ -185,10 +218,18 @@ const setLiveChatChannelId = async (channelId) => {
   if(botConfig.channelId == channelId){
     return {error:"ChannelId is already "+channelId}
   }
+
+  if(!await youtubeService.validateChannelId(channelId)){
+    return {error: `Channel id \"${channelId}\" could not found.`}
+  }
+
   botConfig.channelId = channelId
   await db.setYoutubeBotConfig(botConfig)
-  await stopLiveChat();
-  await startLiveChat();
+
+  if(working){
+    await stopLiveChat();
+    await startLiveChat();
+  }
 }
 
 const toggleLiveChat = async () =>{
@@ -197,11 +238,19 @@ const toggleLiveChat = async () =>{
       error: (await stopLiveChat()).error,
       working: working
     }
+    if(!result.error){
+      botConfig.enabled = false
+      await db.setYoutubeBotConfig(botConfig)
+    }
     return result;
   }else{
     let result = {
       error: (await startLiveChat()).error,
       working: working
+    }
+    if(!result.error){
+      botConfig.enabled = true
+      await db.setYoutubeBotConfig(botConfig)
     }
     return result;
   }

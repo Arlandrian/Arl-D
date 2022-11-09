@@ -20,7 +20,7 @@ function initAuth() {
 }
 
 
-let getActiveLiveChatId = async (videoId) => {
+const getActiveLiveChatId = async (videoId) => {
   let videoInfoResponse = await youtube.videos.list({
     id: videoId,
     part: "liveStreamingDetails"
@@ -30,7 +30,7 @@ let getActiveLiveChatId = async (videoId) => {
   return videoInfoResponse.data.items[0].liveStreamingDetails.activeLiveChatId
 }
 
-let sendLiveChatMessage = async (liveChatId, messageText) => {
+const sendLiveChatMessage = async (liveChatId, messageText) => {
   let response = await youtube.liveChatMessages.insert({
     part: 'snippet',
     resource: {
@@ -47,6 +47,15 @@ let sendLiveChatMessage = async (liveChatId, messageText) => {
   })
 }
 
-initAuth()
+const validateChannelId = async (channelId) =>{
+  let response = await youtube.channels.list({
+    part:["id","auditDetails","contentOwnerDetails"],
+    id: channelId
+  }).catch(err => 
+    console.log(err)
+  )
+  return response.data.pageInfo.totalResults != 0
+}
 
-module.exports = { initAuth, getActiveLiveChatId, sendLiveChatMessage }
+initAuth();
+module.exports = { validateChannelId, getActiveLiveChatId, sendLiveChatMessage }

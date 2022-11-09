@@ -18,7 +18,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["yt toggle","yttoggle"],
+  aliases: ["yttoggle"],
   permLevel: "Administrator"
 };
 
@@ -26,5 +26,5 @@ exports.help = {
   name: "youtube bot toggle",
   category: "Youtube Bot",
   description: "Toggle the youtube bot on/off.",
-  usage: "yt toggle"
+  usage: "yttoggle"
 };

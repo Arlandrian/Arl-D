@@ -5,7 +5,7 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  let liveChatFreq = youtube.getLiveChatFreqSec();
+  let liveChatFreq = await youtube.getLiveChatFreqSec();
   const reply = `Live chat bot message freq: ${liveChatFreq}`
   message.channel.send(reply);
 };
@@ -13,7 +13,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["yt getmessagefreq","ytgetmessagefreq","ytgetmsgfreq"],
+  aliases: ["yt getmessagefreq","ytgetmessagefreq","ytgetmsgfreq","ytgetmsgfrq"],
   permLevel: "Administrator"
 };
 
@@ -21,5 +21,5 @@ exports.help = {
   name: "youtube get message frequency",
   category: "Youtube Bot",
   description: "Get the youtube live chat message frequency of bot in seconds.",
-  usage: "yt getmessagefreq"
+  usage: "ytgetmessagefreq"
 };

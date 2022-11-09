@@ -5,7 +5,7 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  let getLiveChatChannelId = youtube.getLiveChatChannelId();
+  let getLiveChatChannelId = await youtube.getLiveChatChannelId();
   const reply = `Live chat bot channel id: ${getLiveChatChannelId}`
   message.channel.send(reply);
 };
@@ -13,7 +13,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["yt getchannelid","ytgetchannelid","ytch"],
+  aliases: ["ytgetchannelid","ytch"],
   permLevel: "Administrator"
 };
 
@@ -21,5 +21,5 @@ exports.help = {
   name: "youtube get channelid",
   category: "Youtube Bot",
   description: "Get the youtube live chat bot active channel id.",
-  usage: "yt getchannelid"
+  usage: "ytgetchannelid"
 };

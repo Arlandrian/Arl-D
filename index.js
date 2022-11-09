@@ -44,6 +44,7 @@ client.container = {
 // we need to wrap stuff in an anonymous function. It's annoying but it works.
 
 const init = async () => {
+  await initdb()
 
   // Here we load **commands** into memory, as a collection, so they're accessible
   // here and everywhere else.
@@ -56,6 +57,21 @@ const init = async () => {
       client.container.aliases.set(alias, props.help.name);
     });
   }
+
+  const folders = readdirSync("./commands/", { withFileTypes: true }).filter( file => file.isDirectory()).map(folder => folder.name);
+  folders.forEach(
+    foldername => {
+      const folderCommands = readdirSync("./commands/"+foldername).filter(file => file.endsWith(".js"));
+      for (const file of folderCommands) {
+        const props = require(`./commands/${foldername}/${file}`);
+        logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
+        client.container.commands.set(props.help.name, props);
+        props.conf.aliases.forEach(alias => {
+          client.container.aliases.set(alias, props.help.name);
+        });
+      }
+    }
+  )
 
   // Now we load any **slash** commands you may have in the ./slash directory.
   const slashFiles = readdirSync("./slash").filter(file => file.endsWith(".js"));
@@ -85,7 +101,6 @@ const init = async () => {
   // the logic, throw this in it's own event file like the rest.
   client.on("threadCreate", (thread) => thread.join());
 
-  await initdb()
 
   // runTest()
   // Here we login the client.
