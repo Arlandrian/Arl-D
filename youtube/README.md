@@ -1,3 +1,5 @@
+# Youtube Credentials
+## Getting credentials
 1. Create a google acount
 2. Login
 3. Go to here https://console.cloud.google.com/apis/credentials
@@ -12,3 +14,7 @@
 12. Click Authorize APIs
 13. Copy the Refresh token you got
 14. Set the environment variables google values (ClientId,Secret and Refresh Token)
+
+
+## Important Note: Youtube Channel Id is not Channel Name!!!
+### Get the channel id from here https://commentpicker.com/youtube-channel-id.php
