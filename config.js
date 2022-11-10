@@ -27,7 +27,7 @@ const config = {
   "defaultSettings" : {
     "prefix": "!a",
     "modLogChannel": "mod-log",
-    "modRole": "Moderator",
+    "modRole": "Moderatör",
     "adminRole": "Admin",
     "systemNotice": "true", // This gives a notice when a user tries to run a command that they do not have permission to use.
     "commandReply": "true", // Toggle this if you want the bot to ping the command executor or not.

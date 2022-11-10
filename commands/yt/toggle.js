@@ -19,7 +19,7 @@ exports.conf = {
   enabled: true,
   guildOnly: false,
   aliases: ["yttoggle"],
-  permLevel: "Administrator"
+  permLevel: "Moderator"
 };
 
 exports.help = {
