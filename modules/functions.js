@@ -104,7 +104,12 @@ async function sendAMessageToNickLogChannels(client, guildId, message, channels=
   }
 
   channels.forEach(chId => {
-    client.channels.cache.get(chId).send(message)
+    let channel = client.channels.cache.get(chId)
+    if(channel == null){
+      client.channels.fetch(chId)
+      channel = client.channels.cache.get(chId)
+    }
+    channel.send(message)
   });
 }
 

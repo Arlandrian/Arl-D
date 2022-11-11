@@ -101,7 +101,7 @@ const init = async () => {
   // the logic, throw this in it's own event file like the rest.
   client.on("threadCreate", (thread) => thread.join());
 
-
+  client.on("ready", onClientReady)
   // runTest()
   // Here we login the client.
   client.login();
@@ -110,11 +110,16 @@ const init = async () => {
 
 init();
 
-function FetchAllMembers(){
-  // MainGuild.members.fetch().then((members) => {
-  //   console.log(members);
-  //   // code...
-  //  });
+async function onClientReady(){
+  // fetch all members
+  client.guilds.cache.forEach(async guild => {
+    await guild.members.fetch()
+  })
+
+  // fetch all channels
+  client.guilds.cache.forEach(async guild => {
+    await guild.channels.fetch()
+  })
 }
 
 function runTest(){
