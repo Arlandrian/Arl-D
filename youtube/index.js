@@ -71,6 +71,7 @@ const sendChatMessage = async (msg) => {
 
   await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
   lastMessageSendDate = new Date()
+  logger.log(`[${lastMessageSendDate}] Sending chat message...`)
 }
 
 const OffAirState = async () => {
@@ -91,14 +92,14 @@ const initLiveChatEvents = async () => {
     logger.log("live stream started: " + liveId)
     streamStatus = StreamStatus.OnAir;
     currentLiveStreamId = liveId
+    liveChat.stop("no need to watch chat")
   })
 
-  // Emit at end of observation chat.
+  // Emit at end of observation chat. // ONLY CHAT
   // reason: string?
   liveChat.on("end", (reason) => {
     /* Your code here! */
-    logger.log("live stream ended. reason: " + reason)
-    onStreamEnded()
+    logger.log("stopped watching chat. reason: " + reason)
   })
 
   // Emit at receive chat.
@@ -116,17 +117,39 @@ const initLiveChatEvents = async () => {
       // this is expected
       if(streamStatus == StreamStatus.OnAir)
       {
+        logger.error("stopping live chat bot.")
         onStreamEnded()
+        return;
       }
-      return;
     }
 
     if(err.message == "Cannot read properties of undefined (reading '0')")
     {
       logger.error(err)
       if(streamStatus == StreamStatus.OnAir){
-        logger.error("restarting live chat bot.")
-        liveChat.stop(err.message)
+        logger.error("stopping live chat bot.")
+        onStreamEnded()
+        return;
+      }
+    }
+
+    if(err.message == "Request failed with status code 404"){
+      // this is expected
+      if(streamStatus == StreamStatus.OnAir)
+      {
+        logger.error("stopping live chat bot.")
+        onStreamEnded()
+        return;
+      }
+    }
+
+    if(err.message.endsWith("is finished live")){
+      // this is expected
+      if(streamStatus == StreamStatus.OnAir)
+      {
+        logger.error("stopping live chat bot.")
+        onStreamEnded()
+        return;
       }
     }
 
@@ -176,7 +199,7 @@ const startLiveChat = async () => {
     return {error:`Channel id \"${botConfig.channelId}\" could not found.`}
   }
 
-  liveChat = new LiveChat({channelId: botConfig.channelId})
+  liveChat = new LiveChat({channelId: botConfig.channelId}, 1000000000)// interval is for live chat
   initLiveChatEvents()
   /*DONT AWAIT await*/ StartMainLoop()
   return {}
