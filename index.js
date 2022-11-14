@@ -120,6 +120,13 @@ async function onClientReady(){
   client.guilds.cache.forEach(async guild => {
     await guild.channels.fetch()
   })
+
+  // fetch recent messages
+  client.guilds.cache.forEach(async guild => {
+    guild.channels.cache.forEach(async channel => {
+      await channel.messages?.fetch({limit: 50})
+    })
+  })
 }
 
 function runTest(){
