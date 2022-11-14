@@ -119,8 +119,8 @@ const initLiveChatEvents = async () => {
       {
         logger.error("stopping live chat bot.")
         onStreamEnded()
-        return;
       }
+      return;
     }
 
     if(err.message == "Cannot read properties of undefined (reading '0')")
