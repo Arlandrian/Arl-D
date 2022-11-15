@@ -69,7 +69,11 @@ const sendChatMessage = async (msg) => {
     currentLiveChatId = await youtubeService.getActiveLiveChatId(currentLiveStreamId)
   }
 
-  await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
+  let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
+  if(response!= null && response.error == 'The specified live chat is no longer live.'){
+    onStreamEnded()
+    return
+  }
   lastMessageSendDate = new Date()
   logger.log(`[${lastMessageSendDate}] Sending chat message...`)
 }

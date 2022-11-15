@@ -19,7 +19,6 @@ function initAuth() {
   google.options({ auth });
 }
 
-
 const getActiveLiveChatId = async (videoId) => {
   let videoInfoResponse = await youtube.videos.list({
     id: videoId,
@@ -44,7 +43,9 @@ const sendLiveChatMessage = async (liveChatId, messageText) => {
     }
   }).catch(err => {
     console.error(err);
+    return {error: err.message}
   })
+  return response
 }
 
 const validateChannelId = async (channelId) =>{
