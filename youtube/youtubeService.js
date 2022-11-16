@@ -53,7 +53,7 @@ const validateChannelId = async (channelId) =>{
     part:["id","auditDetails","contentOwnerDetails"],
     id: channelId
   }).catch(err => 
-    console.error(err)
+    console.error(err.message)
   )
   return response.data.pageInfo.totalResults != 0
 }
