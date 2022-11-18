@@ -42,7 +42,7 @@ const sendLiveChatMessage = async (liveChatId, messageText) => {
       }
     }
   }).catch(err => {
-    console.error(err);
+    console.error(err.message);
     return {error: err.message}
   })
   return response
