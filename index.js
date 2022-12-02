@@ -105,6 +105,10 @@ const init = async () => {
   // runTest()
   // Here we login the client.
   client.login();
+  
+  process.on('uncaughtException', function (err) {
+    logger.log('Caught exception: ', err);
+  });
 // End top-level async/await function.
 };
 
@@ -124,7 +128,7 @@ async function onClientReady(){
   // fetch recent messages
   client.guilds.cache.forEach(async guild => {
     for (const channel of guild.channels.cache){
-      await channel.messages?.fetch({limit: 100})
+      await channel.messages?.fetch({limit: 500})
     }
   })
 }
