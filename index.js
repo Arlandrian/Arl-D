@@ -106,6 +106,7 @@ const init = async () => {
   // Here we login the client.
   client.login();
   
+  // prevent application from stopping on an exception
   process.on('uncaughtException', function (err) {
     logger.log('Caught exception: ', err);
   });
