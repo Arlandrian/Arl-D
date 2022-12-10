@@ -74,6 +74,13 @@ const sendChatMessage = async (msg) => {
     onStreamEnded()
     return
   }
+  
+  if(response!= null && response.error == 'The caller does not have permission'){
+    logger.error("We are banned, yaaay")
+    logger.error("Deactivating the live chat watch.")
+    toggleLiveChat()
+    return
+  }
   lastMessageSendDate = new Date()
   logger.log(`[${lastMessageSendDate}] Sending chat message...`)
 }
