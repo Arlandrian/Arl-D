@@ -5,7 +5,8 @@ if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 1
 require("dotenv").config();
 
 // Load up the discord.js library
-const { Client, Collection, Intents } = require("discord.js");
+const { Client, Collection, Options } = require("discord.js");
+
 // We also load the rest of the things we need in this file:
 const { readdirSync } = require("fs");
 const { intents, partials, permLevels } = require("./config.js");
@@ -17,12 +18,14 @@ const db = { initdb, setNickLogChannels, getNickLogChannels, getAllNickLogChanne
 // or `bot.something`, this is what we're referring to. Your client.
 
 const client = new Client({intents, partials});
+
 client.db = db
 // Aliases, commands and slash commands are put in collections where they can be
 // read from, catalogued, listed, etc.
 const commands = new Collection();
 const aliases = new Collection();
 const slashcmds = new Collection();
+const appCommands = new Collection();
 
 // Generate a cache of client permissions for pretty perm names in commands.
 const levelCache = {};
@@ -37,6 +40,7 @@ client.container = {
   commands,
   aliases,
   slashcmds,
+  appCommands,
   levelCache
 };
 
@@ -116,6 +120,8 @@ const init = async () => {
 init();
 
 async function onClientReady(){
+
+
   // fetch all members
   client.guilds.cache.forEach(async guild => {
     await guild.members.fetch()
@@ -129,9 +135,35 @@ async function onClientReady(){
   // fetch recent messages
   client.guilds.cache.forEach(async guild => {
     for (const channel of guild.channels.cache){
-      await channel.messages?.fetch({limit: 500})
+      await channel.messages?.fetch({limit: 100})
     }
   })
+
+  await registerApplicationCommands()
+}
+
+async function registerApplicationCommands()
+{
+  try {
+    for (const command of client.container.slashcmds.filter(x => x.commandData.type == 2)) {
+      commandName = command[0]
+      cmd = command[1]
+      logger.log(`Registering Application Command: ${cmd.commandData.name}. 👌`, "log");
+      client.container.appCommands.set(cmd.commandData.name, cmd)
+      client.application.commands.create(cmd.commandData)
+    }
+  } catch (error) {
+    // And of course, make sure you catch and log any errors!
+    console.error(error);
+  }
+}
+
+async function deleteApplicationCommand(name){
+  if(client.application.commands.cache.size() == 0){
+    await client.application.commands.fetch()
+  }
+  let id = client.application.commands.cache.find(x=>x.name == name)
+  await client.application.commands.delete(id)
 }
 
 function runTest(){
