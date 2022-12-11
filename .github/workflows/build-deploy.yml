@@ -1,4 +1,4 @@
-name: Parent Action
+name: Build and Deploy
 
 on:
   workflow_dispatch:
