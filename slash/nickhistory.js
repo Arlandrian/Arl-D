@@ -1,5 +1,4 @@
 const discord = require("discord.js");
-
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
   //await interaction.deferReply({ephemeral: true});
   await interaction.deferReply({ ephemeral: false });
