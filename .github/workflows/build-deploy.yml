@@ -38,14 +38,18 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
 
+      
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 17.3.1
           cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - run: node --version
+      - run: npm --version
+      - run: pwd
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: Run deploy script
-        run: sh run.sh
+      # - name: Run deploy script
+      #   run: sh run.sh
