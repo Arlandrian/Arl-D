@@ -47,7 +47,7 @@ jobs:
 
       - run: node --version
       - run: npm --version
-      - run: pwd
+      - run: echo $OWNER
       # - name: Install dependencies
       #   run: npm install
 
