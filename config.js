@@ -1,5 +1,4 @@
 const { Intents } = require("discord.js");
-const allIntents = new Intents(7796)
 
 /* config */
 const config = {

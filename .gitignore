@@ -9,6 +9,7 @@ config.json
 data/
 test.js
 needfix.md
+temp/
 
 # Runtime data
 pids
