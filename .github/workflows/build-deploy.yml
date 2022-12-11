@@ -17,22 +17,21 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
+env:
+  DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+  OWNER: ${{ secrets.OWNER }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
+  REDIS_USER: ${{ secrets.REDIS_USER }}
+  REDIS_PWD: ${{ secrets.REDIS_PWD }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 jobs:
   build:
     # Run on self-hosted if the private repo or ubuntu-latest if the public repo
     # See pull # 17442 in the private repo for context
     runs-on: [self-hosted, linux]
     timeout-minutes: 60
-    with:
-      env: # Or as an environment variable
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        OWNER: ${{ secrets.OWNER }}
-        REDIS_URL: ${{ secrets.REDIS_URL }}
-        REDIS_USER: ${{ secrets.REDIS_USER }}
-        REDIS_PWD: ${{ secrets.REDIS_PWD }}
-        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-        GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
     steps:
       # Each of these ifs needs to be repeated at each step to make sure the required check still runs
       # Even if if doesn't do anything
