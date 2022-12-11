@@ -5,7 +5,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 1
 require("dotenv").config();
 
 // Load up the discord.js library
-const { Client, Collection, Options } = require("discord.js");
+const { Client, Collection } = require("discord.js");
 
 // We also load the rest of the things we need in this file:
 const { readdirSync } = require("fs");
@@ -46,7 +46,6 @@ client.container = {
 
 // We're doing real fancy node 8 async/await stuff here, and to do that
 // we need to wrap stuff in an anonymous function. It's annoying but it works.
-
 const init = async () => {
   await initdb()
 
@@ -120,8 +119,6 @@ const init = async () => {
 init();
 
 async function onClientReady(){
-
-
   // fetch all members
   client.guilds.cache.forEach(async guild => {
     await guild.members.fetch()

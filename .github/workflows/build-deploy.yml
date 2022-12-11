@@ -1,0 +1,52 @@
+name: Parent Action
+
+on:
+  workflow_dispatch:
+  pull_request:
+  # push:
+  #   branches:
+  #     - master
+
+permissions:
+  contents: read
+  # Needed for the 'trilom/file-changes-action' action
+  pull-requests: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # Run on self-hosted if the private repo or ubuntu-latest if the public repo
+    # See pull # 17442 in the private repo for context
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 60
+    with:
+      env: # Or as an environment variable
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        OWNER: ${{ secrets.OWNER }}
+        REDIS_URL: ${{ secrets.REDIS_URL }}
+        REDIS_USER: ${{ secrets.REDIS_USER }}
+        REDIS_PWD: ${{ secrets.REDIS_PWD }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+    steps:
+      # Each of these ifs needs to be repeated at each step to make sure the required check still runs
+      # Even if if doesn't do anything
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 17.3.1
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run deploy script
+        run: sh run.sh
