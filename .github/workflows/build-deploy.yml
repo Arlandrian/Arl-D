@@ -38,18 +38,27 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
 
-      
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 17.3.1
-          cache: npm
+
+      # - name: "Set environmental variables"
+      #   run: |
+      #     DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      #     OWNER: ${{ secrets.OWNER }}
+      #     REDIS_URL: ${{ secrets.REDIS_URL }}
+      #     REDIS_USER: ${{ secrets.REDIS_USER }}
+      #     REDIS_PWD: ${{ secrets.REDIS_PWD }}
+      #     GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      #     GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      #     GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
 
       - run: node --version
       - run: npm --version
-      - run: echo $OWNER
-      # - name: Install dependencies
-      #   run: npm install
 
-      # - name: Run deploy script
-      #   run: sh run.sh
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run deploy script
+        run: sh run.sh
