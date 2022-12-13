@@ -5,10 +5,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 };
 
 async function githubWorkflowTrigger() {
-  const OWNER = process.env.GITHUB_OWNER
-  const REPO = process.env.GITHUB_REPO
+  const OWNER = process.env.MGITHUB_OWNER
+  const REPO = process.env.MGITHUB_REPO
   const WORKFLOW_ID = "build-deploy.yml"
-  const GITHUB_TOKEN = process.env.GITHUB_WORKFLOW_TOKEN
+  const GITHUB_TOKEN = process.env.MGITHUB_WORKFLOW_TOKEN
 
   const data = {
     ref: "master"
