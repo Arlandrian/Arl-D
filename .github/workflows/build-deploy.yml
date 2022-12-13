@@ -47,6 +47,7 @@ jobs:
           node-version: 17.3.1
       - name: "Set environmental variables"
         run: |
+          echo $OWNER
           echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
           echo "OWNER=$OWNER" >> $GITHUB_ENV
           echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
@@ -58,6 +59,9 @@ jobs:
           echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
           echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
+          echo hmm
+          echo $OWNER
+
       - run: node --version
       - run: npm --version
 
@@ -66,4 +70,16 @@ jobs:
 
       - name: Run deploy script
         run: |
+          echo $OWNER
+          echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
+          echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
+          echo "REDIS_USER=$REDIS_USER" >> $GITHUB_ENV
+          echo "REDIS_PWD=$REDIS_PWD" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_ENV
+          echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" >> $GITHUB_ENV
+          echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
+          echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
           sh run.sh
