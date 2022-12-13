@@ -26,6 +26,9 @@ env:
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
   GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+  GITHUB_OWNER: ${{ secrets.GITHUB_OWNER }}
+  GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   build:
     # Run on self-hosted if the private repo or ubuntu-latest if the public repo
@@ -42,18 +45,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 17.3.1
-
-      # - name: "Set environmental variables"
-      #   run: |
-      #     DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      #     OWNER: ${{ secrets.OWNER }}
-      #     REDIS_URL: ${{ secrets.REDIS_URL }}
-      #     REDIS_USER: ${{ secrets.REDIS_USER }}
-      #     REDIS_PWD: ${{ secrets.REDIS_PWD }}
-      #     GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      #     GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      #     GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-
+      - name: "Set environmental variables"
+        run: |
+          echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
+          echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
+          echo "REDIS_USER=$REDIS_USER" >> $GITHUB_ENV
+          echo "REDIS_PWD=$REDIS_PWD" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_ENV
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_ENV
+          echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" >> $GITHUB_ENV
+          echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
+          echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
       - run: node --version
       - run: npm --version
 
@@ -61,4 +65,5 @@ jobs:
         run: npm install
 
       - name: Run deploy script
-        run: sh run.sh
+        run: |
+          sh run.sh
