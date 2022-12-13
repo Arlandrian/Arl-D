@@ -4,10 +4,10 @@ const { settings } = require("../modules/settings.js");
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
   let result = await githubWorkflowTrigger();
-  if(result){
+  if(result==null){
     message.reply({ content: `Build started.`, allowedMentions: { repliedUser: (replying === "true") }});
   }else{
-    message.reply({ content: `Failed to dispatch workflow!`, allowedMentions: { repliedUser: (replying === "true") }});
+    message.reply({ content: `Failed to dispatch workflow! ${result.message}`, allowedMentions: { repliedUser: (replying === "true") }});
   }
 };
 
@@ -40,10 +40,10 @@ async function githubWorkflowTrigger() {
         }
       }
     )
-    return true
+    return null
   }catch(err){
     console.error(err)
-    return false
+    return err
   }
 }
 
