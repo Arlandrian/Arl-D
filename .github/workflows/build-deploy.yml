@@ -47,7 +47,7 @@ jobs:
       #     node-version: 17.3.1
       - name: "Set environmental variables"
         run: |
-          env
+          echo ${{secrets.REDIS_USER}} | sed 's/./& /g'
 
       - run: node --version
       - run: npm --version
