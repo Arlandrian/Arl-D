@@ -48,13 +48,13 @@ async function githubWorkflowTrigger() {
 exports.conf = {
   enabled: true,
   guildOnly: true,
-  aliases: [],
+  aliases: ["ghdeploy","githubdeploy"],
   permLevel: "Bot Owner"
 };
 
 exports.help = {
-  name: "deploy",
+  name: "ghdeploy",
   category: "System",
-  description: "This will deploy the whole application from ",
-  usage: "deploy"
+  description: "This will build and deploy the whole application from github.",
+  usage: "ghdeploy"
 };
