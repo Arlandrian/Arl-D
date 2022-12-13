@@ -137,6 +137,12 @@ async function onClientReady(){
   })
 
   await registerApplicationCommands()
+
+  // notify owner that bot started
+  let user = await client.users.fetch(process.env.OWNER, false)
+  if(user != null){
+    user.send(`Hello I'm started :)`)
+  }
 }
 
 async function registerApplicationCommands()
