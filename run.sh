@@ -4,6 +4,5 @@ ps aux | grep "node index.js" | grep -vE grep |  awk '{print $2}' | xargs -r kil
 sleep 2
 
 # start new process
-nohup node index.js > arl_d.log 2>&1 & echo $! > pid
-sleep 10
+RUNNER_TRACKING_ID="" && nohup node index.js > arl_d.log 2>&1 & echo $! > pid
 echo "The deployment is complete"
