@@ -41,6 +41,8 @@ jobs:
       # Even if if doesn't do anything
       - name: Check out repo
         uses: actions/checkout@v3
+        with:
+          clean-exclude: [/node_modules/, pid, arl_d.log]
 
       - name: Setup node
         uses: actions/setup-node@v3
@@ -48,7 +50,8 @@ jobs:
           node-version: 17.3.1
 
       - name: Install dependencies
-        run: npm i -g npm-check-updates && ncu -u && npm i
+        run: |
+          npm i
 
       - name: Run deploy script
         run: |
