@@ -6,7 +6,6 @@ async function initdb(){
   client = createClient({
     url: `redis://${process.env.REDIS_USER}:${process.env.REDIS_PWD}@${process.env.REDIS_URL}`,
   });
-  cl
   client.on('error', (err) => console.log('Redis Client Error', err));
   client.on('connection', (me) => console.log('Redis connected successfully.'));
   
