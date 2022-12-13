@@ -34,7 +34,7 @@ jobs:
     # Run on self-hosted if the private repo or ubuntu-latest if the public repo
     # See pull # 17442 in the private repo for context
     runs-on: [self-hosted, linux]
-    environment: augtmented-form
+    environment: augmented-form
     timeout-minutes: 60
     steps:
       # Each of these ifs needs to be repeated at each step to make sure the required check still runs
