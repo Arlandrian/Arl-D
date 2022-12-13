@@ -1,7 +1,12 @@
 const axios = require('axios');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  await githubWorkflowTrigger();
+  let result = await githubWorkflowTrigger();
+  if(result){
+    message.reply({ content: `Build started.`, allowedMentions: { repliedUser: (replying === "true") }});
+  }else{
+    message.reply({ content: `Failed to dispatch workflow!`, allowedMentions: { repliedUser: (replying === "true") }});
+  }
 };
 
 async function githubWorkflowTrigger() {
@@ -18,21 +23,26 @@ async function githubWorkflowTrigger() {
     //   "home": "San Francisco, CA"
     // }
   }
-  const URL = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`
-  const response = await axios.post(
-    URL,
-    JSON.stringify(data),
-    {
-      headers: {
-        'Accept': 'application/vnd.github+json',
-        'Authorization': 'Bearer ' + GITHUB_TOKEN,
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/x-www-form-urlencoded'
+
+  try{
+    const URL = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`
+    const response = await axios.post(
+      URL,
+      JSON.stringify(data),
+      {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': 'Bearer ' + GITHUB_TOKEN,
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       }
-    }
-  ).catch(e=>{
-    console.error(e)
-  });
+    )
+    return true
+  }catch(err){
+    console.error(err)
+    return false
+  }
 }
 
 exports.conf = {
