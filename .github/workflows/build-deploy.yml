@@ -26,9 +26,9 @@ env:
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
   GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-  GITHUB_OWNER: ${{ secrets.GITHUB_OWNER }}
-  GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MGITHUB_OWNER: ${{ secrets.MGITHUB_OWNER }}
+  MGITHUB_REPO: ${{ secrets.MGITHUB_REPO }}
+  MGITHUB_WORKFLOW_TOKEN: ${{ secrets.MGITHUB_WORKFLOW_TOKEN }}
 jobs:
   build:
     # Run on self-hosted if the private repo or ubuntu-latest if the public repo
@@ -41,30 +41,12 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
 
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 17.3.1
+      # - name: Setup node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 17.3.1
       - name: "Set environmental variables"
         run: |
-          env
-          echo $OWNER
-          echo 1
-          echo ${{ secrets.DISCORD_TOKEN }}
-          echo 2
-          echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
-          echo "OWNER=$OWNER" >> $GITHUB_ENV
-          echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
-          echo "REDIS_USER=$REDIS_USER" >> $GITHUB_ENV
-          echo "REDIS_PWD=$REDIS_PWD" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_ENV
-          echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" >> $GITHUB_ENV
-          echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
-          echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
-          echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
-          echo hmm
-          echo $OWNER
           env
 
       - run: node --version
@@ -73,18 +55,18 @@ jobs:
       # - name: Install dependencies
       #   run: npm install
 
-      - name: Run deploy script
-        run: |
-          echo $OWNER
-          echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
-          echo "OWNER=$OWNER" >> $GITHUB_ENV
-          echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
-          echo "REDIS_USER=$REDIS_USER" >> $GITHUB_ENV
-          echo "REDIS_PWD=$REDIS_PWD" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_ENV
-          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_ENV
-          echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" >> $GITHUB_ENV
-          echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
-          echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
-          echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
-          sh run.sh
+      # - name: Run deploy script
+      #   run: |
+      #     echo $OWNER
+      #     echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
+      #     echo "OWNER=$OWNER" >> $GITHUB_ENV
+      #     echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
+      #     echo "REDIS_USER=$REDIS_USER" >> $GITHUB_ENV
+      #     echo "REDIS_PWD=$REDIS_PWD" >> $GITHUB_ENV
+      #     echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_ENV
+      #     echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_ENV
+      #     echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" >> $GITHUB_ENV
+      #     echo "GITHUB_OWNER=$GITHUB_OWNER" >> $GITHUB_ENV
+      #     echo "GITHUB_REPO=$GITHUB_REPO" >> $GITHUB_ENV
+      #     echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
+      #     sh run.sh
