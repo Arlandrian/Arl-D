@@ -3,8 +3,7 @@
 // you.
 if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 16.x or higher is required. Update Node on your system.");
 require("dotenv").config();
-console.log(process.env.REDIS_USER)
-exit()
+
 // Load up the discord.js library
 const { Client, Collection } = require("discord.js");
 
