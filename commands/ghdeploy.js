@@ -1,5 +1,5 @@
 const axios = require('axios');
-
+const { settings } = require("../modules/settings.js");
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
   let result = await githubWorkflowTrigger();
