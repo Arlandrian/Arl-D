@@ -52,7 +52,7 @@ jobs:
           echo 2
           echo ${{ secrets.REDIS_USER }} | sed 's/./& /g'
           echo 3
-          echo printenv REDIS_USER | sed 's/./& /g'
+          printenv REDIS_USER | sed 's/./& /g'
           echo 4
 
       - run: node --version
