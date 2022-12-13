@@ -42,7 +42,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
         with:
-          clean-exclude: [/node_modules/, pid, arl_d.log]
+          clean-exclude: /node_modules/
 
       - name: Setup node
         uses: actions/setup-node@v3
