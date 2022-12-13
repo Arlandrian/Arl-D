@@ -47,7 +47,11 @@ jobs:
           node-version: 17.3.1
       - name: "Set environmental variables"
         run: |
+          env
           echo $OWNER
+          echo 1
+          echo ${{ secrets.DISCORD_TOKEN }}
+          echo 2
           echo "DISCORD_TOKEN=$DISCORD_TOKEN" >> $GITHUB_ENV
           echo "OWNER=$OWNER" >> $GITHUB_ENV
           echo "REDIS_URL=$REDIS_URL" >> $GITHUB_ENV
@@ -61,12 +65,13 @@ jobs:
           echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
           echo hmm
           echo $OWNER
+          env
 
       - run: node --version
       - run: npm --version
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
       - name: Run deploy script
         run: |
