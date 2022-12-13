@@ -19,7 +19,7 @@ concurrency:
 
 env:
   DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-  OWNER: ${{ secrets.OWNER }}
+  OWNER: ${{secrets.OWNER}}
   REDIS_URL: ${{ secrets.REDIS_URL }}
   REDIS_USER: ${{ secrets.REDIS_USER }}
   REDIS_PWD: ${{ secrets.REDIS_PWD }}
