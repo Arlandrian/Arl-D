@@ -1,7 +1,6 @@
 const { createClient } = require('redis');
 let client = null
 async function initdb(){
-  console.log(`redis://${process.env.REDIS_USER}:${process.env.REDIS_PWD}@${process.env.REDIS_URL}`)
   //'redis://alice:foobared@awesome.redis.server:6380'
   client = createClient({
     url: `redis://${process.env.REDIS_USER}:${process.env.REDIS_PWD}@${process.env.REDIS_URL}`,
