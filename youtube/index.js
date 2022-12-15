@@ -70,17 +70,21 @@ const sendChatMessage = async (msg) => {
   }
 
   let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
-  if(response!= null && response.error == 'The specified live chat is no longer live.'){
-    onStreamEnded()
-    return
-  }
-  
+
   if(response!= null && response.error == 'The caller does not have permission'){
     logger.error("We are banned, yaaay")
     logger.error("Deactivating the live chat watch.")
     toggleLiveChat()
     return
   }
+
+  if(response!= null ){
+    //&& response.error == 'The specified live chat is no longer live.'
+    onStreamEnded()
+    return
+  }
+  
+  
   lastMessageSendDate = new Date()
   logger.log(`[${lastMessageSendDate}] Sending chat message...`)
 }
