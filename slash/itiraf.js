@@ -2,7 +2,7 @@ const discord = require("discord.js");
 //const {ApplicationCommandOptionTypes, ApplicationCommandTypes} = require("discord.js/typings/enums")
 const logger = require("../modules/logger")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
-  await interaction.deferReply({ ephemeral: false });
+  await interaction.deferReply({ ephemeral: true });
   let opts = interaction.options._hoistedOptions;
   let itiraf = opts[0].value
   let mahlas = opts.length > 1 ? opts[1].value : null;
