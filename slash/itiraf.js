@@ -11,7 +11,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
     msg += mahlas
     msg += ": "
   }
-  msg = `${itiraf}`
+  msg += `${itiraf}`
   logger.log(`${interaction.user.tag} itiraf ${msg}`)
   interaction.channel.send(msg)
 };
