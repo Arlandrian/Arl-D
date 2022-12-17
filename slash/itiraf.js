@@ -2,7 +2,7 @@ const discord = require("discord.js");
 //const {ApplicationCommandOptionTypes, ApplicationCommandTypes} = require("discord.js/typings/enums")
 const logger = require("../modules/logger")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
-  await interaction.deleteReply()
+  await interaction.deferReply({ ephemeral: false });
   let opts = interaction.options._hoistedOptions;
   let itiraf = opts[0].value
   let mahlas = opts.length > 1 ? opts[1].value : null;
@@ -15,6 +15,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   msg += `${itiraf}`
   logger.log(`${interaction.user.tag} itiraf ${msg}`)
   interaction.channel.send(msg)
+  await interaction.editReply("İtirafınız yollandı.")
 };
 
 
