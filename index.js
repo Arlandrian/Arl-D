@@ -156,6 +156,14 @@ async function registerApplicationCommands()
       client.container.appCommands.set(cmd.commandData.name, cmd)
       client.application.commands.create(cmd.commandData)
     }
+
+    for (const command of client.container.slashcmds.filter(x => x.commandData.type == 1)) {
+      commandName = command[0]
+      cmd = command[1]
+      logger.log(`Registering Application Command: ${cmd.commandData.name}. 👌`, "log");
+      client.container.appCommands.set(cmd.commandData.name, cmd)
+      client.application.commands.create(cmd.commandData)
+    }
   } catch (error) {
     // And of course, make sure you catch and log any errors!
     console.error(error);
