@@ -12,6 +12,7 @@ async function initdb(){
 }
 
 const NICK_LOG_KEY = "arld:guild:nickLogChannels"
+const CONFESSION_KEY = "arld:guild:confessionChannels"
 const YOUTUBE_BOT_CONFIG_KEY = "arld:youtubeBotConfig"
 
 async function setNickLogChannels(guildId, channels) {
@@ -21,14 +22,34 @@ async function setNickLogChannels(guildId, channels) {
 async function getNickLogChannels(guildId) {
   let val = await client.hGet(NICK_LOG_KEY, guildId)
   if(val == null){
-    await setNickLogChannels(guildId, [])
-    return []
+    val = []
+    await setNickLogChannels(guildId, val)
+    return val
   }
-  return JSON.parse(await client.hGet(NICK_LOG_KEY, guildId))
+  return JSON.parse(val)
 }
 
 async function getAllNickLogChannels(){
   let data = await client.hGetAll(NICK_LOG_KEY)
+  return Object.keys(data).map(key => ({ key, value: JSON.parse(data[key]) }))
+}
+
+async function setConfessionChannels(guildId, channels) {
+  await client.hSet(CONFESSION_KEY, guildId, JSON.stringify(channels))
+}
+
+async function getConfessionChannels(guildId) {
+  let val = await client.hGet(CONFESSION_KEY, guildId)
+  if(val == null){
+    val = []
+    await setConfessionChannels(guildId, val)
+    return val
+  }
+  return JSON.parse(val)
+}
+
+async function getAllConfessionChannels(){
+  let data = await client.hGetAll(CONFESSION_KEY)
   return Object.keys(data).map(key => ({ key, value: JSON.parse(data[key]) }))
 }
 
@@ -42,5 +63,6 @@ async function setYoutubeBotConfig(config) {
 module.exports = { 
   initdb,
   setNickLogChannels, getNickLogChannels, getAllNickLogChannels,
+  setConfessionChannels, getConfessionChannels, getAllConfessionChannels,
   getYoutubeBotConfig, setYoutubeBotConfig
 }
