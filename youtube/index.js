@@ -84,7 +84,7 @@ const sendChatMessage = async (msg) => {
 
   if(response != null && response.error != null){
     //&& response.error == 'The specified live chat is no longer live.'
-    logger.error(response.error+". Going stream not available status...")
+    logger.error(response.error)
     onStreamEnded()
     //onStreamNotAvailable()
     return
