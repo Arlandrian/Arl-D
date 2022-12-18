@@ -10,7 +10,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let channels = await db.getConfessionChannels(interaction.guild.id)
   if(!channels.includes(targettedChannel)){
     let modifier = ""
-    if(channels.length > 1){
+    if(channels.length > 0){
       modifier = `<#${channels[0]}> kanalını kullanabilirsiniz.`
     }
     await interaction.editReply("Burası bir itiraf kanalı değil. "+modifier)
