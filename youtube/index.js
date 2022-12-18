@@ -21,7 +21,8 @@ let botConfig = {
 //Enum
 const StreamStatus = {
   OnAir: "OnAir",
-  OffAir: "OffAir"
+  OffAir: "OffAir",
+  NotAvailable: "NotAvailable" // For some reason we're getting an error, so we will deactivate the live chat for some time
 }
 
 let liveChat = null
@@ -31,6 +32,8 @@ let working = false;
 let currentLiveStreamId = null
 let currentLiveChatId = null
 let lastMessageSendDate = new Date()
+
+const NOTAVAILABLE_TIMEPAN = 1000*60*30;
 
 initLiveChatConfig()
 
@@ -45,6 +48,8 @@ const StartMainLoop = async () => {
         break;
       case StreamStatus.OnAir:
         await OnAirState()
+        break;
+      case StreamStatus.NotAvailable:
         break;
     }
   }
@@ -70,7 +75,6 @@ const sendChatMessage = async (msg) => {
   }
 
   let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
-
   if(response!= null && response.error == 'The caller does not have permission'){
     logger.error("We are banned?, yaaay")
     logger.error("Deactivating the live chat watch.")
@@ -78,9 +82,11 @@ const sendChatMessage = async (msg) => {
     return
   }
 
-  if(response!= null ){
+  if(response != null && response.error != null){
     //&& response.error == 'The specified live chat is no longer live.'
+    logger.error(response.error+". Going stream not available status...")
     onStreamEnded()
+    //onStreamNotAvailable()
     return
   }
   
@@ -97,6 +103,11 @@ const onStreamEnded = () => {
   streamStatus = StreamStatus.OffAir
   currentLiveStreamId = null
   currentLiveChatId = null
+}
+
+const onStreamNotAvailable = () =>{
+  streamStatus = StreamStatus.NotAvailable
+  setTimeout(()=> streamStatus = StreamStatus.OffAir, NOTAVAILABLE_TIMEPAN);
 }
 
 const initLiveChatEvents = async () => {
