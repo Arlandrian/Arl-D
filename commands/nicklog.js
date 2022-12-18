@@ -35,7 +35,7 @@ function removeItemOnce(arr, value) {
 
 exports.conf = {
   enabled: true,
-  guildOnly: false,
+  guildOnly: true,
   aliases: [],
   permLevel: "Administrator"
 };

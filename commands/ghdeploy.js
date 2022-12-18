@@ -49,7 +49,7 @@ async function githubWorkflowTrigger() {
 
 exports.conf = {
   enabled: true,
-  guildOnly: true,
+  guildOnly: false,
   aliases: ["ghdeploy","githubdeploy"],
   permLevel: "Bot Owner"
 };
