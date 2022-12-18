@@ -51,13 +51,6 @@ async function sendMessageAsTextFileAttachment(interaction, content) {
 
 async function getAllMessagesInTheChannel(channel) {
   return await lots_of_messages_getter(channel)
-  /*
-  if(channel.isAllMessagesCached == null){
-    allMessages = await lots_of_messages_getter(channel)
-    channel.nickLog = true
-  }
-  return channel.messages.cache
-  */
 }
 
 async function lots_of_messages_getter(channel, limit = 2000) {
@@ -93,6 +86,6 @@ exports.commandData = {
 // Set guildOnly to true if you want it to be available on guilds only.
 // Otherwise false is global.
 exports.conf = {
-  permLevel: "Admin",
+  permLevel: "Administrator",
   guildOnly: true
 };
