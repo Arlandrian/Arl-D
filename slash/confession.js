@@ -1,3 +1,5 @@
+const discord = require("discord.js");
+//const {ApplicationCommandOptionTypes, ApplicationCommandTypes} = require("discord.js/typings/enums")
 const logger = require("../modules/logger")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
@@ -19,14 +21,21 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let opts = interaction.options._hoistedOptions;
   let confession = opts[0].value
   let nick = opts.length > 1 ? opts[1].value : null;
+  // Create log message
   let msg = ""
   if(nick != null){
     msg += nick
     msg += ": "
   }
   msg += `${confession}`
-  logger.log(`${interaction.user.tag} confession ${msg}`)
+  // Create embed message
+  let embedMessage = new discord.MessageEmbed()
+    .setDescription(confession)
+    .setTimestamp()
+    .setColor("#FFFFFF")
+    .setAuthor(nick)
   interaction.channel.send(msg)
+  logger.log(`${interaction.user.tag} confession ${msg}`)
   await interaction.editReply("Your confession is sent.")
 };
 

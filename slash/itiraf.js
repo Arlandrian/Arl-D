@@ -21,14 +21,21 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let opts = interaction.options._hoistedOptions;
   let itiraf = opts[0].value
   let mahlas = opts.length > 1 ? opts[1].value : null;
+  // Create log message
   let msg = ""
   if(mahlas != null){
     msg += mahlas
     msg += ": "
   }
   msg += `${itiraf}`
+  // Create embed message
+  let embedMessage = new discord.MessageEmbed()
+    .setDescription(itiraf)
+    .setTimestamp()
+    .setColor("#FFFFFF")
+    .setAuthor(mahlas)
+  interaction.channel.send({embeds:[embedMessage]})
   logger.log(`${interaction.user.tag} itiraf ${msg}`)
-  interaction.channel.send(msg)
   await interaction.editReply("İtirafınız yollandı.")
 };
 
