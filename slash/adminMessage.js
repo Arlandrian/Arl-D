@@ -18,7 +18,7 @@ exports.run = async (client, interaction) => {
 };
 
 exports.commandData = {
-  name: "Admin Message",
+  name: "admin_message",
   description: "Sends an admin message.",
   descriptionLocalizations: "",
   options: [
