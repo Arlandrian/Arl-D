@@ -18,6 +18,9 @@ module.exports = async (client, message) => {
   // If there is no guild, get default conf (DMs)
   const settings = message.settings = getSettings(message.guild);
 
+  // Trigger DM received
+  onDMReceived(message);
+
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
   // message.mentions is because of the mention prefix later on in the
@@ -89,3 +92,7 @@ This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.c
       .catch(e => console.error("An error occurred replying on an error", e));
   }
 };
+
+async function onDMReceived(message){
+  logger.log(`Received DM message:: ${message.user.tag}: ${message.content}`);
+}
