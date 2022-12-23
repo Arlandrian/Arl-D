@@ -1,6 +1,6 @@
 # Configuring Google Logging Collector
 
-- Change config file /etc/google-cloud-ops-agent/config.yaml
+- Change config file /etc/google-cloud-ops-agent/config.yaml with logging-collector.yaml
 
 - Restart svc
 - ```sudo service google-cloud-ops-agent restart  && sudo service google-cloud-ops-agent status```

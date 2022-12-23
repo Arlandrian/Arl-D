@@ -23,7 +23,7 @@ logging:
     arl-d:
       type: files
       include_paths:
-      - ~/Arl-D/arl_d.log
+      - /var/log/arl_d.log
 
   service:
     pipelines:
