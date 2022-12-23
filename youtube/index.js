@@ -282,6 +282,14 @@ const setLiveChatChannelId = async (channelId) => {
 }
 
 const toggleLiveChat = async () =>{
+  if(process.env.GOOGLE_CLIENT_ID == '' || process.env.GOOGLE_CLIENT_ID == null)
+  {
+    return {
+      error: 'GOOGLE_CLIENT_ID env var is not defined!',
+      working : false
+    };
+  }
+
   if(working){
     let result = {
       error: (await stopLiveChat()).error,

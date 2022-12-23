@@ -43,18 +43,19 @@ const sendLiveChatMessage = async (liveChatId, messageText) => {
     }
   }).catch(err => {
     console.error(err.message);
-    return {error: err.message}
+    return { error: err.message }
   })
   return response
 }
 
-const validateChannelId = async (channelId) =>{
+const validateChannelId = async (channelId) => {
   let response = await youtube.channels.list({
-    part:["id","auditDetails","contentOwnerDetails"],
+    part: ["id", "auditDetails", "contentOwnerDetails"],
     id: channelId
-  }).catch(err => 
-    console.error(err.message)
-  )
+  }).catch(err => {
+    console.error(err.message);
+    return { error: err.message }
+  })
   return response.data.pageInfo.totalResults != 0
 }
 
