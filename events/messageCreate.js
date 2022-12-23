@@ -19,7 +19,9 @@ module.exports = async (client, message) => {
   const settings = message.settings = getSettings(message.guild);
 
   // Trigger DM received
-  onDMReceived(message);
+  if(message.channel.type == 'DM'){
+    onDMReceived(message);
+  }
 
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
