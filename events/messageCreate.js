@@ -96,5 +96,5 @@ This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.c
 };
 
 async function onDMReceived(message){
-  logger.log(`Received DM message:: ${message.user}: ${message.content}`);
+  logger.log(`Received DM message:: ${message}: ${message.content}`);
 }
