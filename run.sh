@@ -7,6 +7,12 @@ sleep 2
 # start new process
 RUNNER_TRACKING_ID="" && nohup node index.js > arl_d.log 2>&1 & echo $! > pid
 
+if [ $? -ne 0 ]
+then
+  echo 'Deployment failed!!!'
+  exit 1
+fi
+
 # create a hard symb link under /var/log so collector can collect it (if it doesnt exists)
 sudo ls -li /var/log/arl_d.log
 if [ $? -ne 0 ]
