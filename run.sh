@@ -11,8 +11,8 @@ RUNNER_TRACKING_ID="" && nohup node index.js > arl_d.log 2>&1 & echo $! > pid
 sudo ls -li /var/log/arl_d.log
 if [ $? -ne 0 ]
 then
-  sudo ln -v /var/log/arl_d.log arl_d.log
-  echo 'created /var/log/arl_d.log hard link'
+  sudo ln -v arl_d.log /var/log/arl_d.log && \
+  echo 'Created /var/log/arl_d.log hard link'
 fi
 
 # show a completed message
