@@ -81,7 +81,11 @@ const OnAirState = async () => {
     break;
     case MessagingMode.MESSAGE_COUNTER:
     {
-      if(liveChatMessageCounter >= botConfig.messageFreqCount){
+      let timePassedSec = (new Date() - lastMessageSendDate) / 1000
+      if(
+        timePassedSec > 15 && // wait at least 15 sec (this is also fixes the first bulk messages problem)
+        liveChatMessageCounter >= botConfig.messageFreqCount // reached limit
+        ){
         liveChatMessageCounter = 0
         await sendChatMessage(botConfig.messageText)
       }
@@ -252,7 +256,7 @@ const startLiveChat = async () => {
     return {error:`Channel id \"${botConfig.channelId}\" could not found.`}
   }
 
-  liveChat = new LiveChat({channelId: botConfig.channelId}, 1000000000)// interval is for live chat
+  liveChat = new LiveChat({channelId: botConfig.channelId}, 5000)// interval is for live chat
   initLiveChatEvents()
   /*DONT AWAIT await*/ StartMainLoop()
   return {}
