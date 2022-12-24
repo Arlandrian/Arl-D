@@ -148,7 +148,10 @@ const initLiveChatEvents = async () => {
     currentLiveStreamId = liveId
     liveChatMessageCounter = 0
     sendChatMessage(botConfig.messageText)
-    // liveChat.stop("no need to watch chat")
+
+    if(botConfig.mode != MessagingMode.MESSAGE_COUNTER){
+      liveChat.stop("no need to watch chat")
+    }
   })
 
   // Emit at end of observation chat. // ONLY CHAT
