@@ -5,32 +5,27 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  let liveChatFreq = Number(args[0])
-  // Check if valid arg
-  if(liveChatFreq == Nan || liveChatFreq == null){
-    message.reply("invalid input");
-    return
-  }
-
-  let resp = await youtube.setLiveChatFreqSec(liveChatFreq);
+  let liveChatMode = args[0]
+  let resp = await youtube.setLiveChatMode(liveChatMode);
   if(resp.error != null){
     message.reply(resp.error)
     return
   }
-  const reply = `Live chat bot message frequency is set to: ${liveChatFreq} seconds.`
+
+  const reply = `Live chat bot message mode is set to: ${liveChatMode}.`
   message.reply(reply);
 };
 
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["ytsetmessagefreq","ytsetmsgfreq"],
+  aliases: ["ytsetmode","ytsetmessagemode"],
   permLevel: "Administrator"
 };
 
 exports.help = {
-  name: "youtube set message frequency",
+  name: "youtube set message mode",
   category: "Youtube Bot",
-  description: "Set the youtube live chat message frequency of bot in seconds.",
-  usage: "ytsetmessagefreq 120"
+  description: "Set the youtube live chat messaging mode. Valid Modes => MESSAGE_COUNTER, SECOND_BASED",
+  usage: "ytsetmode SECOND_BASED"
 };

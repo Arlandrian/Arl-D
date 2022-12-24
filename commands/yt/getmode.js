@@ -5,22 +5,21 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  let liveChatMessage = args.join(' ')
-  await youtube.setLiveChatMessage(liveChatMessage);
-  const reply = `Live chat bot message is set to: ${liveChatMessage}`
+  let mode = await youtube.getLiveChatMode();
+  const reply = `Live chat bot messaging mode: ${mode}`
   message.reply(reply);
 };
 
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: ["ytsetmessage","ytsetmsg"],
+  aliases: ["yt getmode","ytgetmode","ytgetmessagingmode","ytgetmessagemode"],
   permLevel: "Administrator"
 };
 
 exports.help = {
-  name: "youtube set message",
+  name: "youtube get modet",
   category: "Youtube Bot",
-  description: "Set the youtube live chat message of bot.",
-  usage: "ytsetmessage 'new bot messsage'(without quotes))"
+  description: "Get the youtube live chat message mode.",
+  usage: "ytgetmessagemode, ytgetmode"
 };

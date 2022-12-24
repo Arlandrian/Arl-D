@@ -277,13 +277,49 @@ const setLiveChatMessage = async (textMessage) => {
   await db.setYoutubeBotConfig(botConfig)
 }
 
+const getLiveChatMode = async () => {
+  return botConfig.mode
+}
+
+const setLiveChatMode = async (mode) => {
+  let valid = Object.keys(MessagingMode).includes(mode);
+  if(!valid){
+    logger.error(`${mode} is not valid for live chat mode.`);
+    return {error: `${mode} is not valid for live chat mode.`};
+  }
+  botConfig.mode = mode
+  await db.setYoutubeBotConfig(botConfig)
+  return {error: null}
+}
+
+const getLiveChatFreqCount = async () => {
+  return botConfig.messageFreqCount
+}
+
+const setLiveChatFreqCount = async (count) => {
+  if(count < 2){
+    logger.error(`${count} should be above 1.`);
+    return {error: `${count} should be above 1.`};
+  }
+
+  botConfig.messageFreqCount = count
+  await db.setYoutubeBotConfig(botConfig);
+  return {error: null}
+}
+
 const getLiveChatFreqSec = async () => {
   return botConfig.messageFreqSec
 }
 
 const setLiveChatFreqSec = async (freq) => {
+  if(freq < 5){
+    logger.error(`${freq} should be above 5.`);
+    return {error: `${freq} should be above 5.`};
+  }
+
   botConfig.messageFreqSec = freq
   await db.setYoutubeBotConfig(botConfig)
+  return {}
 }
 
 const getLiveChatChannelId = async () => {
@@ -343,6 +379,8 @@ const toggleLiveChat = async () =>{
 module.exports = { 
   toggleLiveChat,
   getLiveChatMessage, setLiveChatMessage,
+  getLiveChatMode, setLiveChatMode,
+  getLiveChatFreqCount, setLiveChatFreqCount,
   getLiveChatFreqSec, setLiveChatFreqSec,
   getLiveChatChannelId, setLiveChatChannelId
 };
