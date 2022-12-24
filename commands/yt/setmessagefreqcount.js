@@ -7,7 +7,7 @@ const durationFormatter = new DurationFormatter();
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   let liveChatFreqCount = Number(args[0])
   // Check if valid arg
-  if(liveChatFreqCount == Nan || liveChatFreqCount == null){
+  if(liveChatFreqCount == NaN || liveChatFreqCount == null){
     message.reply("invalid input");
     return
   }

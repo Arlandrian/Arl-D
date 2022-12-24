@@ -18,7 +18,7 @@ exports.conf = {
 };
 
 exports.help = {
-  name: "youtube get modet",
+  name: "youtube get mode",
   category: "Youtube Bot",
   description: "Get the youtube live chat message mode.",
   usage: "ytgetmessagemode, ytgetmode"

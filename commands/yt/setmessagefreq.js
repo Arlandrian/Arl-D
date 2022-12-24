@@ -4,10 +4,10 @@ const { DurationFormatter } = require("@sapphire/time-utilities");
 const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
-exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+exports.run = async (client, message, args, level) => { 
   let liveChatFreq = Number(args[0])
   // Check if valid arg
-  if(liveChatFreq == Nan || liveChatFreq == null){
+  if(liveChatFreq == NaN || liveChatFreq == null){
     message.reply("invalid input");
     return
   }
