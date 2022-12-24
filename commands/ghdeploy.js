@@ -2,22 +2,36 @@ const axios = require('axios');
 const config = require("../config.js");
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   const replying = true
-  let result = await githubWorkflowTrigger();
+  let branch = "master"
+  if(args.length > 0){
+    branch = args[0]
+  }
+
+  let result = await githubWorkflowTrigger(branch);
   if(result==null){
-    message.reply({ content: `Build started.`, allowedMentions: { repliedUser: (replying === "true") }});
+    message.reply(
+      { 
+        content: `Build started.`,
+        allowedMentions: { repliedUser: (replying === "true")},
+        ephemeral: true 
+      });
   }else{
-    message.reply({ content: `Failed to dispatch workflow! ${result.message}`, allowedMentions: { repliedUser: (replying === "true") }});
+    message.reply(
+      { content: `Failed to dispatch workflow! ${result.message}`,
+        allowedMentions: { repliedUser: (replying === "true") },
+        ephemeral: true
+      });
   }
 };
 
-async function githubWorkflowTrigger() {
+async function githubWorkflowTrigger(branch) {
   const OWNER = process.env.MGITHUB_OWNER
   const REPO = process.env.MGITHUB_REPO
   const WORKFLOW_ID = "build-deploy.yml"
   const GITHUB_TOKEN = process.env.MGITHUB_WORKFLOW_TOKEN
 
   const data = {
-    ref: "master"
+    ref: branch
     // ,
     // inputs: {
     //   "name": "Mona the Octocat",
@@ -57,5 +71,5 @@ exports.help = {
   name: "ghdeploy",
   category: "System",
   description: "This will build and deploy the whole application from github.",
-  usage: "ghdeploy"
+  usage: "ghdeploy [branch]"
 };
