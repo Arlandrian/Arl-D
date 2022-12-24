@@ -42,6 +42,9 @@ exports.run = (client, message, args, level) => {
       }
       output += `${settings.prefix}${c.help.name}${" ".repeat(longest - c.help.name.length)} :: ${c.help.description}\n`;
     });
+    if(output.length > 2000)(
+      output = output.substring(0,1999)
+    )
     message.channel.send(codeBlock("asciidoc", output));
 
   } else {
