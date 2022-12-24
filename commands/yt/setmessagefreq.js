@@ -7,7 +7,7 @@ const durationFormatter = new DurationFormatter();
 exports.run = async (client, message, args, level) => { 
   let liveChatFreq = Number(args[0])
   // Check if valid arg
-  if(liveChatFreq == NaN || liveChatFreq == null){
+  if(isNaN(liveChatFreq) || liveChatFreq == null){
     message.reply("invalid input");
     return
   }

@@ -7,7 +7,7 @@ const durationFormatter = new DurationFormatter();
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   let liveChatFreqCount = Number(args[0])
   // Check if valid arg
-  if(liveChatFreqCount == NaN || liveChatFreqCount == null){
+  if(isNaN(liveChatFreqCount) || liveChatFreqCount == null){
     message.reply("invalid input");
     return
   }
@@ -18,7 +18,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     return
   }
 
-  const reply = `Live chat bot message frequency is set to: ${liveChatFreqCount} seconds.`
+  const reply = `Live chat bot message frequency count is set to: ${liveChatFreqCount}.`
   message.reply(reply);
 };
 
