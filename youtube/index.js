@@ -4,18 +4,27 @@ const youtubeService = require("./youtubeService");
 const { youtube } = require("googleapis/build/src/apis/youtube/index.js");
 const db = { getYoutubeBotConfig, setYoutubeBotConfig } = require("../modules/database.js")
 
+const MessagingMode = {
+  MESSAGE_COUNTER : "MESSAGE_COUNTER",
+  SECOND_BASED : "SECOND_BASED"
+}
+
 const defaultBotConfig = {
   enabled: false,
   channelId: null,
   messageText: null,
-  messageFreqSec: 120
+  messageFreqSec: 120,
+  messageFreqCount: 60,
+  mode: MessagingMode.SECOND_BASED
 }
 
 let botConfig = {
   enabled: false,
   channelId: null,
   messageText: null,
-  messageFreqSec: 120
+  messageFreqSec: 120,
+  messageFreqCount: 60,
+  mode: MessagingMode.SECOND_BASED
 }
 
 //Enum
@@ -32,6 +41,7 @@ let working = false;
 let currentLiveStreamId = null
 let currentLiveChatId = null
 let lastMessageSendDate = new Date()
+let liveChatMessageCounter = 0
 
 const NOTAVAILABLE_TIMEPAN = 1000*60*30;
 
@@ -60,9 +70,23 @@ const StopMainLoop = () => {
 }
 
 const OnAirState = async () => {
-  let timePassedSec = (new Date() - lastMessageSendDate) / 1000
-  if(timePassedSec > botConfig.messageFreqSec){
-    await sendChatMessage(botConfig.messageText)
+  switch(botConfig.mode){
+    case MessagingMode.SECOND_BASED:
+    {
+      let timePassedSec = (new Date() - lastMessageSendDate) / 1000
+      if(timePassedSec > botConfig.messageFreqSec){
+        await sendChatMessage(botConfig.messageText)
+      }
+    }
+    break;
+    case MessagingMode.MESSAGE_COUNTER:
+    {
+      if(liveChatMessageCounter >= botConfig.messageFreqCount){
+        liveChatMessageCounter = 0
+        await sendChatMessage(botConfig.messageText)
+      }
+    }
+    break;
   }
 }
 
@@ -90,7 +114,6 @@ const sendChatMessage = async (msg) => {
     return
   }
   
-  
   lastMessageSendDate = new Date()
   logger.log(`[${lastMessageSendDate}] Sending chat message...`)
 }
@@ -103,6 +126,7 @@ const onStreamEnded = () => {
   streamStatus = StreamStatus.OffAir
   currentLiveStreamId = null
   currentLiveChatId = null
+  liveChatMessageCounter = 0
 }
 
 const onStreamNotAvailable = () =>{
@@ -118,7 +142,9 @@ const initLiveChatEvents = async () => {
     logger.log("live stream started: " + liveId)
     streamStatus = StreamStatus.OnAir;
     currentLiveStreamId = liveId
-    liveChat.stop("no need to watch chat")
+    liveChatMessageCounter = 0
+    sendChatMessage(botConfig.messageText)
+    // liveChat.stop("no need to watch chat")
   })
 
   // Emit at end of observation chat. // ONLY CHAT
@@ -130,10 +156,11 @@ const initLiveChatEvents = async () => {
 
   // Emit at receive chat.
   // chat: ChatItem
-  // liveChat.on("chat", (chatItem) => {
-  //   /* Your code here! */
-  //   // logger.log(chatItem.message)
-  // })
+  liveChat.on("chat", (chatItem) => {
+    /* Your code here! */
+    // logger.log(chatItem.message)
+    liveChatMessageCounter++;
+  })
 
   // Emit when an error occurs
   // err: Error or any
