@@ -16,7 +16,7 @@
 - https://www.googleapis.com/auth/youtube.readonly
 - https://www.googleapis.com/auth/youtubepartner-channel-audit
 12. Click Authorize APIs
-13. Copy the Refresh token you got
+13. Copy the Refresh token
 14. Set the environment variables google values (ClientId,Secret and Refresh Token)
 
 

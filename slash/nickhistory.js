@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
   //await interaction.deferReply({ephemeral: true});
-  await interaction.deferReply({ ephemeral: false });
+  await interaction.deferReply({ ephemeral: true });
 
   const { db } = client;
   let channels = await db.getNickLogChannels(interaction.guild.id)
@@ -37,15 +37,18 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   reply += '\n'
   reply += `\nThere are ${messages.length} messages in the nick log channel.\n`
 
+  const dmResponseUser = client.users.cache.get(interaction.member.user.id);
   if (reply.length < 2000) {
-    const rep = await interaction.editReply(reply);
+    await dmResponseUser.send(reply);
   } else {
-    await sendMessageAsTextFileAttachment(interaction, reply)
+    let atc = new discord.MessageAttachment(Buffer.from(reply), 'nicklog.txt');
+    await dmResponseUser.send({ files: [atc] });
   }
+  await interaction.editReply("History log sent as a DM.");
 };
 
 async function sendMessageAsTextFileAttachment(interaction, content) {
-  let atc = new discord.MessageAttachment(Buffer.from(content), 'nicklog.txt');
+  let atc = new discord.MessageAttachment(Buffer.from(reply), 'nicklog.txt');
   await interaction.editReply({ files: [atc] });
 }
 
