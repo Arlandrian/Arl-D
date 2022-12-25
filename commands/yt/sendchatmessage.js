@@ -5,6 +5,11 @@ const youtube = require("../../youtube")
 const durationFormatter = new DurationFormatter();
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+  if(args.length == 0){
+    message.reply(`Failed: Please enter the message you want to send.`);
+    return
+  }
+
   let liveChatMessage = args.join(' ')
   let result = await youtube.sendLiveChatMessage(liveChatMessage);
   if(result.error != null){
