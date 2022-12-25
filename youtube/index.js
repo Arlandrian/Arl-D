@@ -383,11 +383,24 @@ const toggleLiveChat = async () =>{
   }
 }
 
+const sendLiveChatMessage = async (message) =>{
+  if(currentLiveChatId == null){
+    return {error: "There is no active stream right now."}
+  }
+
+  let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, message)
+  if(response != null && response.error != null){
+    return {error: response.error}
+  }
+  return {error:null}
+}
+
 module.exports = { 
   toggleLiveChat,
   getLiveChatMessage, setLiveChatMessage,
   getLiveChatMode, setLiveChatMode,
   getLiveChatFreqCount, setLiveChatFreqCount,
   getLiveChatFreqSec, setLiveChatFreqSec,
-  getLiveChatChannelId, setLiveChatChannelId
+  getLiveChatChannelId, setLiveChatChannelId,
+  sendLiveChatMessage
 };
