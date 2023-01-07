@@ -7,8 +7,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let requester = interaction.user
   let message = interaction.targetMessage;
 
-  let attachments = message.attachments != null ?  Array.from(message.attachments.map(x=>x.proxyURL)).join("\n"): null;
-  let files = message.files != null ?  Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
+  let attachments = message.attachments != null ? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
+  let files = message.files != null ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
   let content = `Sent by: ${message.author}.\n${message.content}`
 
   if(files != null){
@@ -18,7 +18,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
     content += "\n"+attachments
   }
 
-  logger.log(`${message.author.tag} used DM this to me content: ${content}`)
+  logger.log(`[${message.author.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [message id] ${message.id}`)
 
   await requester.dmChannel.send(
     {
