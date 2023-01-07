@@ -18,6 +18,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
     content += "\n"+attachments
   }
 
+  logger.log(`${requester.user.tag} used DM this to me content: ${content}`)
+
   await requester.dmChannel.send(
     {
       content: content,
