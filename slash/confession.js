@@ -34,7 +34,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
     .setTimestamp()
     .setColor("#FFFFFF")
     .setAuthor(nick)
-  interaction.channel.send(msg)
+  interaction.channel.send({embeds:[embedMessage]})
   logger.log(`${interaction.user.tag} confession ${msg}`)
   await interaction.editReply("Your confession is sent.")
 };
