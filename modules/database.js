@@ -17,6 +17,7 @@ async function initdb(){
 
 const NICK_LOG_KEY = "arld:guild:nickLogChannels"
 const CONFESSION_KEY = "arld:guild:confessionChannels"
+const LOG_IGNORE_KEY = "arld:guild:logIgnoreChannels"
 const YOUTUBE_BOT_CONFIG_KEY = "arld:youtubeBotConfig"
 
 async function setGuildChannelsBase(channelKey, guildId, channels) {
@@ -62,6 +63,18 @@ async function getAllConfessionChannels(){
   return await getAllGuildChannelsBase(CONFESSION_KEY)
 }
 
+async function setLogIgnoreChannels(guildId, channels) {
+  await setGuildChannelsBase(LOG_IGNORE_KEY, guildId, channels)
+}
+
+async function getLogIgnoreChannels(guildId) {
+  return await getGuildChannelsBase(LOG_IGNORE_KEY, guildId)
+}
+
+async function getAllLogIgnoreChannels(){
+  return await getAllGuildChannelsBase(LOG_IGNORE_KEY)
+}
+
 async function getYoutubeBotConfig() {
   return JSON.parse(await client.get(YOUTUBE_BOT_CONFIG_KEY))
 }
@@ -89,5 +102,6 @@ module.exports = {
   initdb,
   setNickLogChannels, getNickLogChannels, getAllNickLogChannels,
   setConfessionChannels, getConfessionChannels, getAllConfessionChannels,
+  setLogIgnoreChannels, getLogIgnoreChannels, getAllLogIgnoreChannels,
   getYoutubeBotConfig, setYoutubeBotConfig
 }

@@ -4,6 +4,12 @@ const discord = require("discord.js");
 module.exports = async (client, message) => {
   // Ignore direct messages
 	if (!message.guild) return;
+
+  // ignore ignored channels
+  const {db} = client
+  let channels = db.getLogIgnoreChannels(message.guild.id)
+  if(channels.includes(message.channel.id)) return;
+  
 	const fetchedLogs = await message.guild.fetchAuditLogs({
 		limit: 1,
 		type: discord.GuildAuditLogs.Actions.MESSAGE_DELETE
