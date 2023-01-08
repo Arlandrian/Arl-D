@@ -14,7 +14,7 @@ module.exports = async (client, message) => {
   const author = message.author ?? message.member
 
 	// Perform a coherence check to make sure that there's *something*
-	if (!deletionLog) return console.log(`A message by ${author.tag} was deleted, but no relevant audit logs were found.`);
+	if (!deletionLog) return console.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. but no relevant audit logs were found.`);
 
 	// Now grab the user object of the person who deleted the message
 	// Also grab the target of this action to double-check things
@@ -25,9 +25,9 @@ module.exports = async (client, message) => {
 	// Update the output with a bit more information
 	// Also run a check to make sure that the log returned was for the same author's message
 	if (target.id === author.id) {
-		logger.log(`A message in channel ${message.channel.name}  by ${author.tag} deleted. executor ${executor.tag}.\n${content}`.replace("\n\n","\n"));
+		logger.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. executor ${executor.tag}.\n${content}`.replace("\n\n","\n"));
 	} else {
-		logger.log(`A message in channel ${message.channel.name} by ${author.tag} was deleted, but we don't know by who.\n${content}`.replace("\n\n","\n"));
+		logger.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. executor unknown.\n${content}`.replace("\n\n","\n"));
 	}
 };
 
