@@ -7,7 +7,7 @@ module.exports = async (client, message) => {
 
   // ignore ignored channels
   const {db} = client
-  let channels = db.getLogIgnoreChannels(message.guild.id)
+  let channels = await db.getLogIgnoreChannels(message.guild.id)
   if(channels.includes(message.channel.id)) return;
   
 	const fetchedLogs = await message.guild.fetchAuditLogs({
