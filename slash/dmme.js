@@ -19,12 +19,15 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
   logger.log(`[${message.author.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [message id] ${message.id}`)
 
+  let embeds = message.embeds != null ? Array.from(message.embeds?.values()) : null;
+  embeds?.forEach(element => {
+    element.description = "desc"
+  });
+
   await requester.dmChannel.send(
     {
       content: content,
-      embeds: message.embeds != null ? Array.from(message.embeds?.values().forEach(element => {
-        element.description = "desc"
-      })) : null,
+      embeds: embeds,
       // attachments: message.attachments != null ? Array.from(message.attachments?.values()) : null,
       // files: message.files != null ? Array.from(message.files?.values()) : null
     });
