@@ -18,6 +18,9 @@ module.exports = async (client, message) => {
 	const deletionLog = fetchedLogs.entries.first();
 
   const author = message.author ?? message.member
+  if(author == null){
+    return
+  }
 
 	// Perform a coherence check to make sure that there's *something*
 	if (!deletionLog) return console.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. but no relevant audit logs were found.`);
