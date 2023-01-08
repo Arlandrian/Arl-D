@@ -33,6 +33,7 @@ function createContent(message){
   if(attachments != null){
     content += "\n"+attachments
   }
+  return content
 }
 
 exports.commandData = {
