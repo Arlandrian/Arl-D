@@ -1,27 +1,54 @@
 const logger = require("../modules/logger.js");
+const discord = require("discord.js");
 
 module.exports = async (client, message) => {
   // Ignore direct messages
 	if (!message.guild) return;
 	const fetchedLogs = await message.guild.fetchAuditLogs({
 		limit: 1,
-		type: AuditLogEvent.MessageDelete,
+		type: discord.GuildAuditLogs.Actions.MESSAGE_DELETE
 	});
 	// Since there's only 1 audit log entry in this collection, grab the first one
 	const deletionLog = fetchedLogs.entries.first();
 
+  const author = message.author ?? message.member
+
 	// Perform a coherence check to make sure that there's *something*
-	if (!deletionLog) return console.log(`A message by ${message.author.tag} was deleted, but no relevant audit logs were found.`);
+	if (!deletionLog) return console.log(`A message by ${author.tag} was deleted, but no relevant audit logs were found.`);
 
 	// Now grab the user object of the person who deleted the message
 	// Also grab the target of this action to double-check things
 	const { executor, target } = deletionLog;
 
+  let content = createContentMessage(message);
+
 	// Update the output with a bit more information
 	// Also run a check to make sure that the log returned was for the same author's message
-	if (target.id === message.author.id) {
-		logger.log(`A message by ${message.author.tag} executor ${executor.tag}.\n${message.content}`);
+	if (target.id === author.id) {
+		logger.log(`A message by ${author.tag} deleted. executor ${executor.tag}.\n${content}`.replace("\n\n","\n"));
 	} else {
-		logger.log(`A message by ${message.author.tag} was deleted, but we don't know by who.\n${message.content}`);
+		logger.log(`A message by ${author.tag} was deleted, but we don't know by who.\n${content}`.replace("\n\n","\n"));
 	}
 };
+
+function createContentMessage(message){
+  let content = message.content
+
+  let files = message.files != null && message.files.length > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
+  if(files != null){
+    content += "\n"+files
+  }
+
+  let attachments = message.attachments != null && message.attachments.length > 0 ? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
+  if(attachments != null){
+    content += "\n"+attachments
+  }
+
+  let embeds = message.embeds != null && message.embeds.length > 0 ? Array.from(message.embeds?.values()) : null;
+  embeds = embeds?.filter(x => x.description != null)
+    .map(x => x.description).join("\n");
+  if(embeds != null){
+    content += "\n"+embeds
+  }
+  return content
+}

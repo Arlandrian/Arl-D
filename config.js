@@ -16,7 +16,7 @@ const config = {
   */
   intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_PRESENCES ],
   // Partials your bot may need should go here, CHANNEL is required for DM's
-  partials: ["CHANNEL", "USER", "GUILD_MEMBER"],
+  partials: ["CHANNEL", "USER", "GUILD_MEMBER", "MESSAGE"],
 
   /*
   * Default per-server settings. These settings are entered in a database on first load, 
