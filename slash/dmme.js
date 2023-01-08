@@ -8,7 +8,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
   let attachments = message.attachments != null ? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
   let files = message.files != null ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
-  let content = `Sent by: ${message.author}.\n${message.content}`
+  let content = `Sent by: ${message.author}. MessageId: ${message.id}.\n${message.content}`
 
   if(files != null){
     content += "\n"+files
