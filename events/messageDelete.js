@@ -25,9 +25,9 @@ module.exports = async (client, message) => {
 	// Update the output with a bit more information
 	// Also run a check to make sure that the log returned was for the same author's message
 	if (target.id === author.id) {
-		logger.log(`A message by ${author.tag} deleted. executor ${executor.tag}.\n${content}`.replace("\n\n","\n"));
+		logger.log(`A message in channel ${message.channel.name}  by ${author.tag} deleted. executor ${executor.tag}.\n${content}`.replace("\n\n","\n"));
 	} else {
-		logger.log(`A message by ${author.tag} was deleted, but we don't know by who.\n${content}`.replace("\n\n","\n"));
+		logger.log(`A message in channel ${message.channel.name} by ${author.tag} was deleted, but we don't know by who.\n${content}`.replace("\n\n","\n"));
 	}
 };
 
