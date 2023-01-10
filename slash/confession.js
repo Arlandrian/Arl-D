@@ -42,7 +42,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 exports.commandData = {
   name: "confession",
   description: "It enables you to send an anonymous message on the predefined confession channels.",
-  descriptionLocalizations: "",
+  descriptionLocalizations: {},
   options: [
     {
       "name": "confession",

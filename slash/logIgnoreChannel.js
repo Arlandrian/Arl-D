@@ -30,7 +30,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 exports.commandData = {
   name: "log_ignore_channel",
   description: "Ignores the channels for logging.",
-  descriptionLocalizations: "",
+  descriptionLocalizations:  {},
   options: [
     {
       "name": "channel",

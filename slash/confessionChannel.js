@@ -30,7 +30,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 exports.commandData = {
   name: "confession_channel",
   description: "Enables confession feature on the channel.",
-  descriptionLocalizations: "",
+  descriptionLocalizations: {},
   options: [
     {
       "name": "channel",

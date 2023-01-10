@@ -42,7 +42,10 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 exports.commandData = {
   name: "itiraf",
   description: "Belirlenmiş itiraf kanallarında anonim bi şekilde mesaj atmanızı sağlar.",
-  descriptionLocalizations: "",
+  descriptionLocalizations:  {
+    "en-US": "It enables you to send an anonymous message on the predefined confession channels.",
+    "tr-TR": "Belirlenmiş itiraf kanallarında anonim bi şekilde mesaj atmanızı sağlar."
+  },  
   options: [
     {
       "name": "itiraf",
