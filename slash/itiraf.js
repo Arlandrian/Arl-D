@@ -44,7 +44,7 @@ exports.commandData = {
   description: "Belirlenmiş itiraf kanallarında anonim bi şekilde mesaj atmanızı sağlar.",
   descriptionLocalizations:  {
     "en-US": "It enables you to send an anonymous message on the predefined confession channels.",
-    "tr-TR": "Belirlenmiş itiraf kanallarında anonim bi şekilde mesaj atmanızı sağlar."
+    "tr": "Belirlenmiş itiraf kanallarında anonim bi şekilde mesaj atmanızı sağlar."
   },  
   options: [
     {
