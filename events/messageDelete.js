@@ -43,12 +43,12 @@ module.exports = async (client, message) => {
 function createContentMessage(message){
   let content = message.content
 
-  let files = message.files != null && message.files.length > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
+  let files = message.files != null && message.files.size > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
   if(files != null){
     content += "\n"+files
   }
 
-  let attachments = message.attachments != null && message.attachments.length > 0 ? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
+  let attachments = message.attachments != null && message.attachments.size > 0 ? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
   if(attachments != null){
     content += "\n"+attachments
   }
