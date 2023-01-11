@@ -18,7 +18,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
       embeds: embeds
     });
 
-  logger.log(`[${message.author.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [channel id]: ${message.channel.id} [message id]: ${message.id}`)
+  logger.log(`[${requester.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [channel id]: ${message.channel.id} [message id]: ${message.id}`)
   await interaction.editReply("DM sent.");
 };
 
