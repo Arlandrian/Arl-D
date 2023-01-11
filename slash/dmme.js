@@ -23,16 +23,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 };
 
 function createContent(message){
-
-  let attachments = message.attachments != null && message.attachments.length > 0? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
-
-  console.log(attachments)
-  console.log(message.attachments)
-  console.log(message.attachments.length)
-  console.log(Array.from(message.attachments.map(x=>x.proxyURL)))
-  console.log(Array.from(message.attachments.map(x=>x.proxyURL)).join("\n"))
-
-  let files = message.files != null&& message.files.length > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
+  let attachments = message.attachments != null && message.attachments.size > 0? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
+  let files = message.files != null&& message.files.size > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
   let content = `Sent by: ${message.author}. ChannelId:${message.channel.id} MessageId: ${message.id}.\n${message.content}`
 
   if(files != null){
