@@ -13,17 +13,25 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   embeds = embeds?.filter(element => element.description != null);
 
   await requester.dmChannel.send(
-    {
-      content: content,
-      embeds: embeds
-    });
+  {
+    content: content,
+    embeds: embeds
+  });
 
   logger.log(`[${requester.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [channel id]: ${message.channel.id} [message id]: ${message.id}`)
   await interaction.editReply("DM sent.");
 };
 
 function createContent(message){
+
   let attachments = message.attachments != null && message.attachments.length > 0? Array.from(message.attachments.map(x=>x.proxyURL)).join("\n") : null;
+
+  console.log(attachments)
+  console.log(message.attachments)
+  console.log(message.attachments.length)
+  console.log(Array.from(message.attachments.map(x=>x.proxyURL)))
+  console.log(Array.from(message.attachments.map(x=>x.proxyURL)).join("\n"))
+
   let files = message.files != null&& message.files.length > 0 ? Array.from(message.files.map(x=>x.proxyURL)).join("\n") : null;
   let content = `Sent by: ${message.author}. ChannelId:${message.channel.id} MessageId: ${message.id}.\n${message.content}`
 
