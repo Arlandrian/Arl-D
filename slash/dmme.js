@@ -19,7 +19,17 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   });
 
   logger.log(`[${requester.tag}] used [DM this to me] [guild id]: ${interaction.guildId} [channel id]: ${message.channel.id} [message id]: ${message.id}`)
-  await interaction.editReply("DM sent.");
+
+  let embedMessage = new discord.MessageEmbed()
+    .setTitle("Arl-D")
+    .setDescription(`Dm Sent.`)
+    .addFields(
+      [{ name: '-->', value: `[Go to message](${message.url})` }]
+    )
+    .setTimestamp()
+    .setColor("#ddbb11")
+
+  await interaction.editReply({embeds:[embedMessage]});
 };
 
 function createContent(message){
