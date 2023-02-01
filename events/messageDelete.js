@@ -13,6 +13,9 @@ module.exports = async (client, message) => {
   let ignoredChannels = await db.getLogIgnoreChannels(message.guild.id)
   if(ignoredChannels.includes(message.channel.id)) return;
 
+  let content = createContentMessage(message);
+  if (!content) return
+
 	const fetchedLogs = await message.guild.fetchAuditLogs({
 		limit: 1,
 		type: discord.GuildAuditLogs.Actions.MESSAGE_DELETE
@@ -28,8 +31,6 @@ module.exports = async (client, message) => {
 	// Now grab the user object of the person who deleted the message
 	// Also grab the target of this action to double-check things
 	const { executor, target } = deletionLog;
-
-  let content = createContentMessage(message);
 
 	// Update the output with a bit more information
 	// Also run a check to make sure that the log returned was for the same author's message
