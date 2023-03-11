@@ -3,9 +3,9 @@ const logger = require("../modules/logger")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
   let opts = interaction.options._hoistedOptions;
-  let boy = number(opts[0])
-  let kilo = number(opts[1])
-  let yas = number(opts[2])
+  let boy = Number(opts[0])
+  let kilo = Number(opts[1])
+  let yas = Number(opts[2])
   let bazalMetabolizma = (13.75*kilo) + (5.03*boy) - (6.75*yas) + 66.5
   await interaction.editReply(`Bazal metabilizma hızınız: ${bazalMetabolizma}`);
 };
@@ -17,19 +17,19 @@ exports.commandData = {
     {
       "name": "boy",
       "description": "Boyunuzu santimetre cinsinden giriniz.",
-      "type": 3,
+      "type": 4,
       "required": true
     },
     {
       "name": "kilo",
       "description": "Kilonuzu kilogram cinsinden giriniz.",
-      "type": 3,
+      "type": 4,
       "required": true
     },
     {
       "name": "yas",
       "description": "Yaşınızı giriniz.",
-      "type": 3,
+      "type": 4,
       "required": true
     }
   ],
