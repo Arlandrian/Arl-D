@@ -12,7 +12,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
 
 exports.commandData = {
-  name: "Bazal Hesapla",
+  name: "BazalHesapla",
   description: "Verilen bilgilere göre bazal metabolizmanızı hesaplar.",
   options: [
     {
