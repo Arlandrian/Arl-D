@@ -10,7 +10,6 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   await interaction.editReply(`Bazal metabilizma hızınız: ${bazalMetabolizma}`);
 };
 
-
 exports.commandData = {
   name: "BazalHesapla",
   description: "Verilen bilgilere göre bazal metabolizmanızı hesaplar.",
@@ -35,7 +34,7 @@ exports.commandData = {
     }
   ],
   defaultPermission: true,
-  //type: 3//ApplicationCommandTypes.USER
+  type: 1//ApplicationCommandTypes.USER
 };
 
 // Set guildOnly to true if you want it to be available on guilds only.
