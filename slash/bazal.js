@@ -12,7 +12,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
 exports.commandData = {
   name: "BazalHesapla",
-  description: "Verilen bilgilere göre bazal metabolizmanızı hesaplar.",
+  description: "Verilen bilgilere göre bazal metabolizma hızınızı hesaplar.",
   options: [
     {
       "name": "Boy",
@@ -27,7 +27,7 @@ exports.commandData = {
       "required": true
     },
     {
-      "name": "Yaş",
+      "name": "Yas",
       "description": "Yaşınızı giriniz.",
       "type": 4,
       "required": true
