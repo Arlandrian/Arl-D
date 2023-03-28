@@ -10,26 +10,26 @@ exports.run = async (client, interaction) => {
   // let memberCount = guild.roles.get(roleID).members.size;
   // message.channel.send(memberCount + " members have this role!");
 
-  const resp = await JSON.stringify(interaction.options._hoistedOptions);
-  interaction.editReply(resp);
-  // Create a message and send it to channel
-  const opts = interaction.options._hoistedOptions;
-  const labels = []
-  const data = []
-  opts.forEach(opt => {
-    const roleIn=opt.role
-    const id=roleIn.id
-    const name=roleIn.name
-    const color=roleIn.color
+  // const resp = await JSON.stringify(interaction.options._hoistedOptions);
+  // interaction.editReply(resp);
+  // // Create a message and send it to channel
+  // const opts = interaction.options._hoistedOptions;
+  // const labels = []
+  // const data = []
+  // opts.forEach(opt => {
+  //   const roleIn=opt.role
+  //   const id=roleIn.id
+  //   const name=roleIn.name
+  //   const color=roleIn.color
 
-    const role = await client.guilds.cache.get(interaction.guildId).roles.fetch(id)
-    const memberCount = role.members.size
-    interaction.channel.send(name+" "+memberCount)
+  //   const role = await client.guilds.cache.get(interaction.guildId).roles.fetch(id)
+  //   const memberCount = role.members.size
+  //   interaction.channel.send(name+" "+memberCount)
 
-    // member names
-    labels.push(role.name)
-    // member count
-    data.push(role)
+  //   // member names
+  //   labels.push(role.name)
+  //   // member count
+  //   data.push(role)
   });
 
   // const chart = new QuickChart();
