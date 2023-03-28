@@ -1,7 +1,10 @@
 // const discord = require("discord.js");
 // const QuickChart = require('quickchart-js');
 
-exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
+const { ApplicationCommandOptionTypes } = require("discord.js/typings/enums");
+
+exports.run = async (client, interaction) => {
+  // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
 
   // let guild = await interaction.guild.fetchMembers();
@@ -9,8 +12,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   // let memberCount = guild.roles.get(roleID).members.size;
   // message.channel.send(memberCount + " members have this role!");
 
-  const resp=await JSON.stringify(interaction.options._hoistedOptions)
-  interaction.editReply(resp)
+  const resp = await JSON.stringify(interaction.options._hoistedOptions);
+  interaction.editReply(resp);
   // // Create a message and send it to channel
   // const opts = interaction.options._hoistedOptions;
   // const labels = []
@@ -43,72 +46,73 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 };
 
 exports.commandData = {
-  name: "piechart role",
-  description: "Creates a pie chart for the given roles showing the ratio between them.",
+  name: "piechartrole",
+  description:
+    "Creates a pie chart for the given roles showing the ratio between them.",
   descriptionLocalizations: {},
   options: [
     {
-      "name": "role1",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": true
+      name: "role1",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: true,
     },
     {
-      "name": "role2",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": true
+      name: "role2",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: true,
     },
     {
-      "name": "role3",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role3",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role4",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role4",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role5",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role5",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role6",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role6",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role7",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role7",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role8",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role8",
+      description: "plase specify a role",
+      type: ApplicationCommandOptionTypes.ROLE,
+      required: false,
     },
     {
-      "name": "role9",
-      "description": "plase specify a role",
-      "type": 3,
-      "required": false
+      name: "role9",
+      description: "plase specify a role",
+      type: 3,
+      required: false,
     },
   ],
   defaultPermission: true,
-  type: 1
+  type: 1,
 };
 
 // Set guildOnly to true if you want it to be available on guilds only.
 // Otherwise false is global.
 exports.conf = {
   permLevel: "User",
-  guildOnly: true
+  guildOnly: true,
 };
