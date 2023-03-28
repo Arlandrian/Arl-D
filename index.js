@@ -122,7 +122,7 @@ init();
 async function onClientReady(){
   // fetch all members
   client.guilds.cache.forEach(async guild => {
-    await guild.members.fetch()
+    console.log("size of guild members: "+await guild.members.fetch().size)
   })
 
   // fetch all channels
