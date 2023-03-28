@@ -1,7 +1,7 @@
 // const discord = require("discord.js");
 // const QuickChart = require('quickchart-js');
 
-const { ApplicationCommandOptionTypes } = require("discord.js/typings/enums");
+const { ApplicationCommandOptionTypes, ApplicationCommandTypes } = require("discord.js/typings/enums");
 
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
@@ -107,7 +107,7 @@ exports.commandData = {
     },
   ],
   defaultPermission: true,
-  type: 1,
+  type: ApplicationCommandTypes.CHAT_INPUT,
 };
 
 // Set guildOnly to true if you want it to be available on guilds only.
