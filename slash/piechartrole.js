@@ -5,7 +5,7 @@ exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
 
-  let roleid = interaction.options._hoisterOptions[0].value
+  let roleid = interaction.options._hoistedOptions[0].value
   let role = interaction.guild.roles.cache[roleid]
   let members = role.members
   let memberCount = members.size
