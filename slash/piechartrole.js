@@ -22,7 +22,7 @@ exports.run = async (client, interaction) => {
     const name=roleIn.name
     const color=roleIn.color
 
-    const role = await interaction.guild.roles.fetch(id)
+    const role = await client.guilds.cache.get(interaction.guildId).roles.fetch(id)
     const memberCount = role.members.size
     interaction.channel.send(name+" "+memberCount)
 
