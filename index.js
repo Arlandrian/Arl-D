@@ -140,7 +140,7 @@ async function onClientReady() {
 
   // fetch all members
   client.guilds.cache.forEach(async (guild) => {
-    if(guild.id == "996890388751208528"){
+    if(guild.id === "996890388751208528"){
       members = await guild.members.fetch({ force: true });
 
       console.log("size of guild members: " + JSON.stringify(members));
