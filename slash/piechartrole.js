@@ -12,17 +12,25 @@ exports.run = async (client, interaction) => {
 
   const resp = await JSON.stringify(interaction.options._hoistedOptions);
   interaction.editReply(resp);
-  // // Create a message and send it to channel
-  // const opts = interaction.options._hoistedOptions;
-  // const labels = []
-  // const data = []
-  // opts.forEach(opt => {
-  //   const role=opt.value
-  //   // member names
-  //   labels.push(role)
-  //   // member count
-  //   data.push(role)
-  // });
+  // Create a message and send it to channel
+  const opts = interaction.options._hoistedOptions;
+  const labels = []
+  const data = []
+  opts.forEach(opt => {
+    const role=opt.role
+    const id=role.id
+    const name=role.name
+    const color=role.color
+
+    const guild = interaction.guild.fetchMembers();
+    const memberCount = guild.roles.get(id).members.size
+    interaction.channel.send(name+" "+memberCount)
+
+    // member names
+    labels.push(role.name)
+    // member count
+    data.push(role)
+  });
 
   // const chart = new QuickChart();
   // const chartConf = {
