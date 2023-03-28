@@ -17,13 +17,13 @@ exports.run = async (client, interaction) => {
   const labels = []
   const data = []
   opts.forEach(opt => {
-    const role=opt.role
-    const id=role.id
-    const name=role.name
-    const color=role.color
+    const roleIn=opt.role
+    const id=roleIn.id
+    const name=roleIn.name
+    const color=roleIn.color
 
-    const guild = await interaction.guild.fetchMembers();
-    const memberCount = guild.roles.get(id).members.size
+    const role = await interaction.guild.roles.fetch(id)
+    const memberCount = role.members.size
     interaction.channel.send(name+" "+memberCount)
 
     // member names
