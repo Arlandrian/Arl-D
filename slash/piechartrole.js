@@ -30,7 +30,7 @@ exports.run = async (client, interaction) => {
   //   labels.push(role.name)
   //   // member count
   //   data.push(role)
-  });
+  // });
 
   // const chart = new QuickChart();
   // const chartConf = {
