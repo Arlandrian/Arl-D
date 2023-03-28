@@ -1,8 +1,6 @@
 // const discord = require("discord.js");
 // const QuickChart = require('quickchart-js');
 
-const { ApplicationCommandOptionTypes, ApplicationCommandTypes } = require("discord.js/typings/enums");
-
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
@@ -54,49 +52,49 @@ exports.commandData = {
     {
       name: "role1",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: true,
     },
     {
       name: "role2",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: true,
     },
     {
       name: "role3",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: false,
     },
     {
       name: "role4",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: false,
     },
     {
       name: "role5",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: false,
     },
     {
       name: "role6",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: false,
     },
     {
       name: "role7",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,
       required: false,
     },
     {
       name: "role8",
       description: "plase specify a role",
-      type: ApplicationCommandOptionTypes.ROLE,
+      type: 8,// ApplicationCommandOptionTypes.ROLE
       required: false,
     },
     {
@@ -107,7 +105,7 @@ exports.commandData = {
     },
   ],
   defaultPermission: true,
-  type: ApplicationCommandTypes.CHAT_INPUT,
+  type: 1,
 };
 
 // Set guildOnly to true if you want it to be available on guilds only.
