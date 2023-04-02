@@ -31,6 +31,7 @@ exports.run = (client, message, args, level) => {
 
     let currentCategory = "";
     let output = `= Command List =\n[Use ${settings.prefix}help <commandname> for details]\n`;
+    output += "itiraf kanallarında => /itiraf yazdıktan sonra itirafınızı yazabilirsiniz. \n"
     const sorted = enabledCommands.sort((p, c) => p.help.category > c.help.category ? 1 : 
       p.help.name > c.help.name && p.help.category === c.help.category ? 1 : -1 );
 
