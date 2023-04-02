@@ -9,7 +9,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let yas = Number(opts[2].value)
 
   let bazalMetabolizma = (13.75*kilo) + (5.03*boy) - (6.75*yas) + 66.5
-  await interaction.editReply(`Bazal metabilizma hızınız: ${bazalMetabolizma}`);
+  await interaction.editReply(`Bazal metabolizma hızınız: ${bazalMetabolizma} cal`);
 };
 
 exports.commandData = {
