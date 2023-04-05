@@ -31,24 +31,28 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
 exports.commandData = {
   name: "videoedit",
-  description: "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır.",
+  //description: "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır.",
+  description: "Cut a video and audio from youtube.",
   descriptionLocalizations: {},
   options: [
     {
-      "name": "videolink",
-      "description": "Videonun linki. (sadece youtube)",
+      "name": "videoURL",
+      "description": "video youtube url",
+      // "description": "Videonun linki. (sadece youtube)",
       "type": 3, 
       "required": true
     },
     {
-      "name": "seslink",
-      "description": "Sesin linki. (sadece youtube)",
+      "name": "audioURL",
+      "description": "Audio youtube url",
+      // "description": "Sesin linki. (sadece youtube)",
       "type": 3,
       "required": true
     },
     {
       "name": "videoStartSec",
-      "description": "videoda kesilmeye baslanacak noktanin saniyesi",
+      "description": "video start point for the cut",
+      // "description": "videoda kesilmeye baslanacak noktanin saniyesi",
       "type": 4,
       "required": true,
       "min_value": 0,
@@ -56,7 +60,8 @@ exports.commandData = {
     },
     {
       "name": "videoEndSec",
-      "description": "videoda kesilmenin biteceği noktanin saniyesi",
+      "description": "video end point for the cut",
+      // "description": "videoda kesilmenin biteceği noktanin saniyesi",
       "type": 4,
       "required": true,
       "min_value": 0,
@@ -64,7 +69,8 @@ exports.commandData = {
     },
     {
       "name": "audioStartSec",
-      "description": "sesde kesilmeye baslanacak noktanin saniyesi",
+      "description": "audio start point for the cut",
+      // "description": "sesde kesilmeye baslanacak noktanin saniyesi",
       "type": 4,
       "required": true,
       "min_value": 0,
@@ -72,7 +78,8 @@ exports.commandData = {
     },
     {
       "name": "audioEndSec",
-      "description": "sesde kesilmenin biteceği noktanin saniyesi",
+      "description": "audio end point for the cut",
+      // "description": "sesde kesilmenin biteceği noktanin saniyesi",
       "type": 4,
       "required": true,
       "min_value": 0,
