@@ -3,7 +3,6 @@ const discord = require("discord.js");
 const logger = require("../modules/logger")
 const videoedit = require("../modules/videoedit")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
-  return
   await interaction.deferReply({ ephemeral: false });
 
   let opts=interaction.options._hoistedOptions
@@ -27,58 +26,72 @@ exports.commandData = {
   name: "videoedit",
   //description: "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır.",
   description: "Cut a video and audio from youtube.",
-  // descriptionLocalizations: {},
+  descriptionLocalizations: {
+    "tr-TR": "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır."
+  },
   options: [
     {
-      "name": "videoURL",
+      "name": "videourl",
       "description": "video youtube url",
-      // "description": "Videonun linki. (sadece youtube)",
+      descriptionLocalizations: {
+        "tr-TR": "Videonun linki. (sadece youtube)"
+      },
       "type": 3, 
       "required": true
     },
-    // {
-    //   "name": "audioURL",
-    //   "description": "Audio youtube url",
-    //   // "description": "Sesin linki. (sadece youtube)",
-    //   "type": 3,
-    //   "required": true
-    // },
-    // {
-    //   "name": "videoStartSec",
-    //   "description": "video start point for the cut",
-    //   // "description": "videoda kesilmeye baslanacak noktanin saniyesi",
-    //   "type": 4,
-    //   "required": true,
-    //   "min_value": 0,
-    //   "max_value": 7200
-    // },
-    // {
-    //   "name": "videoEndSec",
-    //   "description": "video end point for the cut",
-    //   // "description": "videoda kesilmenin biteceği noktanin saniyesi",
-    //   "type": 4,
-    //   "required": true,
-    //   "min_value": 0,
-    //   "max_value": 7200
-    // },
-    // {
-    //   "name": "audioStartSec",
-    //   "description": "audio start point for the cut",
-    //   // "description": "sesde kesilmeye baslanacak noktanin saniyesi",
-    //   "type": 4,
-    //   "required": true,
-    //   "min_value": 0,
-    //   "max_value": 7200
-    // },
-    // {
-    //   "name": "audioEndSec",
-    //   "description": "audio end point for the cut",
-    //   // "description": "sesde kesilmenin biteceği noktanin saniyesi",
-    //   "type": 4,
-    //   "required": true,
-    //   "min_value": 0,
-    //   "max_value": 7200
-    // }
+    {
+      "name": "audioURL",
+      "description": "Audio youtube url",
+      descriptionLocalizations: {
+        "tr-TR": "Sesin linki. (sadece youtube)"
+      },
+      "type": 3,
+      "required": true
+    },
+    {
+      "name": "videostartsec",
+      "description": "video start point for the cut",
+      descriptionLocalizations: {
+        "tr-TR": "videoda kesilmeye baslanacak noktanin saniyesi"
+      },
+      "type": 4,
+      "required": true,
+      "min_value": 0,
+      "max_value": 7200
+    },
+    {
+      "name": "videoendsec",
+      "description": "video end point for the cut",
+      descriptionLocalizations: {
+        "tr-TR": "videoda kesilmenin biteceği noktanin saniyesi"
+      },
+      "type": 4,
+      "required": true,
+      "min_value": 0,
+      "max_value": 7200
+    },
+    {
+      "name": "audiostartsec",
+      "description": "audio start point for the cut",
+      descriptionLocalizations: {
+        "tr-TR": "sesde kesilmeye baslanacak noktanin saniyesi"
+      },
+      "type": 4,
+      "required": true,
+      "min_value": 0,
+      "max_value": 7200
+    },
+    {
+      "name": "audioendsec",
+      "description": "audio end point for the cut",
+      descriptionLocalizations: {
+        "tr-TR": "sesde kesilmenin biteceği noktanin saniyesi"
+      },
+      "type": 4,
+      "required": true,
+      "min_value": 0,
+      "max_value": 7200
+    }
   ],
   defaultPermission: true,
   type: 1
