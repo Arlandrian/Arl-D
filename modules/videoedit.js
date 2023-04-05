@@ -30,7 +30,7 @@ async function downloadVideoAndAudio(
   audioEndTime,
   callback
 ) {
-  if (os.freemem() > MIN_REQ_MEMORY_BYTES){
+  if (os.freemem() < MIN_REQ_MEMORY_BYTES){
     throw new Error("Not enough memory available on the machine.");
   }
 
