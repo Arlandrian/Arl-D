@@ -26,8 +26,8 @@ exports.run = async (client, interaction) => {
       audioURL = "https://www.youtube.com/watch?v=f0-RYStvdkc";
       videoStartSec = opts[1].value;
       videoEndSec = opts[2].value;
-      audioStartSec = getOption(opts, "audiostartsec", 140);
-      audioEndSec = getOption(opts, "audioendsec", 260);
+      audioStartSec = getOption(opts, "audiostartsec", 26);
+      audioEndSec = getOption(opts, "audioendsec", 156);
   }
 
   await interaction.editReply(
