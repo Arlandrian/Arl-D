@@ -17,6 +17,8 @@ if('win32'==os.platform()){
   );
 }
 
+log = (str)=>console.debug("cmd::videoedit: "+str)
+
 // final output will return a file path in the temp folder,
 // user of this function has to clean up the 
 async function downloadVideoAndAudio(
@@ -103,7 +105,7 @@ async function downloadVideoAndAudio(
     });
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise])
-
+    log("videos are downloaded")
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise(resolve=>{
       ffmpeg()
@@ -118,6 +120,9 @@ async function downloadVideoAndAudio(
       .on('end', resolve)
       .run();
     })
+
+    log("final output ready")
+
     await callback(finalOutputPath)
   }catch(err){
     throw err
@@ -126,8 +131,11 @@ async function downloadVideoAndAudio(
     fs.unlink(videoOutputPath, function(err) {});
     fs.unlink(audioOutputPath, function(err) {});
     fs.unlink(finalOutputPath, function(err) {});
+    log("cleaned up files")
   }
 }
+
+
 
 module.exports = { downloadVideoAndAudio }
 // downloadVideoAndAudio(

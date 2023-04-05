@@ -12,9 +12,9 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   const videoEndSec=opts[3].value
   const audioStartSec=opts[4].value
   const audioEndSec=opts[5].value
-
   await interaction.editReply("video düzenleniyor");
   await videoedit.downloadVideoAndAudio(videoURL, audioURL, videoStartSec, videoEndSec, audioStartSec, audioEndSec, async (videoPath)=>{
+    console.debug("cmd::videoedit: sending attachment file "+videoPath)
     const videoAttachment = new discord.MessageAttachment(videoPath);
     await interaction.editReply(videoAttachment)
   })
