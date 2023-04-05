@@ -29,13 +29,13 @@ exports.commandData = {
   description: "Cut a video and audio from youtube.",
   // descriptionLocalizations: {},
   options: [
-    // {
-    //   "name": "videoURL",
-    //   "description": "video youtube url",
-    //   // "description": "Videonun linki. (sadece youtube)",
-    //   "type": 3, 
-    //   "required": true
-    // },
+    {
+      "name": "videoURL",
+      "description": "video youtube url",
+      // "description": "Videonun linki. (sadece youtube)",
+      "type": 3, 
+      "required": true
+    },
     // {
     //   "name": "audioURL",
     //   "description": "Audio youtube url",
