@@ -35,19 +35,19 @@ exports.commandData = {
   descriptionLocalizations: {},
   options: [
     {
-      "name": "video link",
+      "name": "videolink",
       "description": "Videonun linki. (sadece youtube)",
       "type": 3, 
       "required": true
     },
     {
-      "name": "ses link",
+      "name": "seslink",
       "description": "Sesin linki. (sadece youtube)",
       "type": 3,
       "required": true
     },
     {
-      "name": "video baslangic saniyesi",
+      "name": "videoStartSec",
       "description": "videoda kesilmeye baslanacak noktanin saniyesi",
       "type": 4,
       "required": true,
@@ -55,7 +55,7 @@ exports.commandData = {
       "max_value": 7200
     },
     {
-      "name": "video bitis saniyesi",
+      "name": "videoEndSec",
       "description": "videoda kesilmenin biteceği noktanin saniyesi",
       "type": 4,
       "required": true,
@@ -63,7 +63,7 @@ exports.commandData = {
       "max_value": 7200
     },
     {
-      "name": "ses baslangic saniyesi",
+      "name": "audioStartSec",
       "description": "sesde kesilmeye baslanacak noktanin saniyesi",
       "type": 4,
       "required": true,
@@ -71,7 +71,7 @@ exports.commandData = {
       "max_value": 7200
     },
     {
-      "name": "ses bitis saniyesi",
+      "name": "audioEndSec",
       "description": "sesde kesilmenin biteceği noktanin saniyesi",
       "type": 4,
       "required": true,
