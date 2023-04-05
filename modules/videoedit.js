@@ -9,7 +9,7 @@ const tempDir = os.tmpdir();
 
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
-const MIN_REQ_MEMORY_BYTES = 200 * 1024 * 1024;
+const MIN_REQ_MEMORY_BYTES = 128 * 1024 * 1024;
 
 if('win32'==os.platform()){
   ffmpeg.setFfmpegPath(
@@ -48,7 +48,7 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try{
-    log("1111")
+    // log("1111")
 
     // Download video without audio
     const videoStream = ytdl(videoUrl, {
@@ -63,7 +63,7 @@ async function downloadVideoAndAudio(
         );
       },
     });
-    log("2222")
+    // log("2222")
     let videoSize = 0;
     videoStream.on("data", (chunk) => {
       videoSize += chunk.length;
@@ -78,7 +78,7 @@ async function downloadVideoAndAudio(
       videoOutput.on("close", resolve);
     });
 
-    log("3333")
+    // log("3333")
 
     // Download audio only
     const audioStream = ytdl(audioUrl, {
@@ -92,7 +92,7 @@ async function downloadVideoAndAudio(
         );
       },
     });
-    log("4444")
+    // log("4444")
 
 
     // Error: Only one input stream is supported so we have to write one of the input to file
@@ -107,17 +107,17 @@ async function downloadVideoAndAudio(
       }
     });
 
-    log("5555")
+    // log("5555")
 
     audioStream.pipe(audioOutput);
     let audioPromise = new Promise((resolve) => {
       audioOutput.on("close", resolve);
     });
-    log("6666")
+    // log("6666")
 
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise])
-    log("videos are downloaded")
+    // log("videos are downloaded")
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise(resolve=>{
       ffmpeg()
@@ -133,7 +133,7 @@ async function downloadVideoAndAudio(
       .run();
     })
 
-    log("final output ready")
+    // log("final output ready")
 
     await callback(finalOutputPath)
   }catch(err){
@@ -143,7 +143,7 @@ async function downloadVideoAndAudio(
     fs.unlink(videoOutputPath, function(err) {});
     fs.unlink(audioOutputPath, function(err) {});
     fs.unlink(finalOutputPath, function(err) {});
-    log("cleaned up files")
+    // log("cleaned up files")
   }
 }
 

@@ -29,7 +29,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
       audioEndSec=260
   }
 
-  await interaction.editReply(":factoryworker: => :cyclone:video düzenleniyor, lütfen bekleyin:cyclone:");
+  await interaction.editReply(":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:");
   await videoedit.downloadVideoAndAudio(videoURL, audioURL, videoStartSec, videoEndSec, audioStartSec, audioEndSec, async (videoPath)=>{
     console.debug("cmd::videoedit: sending attachment file "+videoPath)
     const videoAttachment = new discord.MessageAttachment(videoPath);
