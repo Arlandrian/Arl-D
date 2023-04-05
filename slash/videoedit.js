@@ -40,7 +40,7 @@ exports.commandData = {
       "required": true
     },
     {
-      "name": "audiouRL",
+      "name": "audiourl",
       "description": "Audio youtube url",
       "descriptionLocalizations": {
         "tr": "Sesin linki. (sadece youtube)"
