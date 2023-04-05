@@ -19,7 +19,7 @@ if('win32'==os.platform()){
 
 // final output will return a file path in the temp folder,
 // user of this function has to clean up the 
-export async function downloadVideoAndAudio(
+async function downloadVideoAndAudio(
   videoUrl,
   audioUrl,
   videoStartTime,
@@ -129,6 +129,7 @@ export async function downloadVideoAndAudio(
   }
 }
 
+module.exports = { downloadVideoAndAudio }
 // downloadVideoAndAudio(
 //   "https://www.youtube.com/watch?v=c1HeRtKk86U",
 //   "https://www.youtube.com/watch?v=f0-RYStvdkc",
