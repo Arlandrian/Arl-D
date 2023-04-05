@@ -9,6 +9,7 @@ const tempDir = os.tmpdir();
 
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+const MIN_REQ_MEMORY_BYTES = 200 * 1024 * 1024;
 
 if('win32'==os.platform()){
   ffmpeg.setFfmpegPath(
@@ -27,6 +28,10 @@ export async function downloadVideoAndAudio(
   audioEndTime,
   callback
 ) {
+  if (os.freemem() > MIN_REQ_MEMORY_BYTES){
+    throw new Error("Not enough memory available on the machine.");
+  }
+
   const timestamp = new Date().getTime();
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const audioOutputPath = `${tempDir}/audio_${timestamp}.mp3`;
