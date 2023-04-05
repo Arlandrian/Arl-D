@@ -7,7 +7,7 @@ const os = require("os");
 // get temp directory
 const tempDir = os.tmpdir();
 
-const MAX_VIDEO_MS = 10 * 60 * 60 * 1000;
+const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 
 if('win32'==os.platform()){
