@@ -27,14 +27,14 @@ exports.commandData = {
   //description: "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır.",
   description: "Cut a video and audio from youtube.",
   descriptionLocalizations: {
-    "tr-TR": "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır."
+    "tr": "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır."
   },
   options: [
     {
       "name": "videourl",
       "description": "video youtube url",
-      descriptionLocalizations: {
-        "tr-TR": "Videonun linki. (sadece youtube)"
+      "descriptionLocalizations": {
+        "tr": "Videonun linki. (sadece youtube)"
       },
       "type": 3, 
       "required": true
@@ -42,8 +42,8 @@ exports.commandData = {
     {
       "name": "audiouRL",
       "description": "Audio youtube url",
-      descriptionLocalizations: {
-        "tr-TR": "Sesin linki. (sadece youtube)"
+      "descriptionLocalizations": {
+        "tr": "Sesin linki. (sadece youtube)"
       },
       "type": 3,
       "required": true
@@ -51,8 +51,8 @@ exports.commandData = {
     {
       "name": "videostartsec",
       "description": "video start point for the cut",
-      descriptionLocalizations: {
-        "tr-TR": "videoda kesilmeye baslanacak noktanin saniyesi"
+      "descriptionLocalizations": {
+        "tr": "videoda kesilmeye baslanacak noktanin saniyesi"
       },
       "type": 4,
       "required": true,
@@ -62,8 +62,8 @@ exports.commandData = {
     {
       "name": "videoendsec",
       "description": "video end point for the cut",
-      descriptionLocalizations: {
-        "tr-TR": "videoda kesilmenin biteceği noktanin saniyesi"
+      "descriptionLocalizations": {
+        "tr": "videoda kesilmenin biteceği noktanin saniyesi"
       },
       "type": 4,
       "required": true,
@@ -73,8 +73,8 @@ exports.commandData = {
     {
       "name": "audiostartsec",
       "description": "audio start point for the cut",
-      descriptionLocalizations: {
-        "tr-TR": "sesde kesilmeye baslanacak noktanin saniyesi"
+      "descriptionLocalizations": {
+        "tr": "sesde kesilmeye baslanacak noktanin saniyesi"
       },
       "type": 4,
       "required": true,
@@ -84,8 +84,8 @@ exports.commandData = {
     {
       "name": "audioendsec",
       "description": "audio end point for the cut",
-      descriptionLocalizations: {
-        "tr-TR": "sesde kesilmenin biteceği noktanin saniyesi"
+      "descriptionLocalizations": {
+        "tr": "sesde kesilmenin biteceği noktanin saniyesi"
       },
       "type": 4,
       "required": true,
