@@ -33,7 +33,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   await videoedit.downloadVideoAndAudio(videoURL, audioURL, videoStartSec, videoEndSec, audioStartSec, audioEndSec, async (videoPath)=>{
     console.debug("cmd::videoedit: sending attachment file "+videoPath)
     const videoAttachment = new discord.MessageAttachment(videoPath);
-    await interaction.editReply("video edit hazır: ", {files:[videoAttachment]})
+    await interaction.editReply("video edit hazır:white_check_mark:")
+    await interaction.editReply({files:[videoAttachment]})
   })
 };
 
