@@ -3,7 +3,7 @@ const discord = require("discord.js");
 const logger = require("../modules/logger")
 const videoedit = require("../modules/videoedit")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ ephemeral: false });
 
   let opts=interaction.options._hoistedOptions
   const videoURL=opts[0].value
@@ -15,15 +15,8 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 
   await interaction.editReply("video düzenleniyor");
   await videoedit.downloadVideoAndAudio(videoURL, audioURL, videoStartSec, videoEndSec, audioStartSec, audioEndSec, async (videoPath)=>{
-    // Open a read stream for your video file
-    const videoStream = fs.createReadStream(videoPath);
-
-    // Create a MessageAttachment object with the stream
-    const videoAttachment = new discord.MessageAttachment(videoStream, 'videoedit.mp4');
-
-    // Send the attachment as a reply to the message
+    const videoAttachment = new discord.MessageAttachment(videoPath);
     await interaction.editReply(videoAttachment)
-    interaction.reply(videoAttachment);
   })
 
   // await interaction.editReply("Video düzenlendi.")
@@ -33,7 +26,7 @@ exports.commandData = {
   name: "videoedit",
   //description: "İlk videonun görüntüsüyle ikinci videonun sesini birleştirir. Sadece youtube linkleri çalışır.",
   description: "Cut a video and audio from youtube.",
-  descriptionLocalizations: {},
+  // descriptionLocalizations: {},
   options: [
     {
       "name": "videoURL",

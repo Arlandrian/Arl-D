@@ -2,14 +2,27 @@
 // const QuickChart = require('quickchart-js');
 
 exports.run = async (client, interaction) => {
+  return
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
 
+
+  let guildId = interaction.guildId
   let roleid = interaction.options._hoistedOptions[0].role.id
-  let role = interaction.guild.roles.fetch(roleid)
-  let members = role.members
-  let memberCount = members.size
-  await interaction.editReply(memberCount);
+  const guild=client.guilds.cache[guildId]
+  members = await guild.members.fetch({ force: true });
+  // falan filan
+  // Get all members then filter down to those with the given role ID
+  // Note: Only works for up to 1000 members
+  // const members = await client.members.fetch({ guildId, limit: 1000 });
+  // const membersWithRole = members.filter(m => !!m.roles.find(r => r === role_id));
+  // const membersWithRoleCount = membersWithRole.length;
+
+
+  // let role = interaction.guild.roles.fetch(roleid)
+  // let members = role.members
+  // let memberCount = members.size
+  // await interaction.editReply(memberCount);
 
   // let roleID = '3933783737379';
   // let memberCount = guild.roles.get(roleID).members.size;
