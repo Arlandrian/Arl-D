@@ -48,7 +48,7 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try{
-    log("1111")
+    // log("1111")
 
     // Download video without audio
     const videoStream = ytdl(videoUrl, {
@@ -63,7 +63,7 @@ async function downloadVideoAndAudio(
         );
       },
     });
-    log("2222")
+    // log("2222")
     let videoSize = 0;
     videoStream.on("data", (chunk) => {
       videoSize += chunk.length;
@@ -78,7 +78,7 @@ async function downloadVideoAndAudio(
       videoOutput.on("close", resolve);
     });
 
-    log("3333")
+    // log("3333")
 
     // Download audio only
     const audioStream = ytdl(audioUrl, {
@@ -92,8 +92,7 @@ async function downloadVideoAndAudio(
         );
       },
     });
-    log("4444")
-
+    // log("4444")
 
     // Error: Only one input stream is supported so we have to write one of the input to file
     // i chose audio
@@ -107,7 +106,7 @@ async function downloadVideoAndAudio(
       }
     });
 
-    log("5555")
+    // log("5555")
 
     audioStream.pipe(audioOutput);
     let audioPromise = new Promise((resolve) => {
@@ -117,7 +116,7 @@ async function downloadVideoAndAudio(
 
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise])
-    // log("videos are downloaded")
+    log("videos are downloaded")
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise(resolve=>{
       ffmpeg()
