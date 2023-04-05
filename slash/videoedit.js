@@ -21,6 +21,7 @@ exports.run = async (client, interaction) => {
       videoEndSec = opts[3].value;
       audioStartSec = opts[4].value;
       audioEndSec = opts[5].value;
+      break
     case "askinolayim":
       videoURL = opts[0].value;
       audioURL = "https://www.youtube.com/watch?v=f0-RYStvdkc";
@@ -28,6 +29,15 @@ exports.run = async (client, interaction) => {
       videoEndSec = opts[2].value;
       audioStartSec = getOption(opts, "audiostartsec", 26);
       audioEndSec = getOption(opts, "audioendsec", 156);
+      break
+    case "cennettencicek":
+      videoURL = opts[0].value;
+      audioURL = "https://www.youtube.com/watch?v=BtuBu9FecKM";
+      videoStartSec = opts[1].value;
+      videoEndSec = opts[2].value;
+      audioStartSec = getOption(opts, "audiostartsec", 0);
+      audioEndSec = getOption(opts, "audioendsec", 45);
+      break
   }
 
   await interaction.editReply(
@@ -57,6 +67,62 @@ function getOption(opts, name, defValue) {
     return provided.value;
   }
 }
+
+const subCommandOptions = [
+  {
+    name: "videourl",
+    description: "video youtube url",
+    descriptionLocalizations: {
+      tr: "Videonun linki. (sadece youtube)",
+    },
+    type: 3,
+    required: true,
+    },
+    {
+      name: "videostartsec",
+      description: "video start point for the cut",
+      descriptionLocalizations: {
+        tr: "videoda kesilmeye baslanacak noktanin saniyesi",
+      },
+      type: 4,
+      required: true,
+      min_value: 0,
+      max_value: 7200,
+    },
+    {
+      name: "videoendsec",
+      description: "video end point for the cut",
+      descriptionLocalizations: {
+        tr: "videoda kesilmenin biteceği noktanin saniyesi",
+      },
+      type: 4,
+      required: true,
+      min_value: 0,
+      max_value: 7200,
+    },
+    {
+      name: "audiostartsec",
+      description: "audio start point for the cut",
+      descriptionLocalizations: {
+        tr: "sesde kesilmeye baslanacak noktanin saniyesi",
+      },
+      type: 4,
+      required: false,
+      min_value: 0,
+      max_value: 7200,
+    },
+    {
+      name: "audioendsec",
+      description: "audio end point for the cut",
+      descriptionLocalizations: {
+        tr: "sesde kesilmenin biteceği noktanin saniyesi",
+      },
+      type: 4,
+      required: false,
+      min_value: 0,
+      max_value: 7200,
+    }
+]
 
 exports.commandData = {
   name: "videoedit",
@@ -145,61 +211,16 @@ exports.commandData = {
         tr: "Verilen video aralığında aşkın olayım müziğini ekler",
       },
       type: "SUB_COMMAND",
-      options: [
-        {
-          name: "videourl",
-          description: "video youtube url",
-          descriptionLocalizations: {
-            tr: "Videonun linki. (sadece youtube)",
-          },
-          type: 3,
-          required: true,
-        },
-        {
-          name: "videostartsec",
-          description: "video start point for the cut",
-          descriptionLocalizations: {
-            tr: "videoda kesilmeye baslanacak noktanin saniyesi",
-          },
-          type: 4,
-          required: true,
-          min_value: 0,
-          max_value: 7200,
-        },
-        {
-          name: "videoendsec",
-          description: "video end point for the cut",
-          descriptionLocalizations: {
-            tr: "videoda kesilmenin biteceği noktanin saniyesi",
-          },
-          type: 4,
-          required: true,
-          min_value: 0,
-          max_value: 7200,
-        },
-        {
-          name: "audiostartsec",
-          description: "audio start point for the cut",
-          descriptionLocalizations: {
-            tr: "sesde kesilmeye baslanacak noktanin saniyesi",
-          },
-          type: 4,
-          required: false,
-          min_value: 0,
-          max_value: 7200,
-        },
-        {
-          name: "audioendsec",
-          description: "audio end point for the cut",
-          descriptionLocalizations: {
-            tr: "sesde kesilmenin biteceği noktanin saniyesi",
-          },
-          type: 4,
-          required: false,
-          min_value: 0,
-          max_value: 7200,
-        },
-      ],
+      options: subCommandOptions,
+    },
+    {
+      name: "cennettencicek",
+      description: "adds 'cennetten cicek mi topluyorum' music to given video",
+      descriptionLocalizations: {
+        tr: "Verilen video aralığında 'cennetten cicek mi topluyorum' müziğini ekler",
+      },
+      type: "SUB_COMMAND",
+      options: subCommandOptions,
     },
   ],
   defaultPermission: true,
