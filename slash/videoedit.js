@@ -60,7 +60,7 @@ exports.run = async (client, interaction) => {
 };
 
 function getOption(opts, name, defValue) {
-  let provided = opts.find((x) => x.name == "audiostart");
+  let provided = opts.find((x) => x.name == name);
   if (provided == null) {
     return defValue;
   } else {
