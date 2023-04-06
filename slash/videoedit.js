@@ -38,6 +38,14 @@ exports.run = async (client, interaction) => {
       audioStartSec = getOption(opts, "audiostartsec", 0);
       audioEndSec = getOption(opts, "audioendsec", 45);
       break
+      case "dertetmeler":
+        videoURL = opts[0].value;
+        audioURL = "https://www.youtube.com/watch?v=A5pikichwRI";
+        videoStartSec = opts[1].value;
+        videoEndSec = opts[2].value;
+        audioStartSec = getOption(opts, "audiostartsec", 0);
+        audioEndSec = getOption(opts, "audioendsec", 31);
+        break
   }
 
   await interaction.editReply(
@@ -218,6 +226,15 @@ exports.commandData = {
       description: "adds 'cennetten cicek mi topluyorum' music to given video",
       descriptionLocalizations: {
         tr: "Verilen video aralığında 'cennetten cicek mi topluyorum' müziğini ekler",
+      },
+      type: "SUB_COMMAND",
+      options: subCommandOptions,
+    },
+    {
+      name: "dertetmeler",
+      description: "adds 'seni dert etmeler' music to given video",
+      descriptionLocalizations: {
+        tr: "Verilen video aralığında 'seni dert etmeler' müziğini ekler",
       },
       type: "SUB_COMMAND",
       options: subCommandOptions,
