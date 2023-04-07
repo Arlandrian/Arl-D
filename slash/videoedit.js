@@ -45,7 +45,7 @@ exports.run = async (client, interaction) => {
         videoEndSec = opts[2].value;
         audioStartSec = getOption(opts, "audiostartsec", 0);
         audioEndSec = getOption(opts, "audioendsec", 31);
-        break
+      break
   }
 
   await interaction.editReply(
