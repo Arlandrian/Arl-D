@@ -117,15 +117,17 @@ async function downloadVideoAndAudio(
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise])
     log("videos are downloaded")
+    const videoDuration = videoEndTime - videoStartTime
+    const audioDuration = audioEndTime - audioStartTime
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise(resolve=>{
       ffmpeg()
       .addInput(videoOutputPath)
       .seekInput(videoStartTime) // start time in seconds
-      .duration(videoEndTime - videoStartTime) // duration in seconds
+      .addOptions(`-t ${videoDuration}`) // duration in seconds
       .input(audioOutputPath)
       .seekInput(audioStartTime) // start time in seconds
-      .duration(audioEndTime - audioStartTime) // duration in seconds
+      .addOptions(`-t ${audioDuration}`)  // duration in seconds
       .addOutputOption("-shortest")
       .output(finalOutputPath)
       .on('end', resolve)
