@@ -102,6 +102,19 @@ const sendChatMessage = async (msg) => {
     currentLiveChatId = await youtubeService.getActiveLiveChatId(currentLiveStreamId)
   }
 
+  // HACK
+  // youtube some how detects the messaage as spam and filter out on the live chat
+  if (0.333 < Math.random()){
+    let r = Math.random()
+    if (0.333 < r){
+      msg = msg.replace(":","::")
+    }else if (0.666<r){
+      msg = msg.replace(":","=>")
+    }else{
+      msg = msg.replace(":",">")
+    }
+  }
+
   let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
   if(response!= null && response.error == 'The caller does not have permission'){
     logger.error("We are banned?, yaaay")
