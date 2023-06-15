@@ -1,11 +1,8 @@
 const discord = require("discord.js");
 const logger = require("../modules/logger")
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
-  return
-
   await interaction.deferReply({ ephemeral: true });
-  await interaction.editReply("out of order");
-  return
+
   let requester = interaction.user
   let message = interaction.targetMessage;
 
