@@ -26,7 +26,7 @@ exports.conf = {
   enabled: true,
   guildOnly: false,
   aliases: ["ytsetmessagefreqcount","ytsetmsgfreqcount"],
-  permLevel: "Administrator"
+  permLevel: "Bot Owner"
 };
 
 exports.help = {

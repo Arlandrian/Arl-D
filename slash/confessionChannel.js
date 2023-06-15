@@ -46,6 +46,6 @@ exports.commandData = {
 // Set guildOnly to true if you want it to be available on guilds only.
 // Otherwise false is global.
 exports.conf = {
-  permLevel: "Admin",
+  permLevel: "Administrator",
   guildOnly: true
 };

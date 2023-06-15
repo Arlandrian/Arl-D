@@ -21,7 +21,7 @@ exports.conf = {
   enabled: true,
   guildOnly: false,
   aliases: ["ytsetchannelid","ytsetchid"],
-  permLevel: "Administrator"
+  permLevel: "Bot Owner"
 };
 
 exports.help = {

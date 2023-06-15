@@ -20,7 +20,7 @@ exports.conf = {
   enabled: true,
   guildOnly: false,
   aliases: ["ytsetmode","ytsetmessagemode"],
-  permLevel: "Administrator"
+  permLevel: "Bot Owner"
 };
 
 exports.help = {
