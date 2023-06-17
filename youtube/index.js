@@ -115,6 +115,11 @@ const sendChatMessage = async (msg) => {
     }
   }
 
+  // MORE HACK
+  const possiblePrefixes = ["!", "+", "#", "$", "%", "&", "*", "-", "##", "$$", "%%", "&&"] 
+  let pickedPrefix = getRandomElement(possiblePrefixes)
+  msg = pickedPrefix + " " + msg
+
   let response = await youtubeService.sendLiveChatMessage(currentLiveChatId, msg)
   if(response!= null && response.error == 'The caller does not have permission'){
     logger.error("We are banned?, yaaay")
@@ -149,6 +154,11 @@ const onStreamEnded = () => {
 const onStreamNotAvailable = () =>{
   streamStatus = StreamStatus.NotAvailable
   setTimeout(()=> streamStatus = StreamStatus.OffAir, NOTAVAILABLE_TIMEPAN);
+}
+
+function getRandomElement(array) {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
 }
 
 const initLiveChatEvents = async () => {
