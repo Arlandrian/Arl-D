@@ -16,7 +16,7 @@ module.exports = async (client, message) => {
   let content = createContentMessage(message);
   if (!content) return
 
-  let hasAuditLogAccess = message.guild.me.hasPermission(discord.Permissions.FLAGS.VIEW_AUDIT_LOG)
+  let hasAuditLogAccess = message.guild.members.me.hasPermission(discord.Permissions.FLAGS.VIEW_AUDIT_LOG)
 
   let deletionLog = null
   if(hasAuditLogAccess){
