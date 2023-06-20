@@ -16,14 +16,19 @@ module.exports = async (client, message) => {
   let content = createContentMessage(message);
   if (!content) return
 
-	const fetchedLogs = await message.guild.fetchAuditLogs({
-		limit: 1,
-		type: discord.GuildAuditLogs.Actions.MESSAGE_DELETE
-	});
-	// Since there's only 1 audit log entry in this collection, grab the first one
-	const deletionLog = fetchedLogs.entries.first();
+  let hasAuditLogAccess = message.guild.me.hasPermission(discord.Permissions.FLAGS.VIEW_AUDIT_LOG)
 
-  const author = message.author ?? message.member ?? deletionLog.target
+  let deletionLog = null
+  if(hasAuditLogAccess){
+    const fetchedLogs = await message.guild.fetchAuditLogs({
+      limit: 1,
+      type: discord.GuildAuditLogs.Actions.MESSAGE_DELETE
+    });
+    // Since there's only 1 audit log entry in this collection, grab the first one
+    deletionLog = fetchedLogs.entries.first();
+  }
+
+  const author = message.author ?? message.member ?? deletionLog != null ? deletionLog.target : {tag:"author unknown"}
   //message.content = deletionLog.mes
 	// Perform a coherence check to make sure that there's *something*
 	if (!deletionLog) return console.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. but no relevant audit logs were found.`);
