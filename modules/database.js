@@ -44,9 +44,9 @@ const getGuildKeyData = async function(guildId, key, userId){
     return null
   }
 
-  let allGuildKeys = await getAllGuildKey(guildId, key)
-  cache[guildKey] = allGuildKeys
-  return allGuildKeys[userId]
+  let allKeysOfGuild = await getAllGuild_Key(guildId, key)
+  cache[guildKey] = allKeysOfGuild
+  return allKeysOfGuild[userId]
 }
 
 const setGuildKeyData = async function(guildId, key, userId, data){
@@ -71,7 +71,7 @@ async function deleteGuildKeyData(guildId, key, userId){
   return "not found"
 }
 
-async function getAllGuildKey(guildId, key){
+async function getAllGuild_Key(guildId, key){
   var dictionary = {}
   let data = await client.hGetAll(getGuildkey(guildId, key))
   Object.keys(data).forEach(k => dictionary[k] = JSON.parse(data[k]))

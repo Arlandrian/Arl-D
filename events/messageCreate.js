@@ -119,5 +119,8 @@ async function checkForSlowdown(message) {
     }
     console.log(`NOT throttled! can send message`)
   }
+  else{
+    console.log(`slowdown: null`)
+  }
   return true
 }
