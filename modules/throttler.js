@@ -115,4 +115,4 @@ class UserMessageThrottler {
 // Create a singleton instance of UserMessageThrottler
 const userMessageThrottler = new UserMessageThrottler();
 
-export default userMessageThrottler;
+module.exports = userMessageThrottler;
