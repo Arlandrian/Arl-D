@@ -1,5 +1,4 @@
 // TimeWindowedMessageThrottler.js
-
 class TimeWindowedMessageThrottler {
   constructor(limit, windowSize) {
     this.limit = limit; // Number of messages allowed
@@ -42,8 +41,6 @@ class TimeWindowedMessageThrottler {
     }
   }
 }
-
-export { TimeWindowedMessageThrottler };
 
 class UserMessageThrottler {
   constructor() {
