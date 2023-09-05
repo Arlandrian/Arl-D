@@ -19,7 +19,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
 };
 
 exports.commandData = {
-  name: "slowdownRemove",
+  name: "slowdown_remove",
   description: "Remove message throttle from user.",
   descriptionLocalizations: {
     tr: "kullanıcının belli bir zaman aralığında atabildiği mesaj sayısını limitler.",
