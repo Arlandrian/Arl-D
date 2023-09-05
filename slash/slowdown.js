@@ -48,7 +48,7 @@ exports.commandData = {
       "type": 4,
       "required": true,
       "minValue": 5,
-      "minValue": 600,
+      "maxValue": 600,
     },
     {
       "name": "msgcount",

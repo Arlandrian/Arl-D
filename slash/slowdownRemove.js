@@ -6,7 +6,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let opts = interaction.options._hoistedOptions;
   let member = opts[0].member
 
-  let success = await db.deleteUserSlowDown(interaction.guild.id, member.id)
+  let success = await db.deleteUserSlowdown(interaction.guild.id, member.id)
   if(success){
     await interaction.editReply(
       ":white_check_mark: => :cyclone: kullanıcı mesaj limiti kaldırıldı."
