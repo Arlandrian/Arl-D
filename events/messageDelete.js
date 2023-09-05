@@ -27,7 +27,14 @@ module.exports = async (client, message) => {
     deletionLog = fetchedLogs.entries.first();
   }
 
-  const author = message.author ?? message.member ?? deletionLog != null ? deletionLog.target : {tag:"author unknown"}
+  let author = message.author ?? message.member 
+  if (author == null) {
+    if (deletionLog != null){
+      author = deletionLog.target
+    }else{
+      author = {tag: "author unknown"}
+    }
+  }
   //message.content = deletionLog.mes
 	// Perform a coherence check to make sure that there's *something*
 	if (!deletionLog) return console.log(`[messageDelete] in channel ${message.channel.name} by ${author.tag}. but no relevant audit logs were found.`);
