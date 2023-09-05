@@ -22,9 +22,10 @@ module.exports = async (client, message) => {
   // Trigger DM received
   if(message.channel.type == 'DM'){
     onDMReceived(message);
+  }else
+    if (!await checkForSlowdown(message)) return;
   }
 
-  if (!await checkForSlowdown(message)) return;
 
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
