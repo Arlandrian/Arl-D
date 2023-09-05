@@ -52,6 +52,9 @@ const getGuildKeyData = async function(guildId, key, userId){
 const setGuildKeyData = async function(guildId, key, userId, data){
   const guildKey = getGuildkey(guildId, key)
   await client.hSet(guildKey, userId, JSON.stringify(data))
+  if (cache[guildKey] == null) {
+    cache[guildKey] = {}
+  }
   cache[guildKey][userId] = data
   return "success"
 }
