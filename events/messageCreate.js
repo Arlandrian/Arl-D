@@ -24,6 +24,8 @@ module.exports = async (client, message) => {
     onDMReceived(message);
   }
 
+  if (!await checkForSlowdown(message)) return;
+
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
   // message.mentions is because of the mention prefix later on in the
@@ -50,7 +52,6 @@ module.exports = async (client, message) => {
   // If the member on a guild is invisible or not cached, fetch them.
   if (message.guild && !message.member) await message.guild.members.fetch(message.author);
 
-  if (!await checkForSlowdown(message)) return;
 
   // Get the user or member's permission level from the elevation
   const level = permlevel(message);
