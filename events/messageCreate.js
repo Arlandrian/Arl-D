@@ -116,6 +116,9 @@ async function checkForSlowdown(message) {
       console.log(`throttled! cant send message`)
       await message.delete()
       await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
+      if (message.member != null) {
+        await message.member.timeout(1 * 60 * 1000, 'slowdownda yazmaya çalıştı.')
+      }
       return false
     }
     console.log(`Throttle not exceeded! Can send message.`)
