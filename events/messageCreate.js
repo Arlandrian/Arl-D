@@ -1,7 +1,8 @@
 const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
-const userUpdate = require("./userUpdate");
+const userMessageThrottler = require("../modules/throttler.js");
+const db = { getUserSlowdown } = require("../modules/database.js")
 
 // The MESSAGE event runs anytime a message is received
 // Note that due to the binding of client to every event, every event
@@ -48,6 +49,8 @@ module.exports = async (client, message) => {
 
   // If the member on a guild is invisible or not cached, fetch them.
   if (message.guild && !message.member) await message.guild.members.fetch(message.author);
+
+  if (!await checkForSlowdown(message)) return;
 
   // Get the user or member's permission level from the elevation
   const level = permlevel(message);
@@ -97,4 +100,19 @@ This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.c
 
 async function onDMReceived(message){
   logger.log(`Received DM message:: ${message.author.tag}: ${message.content}`);
+}
+
+async function checkForSlowdown(message) {
+  let slowdown = await db.getUserSlowdown(message.guildId, message.author.id)
+  if (slowdown != null) {
+    if (!userMessageThrottler.exists(message.guildId, message.author.id) ){
+      userMessageThrottler.addUser(message.guildId, message.author.id, slowdown.msgCount, slowdown.timeSec*1000)
+    }
+    if(!userMessageThrottler.onSendMessage(message.guildId, message.author.id)){
+      await message.delete()
+      await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
+      return false
+    }
+  }
+  return true
 }

@@ -1,5 +1,7 @@
 const { createClient } = require('redis');
 let client = null
+const cache = {}
+
 async function initdb(){
   if(process.env.REDIS_URL == null){
     console.warn("REDIS_URL env var is not defined, some features will not work!")
@@ -15,10 +17,64 @@ async function initdb(){
   await client.connect();
 }
 
+function getGuildkey(guildId, key){
+  return `arld:guilds:${guildId}:${key}`
+}
+
 const NICK_LOG_KEY = "arld:guild:nickLogChannels"
 const CONFESSION_KEY = "arld:guild:confessionChannels"
 const LOG_IGNORE_KEY = "arld:guild:logIgnoreChannels"
 const YOUTUBE_BOT_CONFIG_KEY = "arld:youtubeBotConfig"
+const SLOWDOWN_KEY = "slowdownUsers"
+
+// Region In-MemoryCache Layer
+const getGuildKeyData = async function(guildId, key, userId){
+  const guildKey = getGuildkey(guildId, key)
+  let userDict = cache[guildKey]
+  if (userDict != null) {
+    return userDict[userId]
+  }
+
+  // check if key exists in redis, NOT hash key but the key itself
+  let exists = await client.exists(guildKey)
+  if(!exists){
+    // if not set and return empty object
+    const userDict = {}
+    cache[guildKey] = userDict
+    return null
+  }
+
+  let allGuildKeys = await getAllGuildKey(guildId, key)
+  cache[guildKey] = allGuildKeys
+  return allGuildKeys[userId]
+}
+
+const setGuildKeyData = async function(guildId, key, userId, data){
+  const guildKey = getGuildkey(guildId, key)
+  await client.hSet(guildKey, userId, JSON.stringify(data))
+  cache[guildKey][userId] = data
+  return "success"
+}
+
+async function deleteGuildKeyData(guildId, key, userId){
+  const guildKey = getGuildkey(guildId, key)
+
+  let userDict = cache[guildKey]
+  if( userDict != null) {
+    delete userDict[userId]
+    await client.hDel(getGuildkey(guildId, key), userId)
+    return "success"
+  }
+  return "not found"
+}
+
+async function getAllGuildKey(guildId, key){
+  var dictionary = {}
+  let data = await client.hGetAll(getGuildkey(guildId, key))
+  Object.keys(data).forEach(k => dictionary[k] = JSON.parse(data[k]))
+  return dictionary
+}
+// Endregion
 
 async function setGuildChannelsBase(channelKey, guildId, channels) {
   await client.hSet(channelKey, guildId, JSON.stringify(channels))
@@ -82,6 +138,17 @@ async function setYoutubeBotConfig(config) {
   await client.set(YOUTUBE_BOT_CONFIG_KEY, JSON.stringify(config))
 }
 
+async function setUserSlowdown(guildId, userId, data) {
+  return await setGuildKeyData(guildId, SLOWDOWN_KEY, userId, data)
+}
+
+async function getUserSlowdown(guildId, userId) {
+  return await getGuildKeyData(guildId, SLOWDOWN_KEY, userId)
+}
+
+async function deleteUserSlowdown(guildId, userId) {
+  return await deleteGuildKeyData(guildId, SLOWDOWN_KEY, userId)
+}
 
 // Base Helper
 async function saveGuildObject(guildId, key, value){
@@ -103,5 +170,6 @@ module.exports = {
   setNickLogChannels, getNickLogChannels, getAllNickLogChannels,
   setConfessionChannels, getConfessionChannels, getAllConfessionChannels,
   setLogIgnoreChannels, getLogIgnoreChannels, getAllLogIgnoreChannels,
-  getYoutubeBotConfig, setYoutubeBotConfig
+  getYoutubeBotConfig, setYoutubeBotConfig,
+  setUserSlowdown, getUserSlowdown, deleteUserSlowdown
 }
