@@ -118,10 +118,7 @@ async function checkForSlowdown(message) {
       await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
       return false
     }
-    console.log(`NOT throttled! can send message`)
-  }
-  else{
-    console.log(`slowdown: null`)
+    console.log(`Throttle not exceeded! Can send message.`)
   }
   return true
 }
