@@ -105,14 +105,19 @@ async function onDMReceived(message){
 async function checkForSlowdown(message) {
   let slowdown = await db.getUserSlowdown(message.guildId, message.author.id)
   if (slowdown != null) {
+    console.log(`slowdown: ${slowdown.timeSec} ${slowdown.msgCount}`)
     if (!userMessageThrottler.exists(message.guildId, message.author.id) ){
+      console.log(`userMessageThrottler.exists: false`)
       userMessageThrottler.addUser(message.guildId, message.author.id, slowdown.msgCount, slowdown.timeSec*1000)
     }
+
     if(!userMessageThrottler.onSendMessage(message.guildId, message.author.id)){
+      console.log(`throttled! cant send message`)
       await message.delete()
       await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
       return false
     }
+    console.log(`NOT throttled! can send message`)
   }
   return true
 }
