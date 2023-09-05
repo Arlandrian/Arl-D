@@ -117,7 +117,7 @@ async function checkForSlowdown(message) {
       await message.delete()
       await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
       if (message.member != null) {
-        await message.member.timeout(1 * 60 * 1000, 'slowdownda yazmaya çalıştı.')
+        await message.member.timeout(slowdown.timeSec*2*1000, 'slowdownda yazmaya çalıştı.')
       }
       return false
     }
