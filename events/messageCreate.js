@@ -106,22 +106,22 @@ async function onDMReceived(message){
 async function checkForSlowdown(message) {
   let slowdown = await db.getUserSlowdown(message.guildId, message.author.id)
   if (slowdown != null) {
-    console.log(`slowdown: ${slowdown.timeSec} ${slowdown.msgCount}`)
+    // console.log(`slowdown: ${slowdown.timeSec} ${slowdown.msgCount}`)
     if (!userMessageThrottler.exists(message.guildId, message.author.id) ){
-      console.log(`userMessageThrottler.exists: false`)
+      // console.log(`userMessageThrottler.exists: false`)
       userMessageThrottler.addUser(message.guildId, message.author.id, slowdown.msgCount, slowdown.timeSec*1000)
     }
 
     if(!userMessageThrottler.onSendMessage(message.guildId, message.author.id)){
-      console.log(`throttled! cant send message`)
+      // console.log(`throttled! cant send message`)
       await message.delete()
       await message.author.send(`Yavaşlatıldığınız için mesajınız silindi. ${slowdown.timeSec} saniye içinde ${slowdown.msgCount} mesaj gönderebilirsiniz.`)
       if (message.member != null) {
-        await message.member.timeout(slowdown.timeSec*2*1000, 'slowdownda yazmaya çalıştı.')
+        await message.member.timeout(slowdown.timeSec*1000, 'slowdownda yazmaya çalıştı.')
       }
       return false
     }
-    console.log(`Throttle not exceeded! Can send message.`)
+    // console.log(`Throttle not exceeded! Can send message.`)
   }
   return true
 }
