@@ -8,6 +8,11 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
   let timeSec = opts[1].value
   let msgCount = opts.length > 2 ? opts[2].value : 1;
 
+  if(member.user.bot){
+    await interaction.editReply(`Bots shouldnt be slowed down.`);
+    return;
+  }
+
   let data = {
     id: member.id,
     timeSec: timeSec,
