@@ -147,11 +147,9 @@ async function downloadVideoAndAudio(
     await new Promise((resolve) => {
       ffmpeg()
         .addInput(videoOutputPath)
-        .noAudio()
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
         .input(audioOutputPath)
-        .noVideo()
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
         .addOutputOption("-shortest")
