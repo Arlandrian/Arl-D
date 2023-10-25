@@ -149,6 +149,7 @@ async function downloadVideoAndAudio(
         .addInput(videoOutputPath)
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
+        .noAudio()
         .input(audioOutputPath)
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
