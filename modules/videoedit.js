@@ -147,15 +147,13 @@ async function downloadVideoAndAudio(
     await new Promise((resolve) => {
       ffmpeg()
         .addInput(videoOutputPath)
+        .videoCodec("copy")
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
         .input(audioOutputPath)
+        .audioCodec("aac")
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
-        .inputOptions("-map 0:v")
-        .inputOptions("-map 1:a")
-        .inputOptions("-c:v copy")
-        .inputOptions("-c:a aac")
         .addOutputOption("-shortest")
         .output(finalOutputPath)
         .on("end", resolve)
