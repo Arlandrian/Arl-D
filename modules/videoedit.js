@@ -57,15 +57,9 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try {
-    isVideoUrlMp4 = false;
-    isAudioUrlMp4 = false;
-    isVideoUrlMp4Promise = isUrlMP4(videoUrl);
-    isVideoUrlMp4Promise = isUrlMP4(videoUrl);
-    Promise.all([isVideoUrlMp4Promise, isVideoUrlMp4Promise]).then((data) => {
-      isVideoUrlMp4 = data[0];
-      isAudioUrlMp4 = data[1];
-    });
-
+    const pRes = await Promise.all([isUrlMP4(videoUrl), isUrlMP4(audioUrl)]);
+    const isVideoUrlMp4 = pRes[0];
+    const isAudioUrlMp4 = pRes[1];
     log(`1111 ${isVideoUrlMp4} ${isAudioUrlMp4}`);
 
     let videoStream = null;
@@ -180,17 +174,25 @@ async function downloadVideoAndAudio(
 }
 
 async function isUrlMP4(url) {
-  https.get(url, (response) => {
-    if (response.statusCode === 200) {
-      const contentType = response.headers["content-type"];
-      if (contentType && contentType.includes("video/mp4")) {
-        return true;
+  return new Promise((resolve) => {
+    https.get(url, (response) => {
+      if (response.statusCode === 200) {
+        const contentType = response.headers["content-type"];
+        if (
+          contentType &&
+          (contentType.includes("video/mp4") ||
+            contentType.includes("video/mp3") ||
+            contentType.includes("video/aac") ||
+            contentType.includes("video/wav"))
+        ) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
       } else {
-        return false;
+        resolve(false);
       }
-    } else {
-      throw new Error("failed to check if the url is mp4");
-    }
+    });
   });
 }
 
