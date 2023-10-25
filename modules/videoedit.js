@@ -57,8 +57,14 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try {
-    isVideoUrlMp4 = isUrlMP4(videoUrl);
-    isAudioUrlMp4 = isUrlMP4(videoUrl);
+    isVideoUrlMp4 = false;
+    isAudioUrlMp4 = false;
+    isVideoUrlMp4Promise = isUrlMP4(videoUrl);
+    isVideoUrlMp4Promise = isUrlMP4(videoUrl);
+    Promise.all([isVideoUrlMp4Promise, isVideoUrlMp4Promise]).then((data) => {
+      isVideoUrlMp4 = data[0];
+      isAudioUrlMp4 = data[1];
+    });
 
     log(`1111 ${isVideoUrlMp4} ${isAudioUrlMp4}`);
 
