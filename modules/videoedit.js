@@ -158,6 +158,7 @@ async function downloadVideoAndAudio(
         .addOutputOption("-shortest")
         .addOutputOption("-c:v copy")
         .addOutputOption("-c:a aac")
+        .output(finalOutputPath)
         .on("end", resolve)
         .run();
     });
