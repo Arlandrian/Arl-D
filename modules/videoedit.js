@@ -149,11 +149,12 @@ async function downloadVideoAndAudio(
         .addInput(videoOutputPath)
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
-        .noAudio()
         .input(audioOutputPath)
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
         .addOutputOption("-shortest")
+        .map("0")
+        .map("1:a")
         .output(finalOutputPath)
         .on("end", resolve)
         .run();
