@@ -100,8 +100,8 @@ async function downloadVideoAndAudio(
     log("3333");
 
     let audioStream = null;
-    if (isVideoUrlMp4) {
-      audioStream = (await axios.get(videoUrl, { responseType: "stream" }))
+    if (isAudioUrlMp4) {
+      audioStream = (await axios.get(audioUrl, { responseType: "stream" }))
         .data;
     } else {
       // Download audio only
