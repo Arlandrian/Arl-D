@@ -152,13 +152,11 @@ async function downloadVideoAndAudio(
         .input(audioOutputPath)
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
-        .complexFilter(["[0:v][1:a]null[aout]"])
-        .map("[aout]")
-        .map("[0:v]")
+        .inputOptions("-map 0:v")
+        .inputOptions("-map 1:a")
+        .inputOptions("-c:v copy")
+        .inputOptions("-c:a aac")
         .addOutputOption("-shortest")
-        .outputOptions("-c:v copy")
-        .outputOptions("-c:a aac")
-        .outputOptions("-strict experimental")
         .output(finalOutputPath)
         .on("end", resolve)
         .run();
