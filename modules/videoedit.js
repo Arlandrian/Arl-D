@@ -175,8 +175,8 @@ async function downloadVideoAndAudio(
       }
 
       if (isAudioUrlMp4) {
-        fs.unlinkSync(audioOutput);
-        fs.renameSync(midProcessAudioOutputPath, audioOutput);
+        fs.unlinkSync(audioOutputPath);
+        fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
       }
     }
