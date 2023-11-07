@@ -17,7 +17,7 @@ const tempDir = os.tmpdir();
 
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
-const MIN_REQ_MEMORY_BYTES = 128 * 1024 * 1024;
+const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
 
 if ("win32" == os.platform()) {
   ffmpeg.setFfmpegPath(
