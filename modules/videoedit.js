@@ -160,7 +160,7 @@ async function downloadVideoAndAudio(
     }
 
     if (isAudioUrlMp4) {
-      promises.push(removeVideo(audioOutput, midProcessAudioOutputPath));
+      promises.push(removeVideo(audioOutputPath, midProcessAudioOutputPath));
     }
 
     if (promises.length > 0) {
@@ -236,11 +236,11 @@ async function isUrlMP4(url) {
   });
 }
 
-function removeVideoAndExtractAudio(inputFilePath, outputAudioPath) {
+function removeVideo(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
     ffmpeg()
       .input(inputFilePath)
-      .output(outputAudioPath)
+      .output(outputFilePath)
       .audioCodec("libmp3lame") // Use the MP3 audio codec
       .noVideo() // Remove video
       .on("end", () => {
@@ -254,8 +254,6 @@ function removeVideoAndExtractAudio(inputFilePath, outputAudioPath) {
       .run();
   });
 }
-
-function removeVideo(inputFilePath, outputFilePath) {}
 
 function removeAudio(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
