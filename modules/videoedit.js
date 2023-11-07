@@ -25,8 +25,10 @@ if ("win32" == os.platform()) {
       "/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-6.0-full_build/bin/ffmpeg.exe"
   );
 }
-
-log = (str) => console.debug("cmd::videoedit: " + str);
+const debugEnabled = true;
+log = (str) => {
+  if (debugEnabled) console.debug("cmd::videoedit: " + str);
+};
 
 // final output will return a file path in the temp folder,
 // user of this function has to clean up the
@@ -47,6 +49,10 @@ async function downloadVideoAndAudio(
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const audioOutputPath = `${tempDir}/audio_${timestamp}.mp3`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
+
+  const midProcessVideoOutputPath = `${tempDir}/video_mid_${timestamp}.mp4`;
+  const midProcessAudioOutputPath = `${tempDir}/audio_mid_${timestamp}.mp3`;
+
   // Validate time ranges
   if (
     videoStartTime < 0 ||
@@ -141,6 +147,40 @@ async function downloadVideoAndAudio(
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
+
+    // middle processing
+    // 1. remove audio from the video
+    // 2. write it to a temp file
+    // 3. delete old file
+    // 4. rename new file to old file
+    // 5. vice-versa for audio file
+    const promises = [];
+    if (isVideoUrlMp4) {
+      promises.push(removeAudio(videoOutputPath, midProcessVideoOutputPath));
+    }
+
+    if (isAudioUrlMp4) {
+      promises.push(removeVideo(audioOutput, midProcessAudioOutputPath));
+    }
+
+    if (promises.length > 0) {
+      log("mid process start");
+      await Promise.all(promises);
+      log("mid process ended");
+
+      if (isVideoUrlMp4) {
+        fs.unlinkSync(videoOutputPath);
+        fs.renameSync(midProcessVideoOutputPath, videoOutputPath);
+        log("deleted unprocessed video");
+      }
+
+      if (isAudioUrlMp4) {
+        fs.unlinkSync(audioOutput);
+        fs.renameSync(midProcessAudioOutputPath, audioOutput);
+        log("deleted unprocessed audio");
+      }
+    }
+
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     // Use fluent-ffmpeg to merge the video and audio files
@@ -156,19 +196,6 @@ async function downloadVideoAndAudio(
         .output(finalOutputPath)
         .on("end", resolve)
         .run();
-      // ffmpeg()
-      //   .addInput(videoOutputPath)
-      //   .videoCodec("copy")
-      //   .seekInput(videoStartTime) // start time in seconds
-      //   .addOptions(`-t ${videoDuration}`) // duration in seconds
-      //   .addInput(audioOutputPath)
-      //   .audioCodec("aac")
-      //   .seekInput(audioStartTime) // start time in seconds
-      //   .addOptions(`-t ${audioDuration}`) // duration in seconds
-      //   .addOutputOption("-shortest")
-      //   .output(finalOutputPath)
-      //   .on("end", resolve)
-      //   .run();
     });
 
     log("final output ready");
@@ -180,7 +207,9 @@ async function downloadVideoAndAudio(
     fs.unlink(videoOutputPath, function (err) {});
     fs.unlink(audioOutputPath, function (err) {});
     fs.unlink(finalOutputPath, function (err) {});
-    // log("cleaned up files")
+    fs.unlink(midProcessAudioOutputPath, function (err) {});
+    fs.unlink(midProcessVideoOutputPath, function (err) {});
+    log("cleaned up files");
   }
 }
 
@@ -204,6 +233,45 @@ async function isUrlMP4(url) {
         resolve(false);
       }
     });
+  });
+}
+
+function removeVideoAndExtractAudio(inputFilePath, outputAudioPath) {
+  return new Promise((resolve, reject) => {
+    ffmpeg()
+      .input(inputFilePath)
+      .output(outputAudioPath)
+      .audioCodec("libmp3lame") // Use the MP3 audio codec
+      .noVideo() // Remove video
+      .on("end", () => {
+        log("Video removed, and audio extracted as MP3 successfully");
+        resolve();
+      })
+      .on("error", (err) => {
+        log("Error: " + err);
+        reject(err);
+      })
+      .run();
+  });
+}
+
+function removeVideo(inputFilePath, outputFilePath) {}
+
+function removeAudio(inputFilePath, outputFilePath) {
+  return new Promise((resolve, reject) => {
+    ffmpeg()
+      .input(inputFilePath)
+      .output(outputFilePath)
+      .noAudio() // Remove audio from the video
+      .on("end", () => {
+        log("Audio removed successfully");
+        resolve();
+      })
+      .on("error", (err) => {
+        log("Error: " + err);
+        reject(err);
+      })
+      .run();
   });
 }
 
