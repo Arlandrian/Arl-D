@@ -5,7 +5,7 @@ const videoedit = require("../modules/videoedit");
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
-  let opts = interaction.options._hoistedOptions;
+  const opts = interaction.options._hoistedOptions;
   let videoURL = "";
   let audioURL = "";
   let videoStartSec = "";
@@ -21,7 +21,7 @@ exports.run = async (client, interaction) => {
       videoEndSec = opts[3].value;
       audioStartSec = opts[4].value;
       audioEndSec = opts[5].value;
-      break
+      break;
     case "askinolayim":
       videoURL = opts[0].value;
       audioURL = "https://www.youtube.com/watch?v=f0-RYStvdkc";
@@ -29,7 +29,7 @@ exports.run = async (client, interaction) => {
       videoEndSec = opts[2].value;
       audioStartSec = getOption(opts, "audiostartsec", 26);
       audioEndSec = getOption(opts, "audioendsec", 156);
-      break
+      break;
     case "cennettencicek":
       videoURL = opts[0].value;
       audioURL = "https://www.youtube.com/watch?v=BtuBu9FecKM";
@@ -37,15 +37,23 @@ exports.run = async (client, interaction) => {
       videoEndSec = opts[2].value;
       audioStartSec = getOption(opts, "audiostartsec", 0);
       audioEndSec = getOption(opts, "audioendsec", 45);
-      break
-      case "dertetmeler":
-        videoURL = opts[0].value;
-        audioURL = "https://www.youtube.com/watch?v=A5pikichwRI";
-        videoStartSec = opts[1].value;
-        videoEndSec = opts[2].value;
-        audioStartSec = getOption(opts, "audiostartsec", 0);
-        audioEndSec = getOption(opts, "audioendsec", 31);
-      break
+      break;
+    case "dertetmeler":
+      videoURL = opts[0].value;
+      audioURL = "https://www.youtube.com/watch?v=A5pikichwRI";
+      videoStartSec = opts[1].value;
+      videoEndSec = opts[2].value;
+      audioStartSec = getOption(opts, "audiostartsec", 0);
+      audioEndSec = getOption(opts, "audioendsec", 31);
+      break;
+    case "imparator":
+      videoURL = opts[0].value;
+      audioURL = "https://youtu.be/ceK95I_CK9w";
+      videoStartSec = opts[1].value;
+      videoEndSec = opts[2].value;
+      audioStartSec = getOption(opts, "audiostartsec", 0);
+      audioEndSec = getOption(opts, "audioendsec", 11);
+      break;
   }
 
   await interaction.editReply(
@@ -68,7 +76,7 @@ exports.run = async (client, interaction) => {
 };
 
 function getOption(opts, name, defValue) {
-  let provided = opts.find((x) => x.name == name);
+  const provided = opts.find((x) => x.name == name);
   if (provided == null) {
     return defValue;
   } else {
@@ -85,52 +93,52 @@ const subCommandOptions = [
     },
     type: 3,
     required: true,
+  },
+  {
+    name: "videostartsec",
+    description: "video start point for the cut",
+    descriptionLocalizations: {
+      tr: "videoda kesilmeye baslanacak noktanin saniyesi",
     },
-    {
-      name: "videostartsec",
-      description: "video start point for the cut",
-      descriptionLocalizations: {
-        tr: "videoda kesilmeye baslanacak noktanin saniyesi",
-      },
-      type: 4,
-      required: true,
-      min_value: 0,
-      max_value: 7200,
+    type: 4,
+    required: true,
+    min_value: 0,
+    max_value: 7200,
+  },
+  {
+    name: "videoendsec",
+    description: "video end point for the cut",
+    descriptionLocalizations: {
+      tr: "videoda kesilmenin biteceği noktanin saniyesi",
     },
-    {
-      name: "videoendsec",
-      description: "video end point for the cut",
-      descriptionLocalizations: {
-        tr: "videoda kesilmenin biteceği noktanin saniyesi",
-      },
-      type: 4,
-      required: true,
-      min_value: 0,
-      max_value: 7200,
+    type: 4,
+    required: true,
+    min_value: 0,
+    max_value: 7200,
+  },
+  {
+    name: "audiostartsec",
+    description: "audio start point for the cut",
+    descriptionLocalizations: {
+      tr: "sesde kesilmeye baslanacak noktanin saniyesi",
     },
-    {
-      name: "audiostartsec",
-      description: "audio start point for the cut",
-      descriptionLocalizations: {
-        tr: "sesde kesilmeye baslanacak noktanin saniyesi",
-      },
-      type: 4,
-      required: false,
-      min_value: 0,
-      max_value: 7200,
+    type: 4,
+    required: false,
+    min_value: 0,
+    max_value: 7200,
+  },
+  {
+    name: "audioendsec",
+    description: "audio end point for the cut",
+    descriptionLocalizations: {
+      tr: "sesde kesilmenin biteceği noktanin saniyesi",
     },
-    {
-      name: "audioendsec",
-      description: "audio end point for the cut",
-      descriptionLocalizations: {
-        tr: "sesde kesilmenin biteceği noktanin saniyesi",
-      },
-      type: 4,
-      required: false,
-      min_value: 0,
-      max_value: 7200,
-    }
-]
+    type: 4,
+    required: false,
+    min_value: 0,
+    max_value: 7200,
+  },
+];
 
 exports.commandData = {
   name: "videoedit",
@@ -235,6 +243,15 @@ exports.commandData = {
       description: "adds 'seni dert etmeler' music to given video",
       descriptionLocalizations: {
         tr: "Verilen video aralığında 'seni dert etmeler' müziğini ekler",
+      },
+      type: "SUB_COMMAND",
+      options: subCommandOptions,
+    },
+    {
+      name: "imparator",
+      description: "adds 'imparator' music to given video",
+      descriptionLocalizations: {
+        tr: "Verilen video aralığında 'imparator' müziğini ekler",
       },
       type: "SUB_COMMAND",
       options: subCommandOptions,
