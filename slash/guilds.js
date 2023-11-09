@@ -3,15 +3,19 @@ exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
   let content = "";
-  client.guilds.fetch();
-  client.guilds.cache.forEach((guild) => {
+  await client.guilds.fetch();
+  client.guilds.cache.forEach(async (guild) => {
     const owner = guild.fetchOwner();
-    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${owner.user.tag} (${owner.id})\n`;
+    const ownerUser = JSON.stringify(owner.user);
+    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${ownerUser} (${owner.id})\n`;
     content += "## Channels\n";
+    await guild.channels.fetch();
     guild.channels.cache.forEach((ch) => {
       content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""}\n`;
     });
     content += "## Roles\n";
+    await guild.roles.fetch();
+
     guild.roles.cache.forEach((role) => {
       content += `  ${role.name}\n`;
     });
