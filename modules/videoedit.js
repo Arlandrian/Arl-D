@@ -221,9 +221,13 @@ async function isUrlMP4(url) {
         if (
           contentType &&
           (contentType.includes("video/mp4") ||
-            contentType.includes("video/mp3") ||
-            contentType.includes("video/aac") ||
-            contentType.includes("video/wav"))
+            contentType.includes("video/webm") ||
+            contentType.includes("video/ogg") ||
+            contentType.includes("audio/mpeg") ||
+            contentType.includes("audio/aac") ||
+            contentType.includes("audio/ogg") ||
+            contentType.includes("audio/flac") ||
+            contentType.includes("audio/wav"))
         ) {
           resolve(true);
         } else {
