@@ -159,7 +159,7 @@ async function onClientReady() {
   });
 
   await registerApplicationCommands();
-  await registerAdminPanel();
+  //await registerAdminPanel();
 
   // notify owner that bot started
   const user = await client.users.fetch(process.env.OWNER, false);

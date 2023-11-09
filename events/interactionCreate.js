@@ -1,13 +1,13 @@
 const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
-const adminP = require("../modules/adminPanel.js");
+// const adminP = require("../modules/adminPanel.js");
 
 module.exports = async (client, interaction) => {
-  if (interaction.isSelectMenu()) {
-    await adminP.panel(client, interaction);
-    return;
-  }
+  // if (interaction.isSelectMenu()) {
+  //   await adminP.panel(client, interaction);
+  //   return;
+  // }
 
   // If it's not a command, stop.
   if (!interaction.isCommand() && interaction.type != "APPLICATION_COMMAND")
