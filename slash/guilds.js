@@ -4,24 +4,24 @@ exports.run = async (client, interaction) => {
   await interaction.deferReply({ ephemeral: false });
   let content = "# GUILDS";
   await client.guilds.fetch();
-  await client.guilds.cache.forEach(async (guild) => {
+  for (const guild in client.guilds.cache.values()) {
     const owner = await guild.fetchOwner();
     const ownerUser = JSON.stringify(owner.user);
     content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${ownerUser} (${owner.id})\n`;
-    content += "## Channels\n";
-    const channels = await guild.channels.fetch();
-    content += "hmm\n";
 
-    channels.forEach((ch) => {
+    content += "## Channels\n";
+    // const channels = await guild.channels.fetch();
+    for (const ch in guild.channels.cache.values()) {
       content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""}\n`;
-    });
+    }
+
     content += "## Roles\n";
-    const roles = await guild.roles.fetch();
-    roles.forEach((role) => {
+    // await guild.roles.fetch();
+    for (const role in guild.roles.cache.values()) {
       content += `  ${role.name}\n`;
-    });
+    }
     content += "\n---\n";
-  });
+  }
 
   const atc = new discord.MessageAttachment(
     Buffer.from(content),
