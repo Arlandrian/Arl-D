@@ -12,7 +12,6 @@ const { Client, Collection } = require("discord.js");
 
 // We also load the rest of the things we need in this file:
 const { readdirSync } = require("fs");
-const { exit } = require("process");
 const { intents, partials, permLevels } = require("./config.js");
 const logger = require("./modules/logger.js");
 const settings = require("./modules/settings.js");

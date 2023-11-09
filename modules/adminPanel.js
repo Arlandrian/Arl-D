@@ -26,18 +26,21 @@ exports.panel = async (client, interaction) => {
 };
 
 const handleInteractions = (client, interaction) => {
+  console.log("1111");
+
   const guilds = client.guilds.cache.array();
   const itemsPerPage = 5;
 
   const page = interaction.customId.startsWith("left")
     ? Math.max(0, parseInt(interaction.values[0], 10) - 1)
     : interaction.customId.startsWith("right")
-      ? Math.min(
+    ? Math.min(
         Math.ceil(guilds.length / itemsPerPage) - 1,
         parseInt(interaction.values[0], 10) + 1
       )
-      : 0;
+    : 0;
 
+  console.log("2222");
   const startIdx = page * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
   const visibleGuilds = guilds.slice(startIdx, endIdx);
@@ -46,6 +49,7 @@ const handleInteractions = (client, interaction) => {
     label: `${guild.name} (${guild.memberCount} members, ${guild.channels.cache.size} channels) - Owner: ${guild.owner.user.tag} (${guild.ownerID})`,
     value: guild.id,
   }));
+  console.log("33333");
 
   const row = {
     type: "ACTION_ROW",
@@ -76,10 +80,12 @@ const handleInteractions = (client, interaction) => {
       style: "PRIMARY",
     });
   }
+  console.log("444444");
 
   interaction.update({
     components: [row],
   });
+  console.log("555555");
 };
 
 const isBotOwner = (message) => {
