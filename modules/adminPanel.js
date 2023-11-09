@@ -12,7 +12,7 @@ exports.panel = async (client, interaction) => {
   }
 
   try {
-    handleInteractions(client, interaction);
+    await handleInteractions(client, interaction);
   } catch (err) {
     interaction
       .reply({
@@ -25,7 +25,7 @@ exports.panel = async (client, interaction) => {
   }
 };
 
-const handleInteractions = (client, interaction) => {
+const handleInteractions = async (client, interaction) => {
   console.log("1111");
 
   const guilds = client.guilds.cache.array();
@@ -82,7 +82,7 @@ const handleInteractions = (client, interaction) => {
   }
   console.log("444444");
 
-  interaction.update({
+  await interaction.update({
     components: [row],
   });
   console.log("555555");

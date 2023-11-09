@@ -5,7 +5,7 @@ const adminP = require("../modules/adminPanel.js");
 
 module.exports = async (client, interaction) => {
   if (interaction.isSelectMenu()) {
-    adminP.panel(client, interaction);
+    await adminP.panel(client, interaction);
     return;
   }
 
