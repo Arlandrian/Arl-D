@@ -5,7 +5,8 @@ exports.run = async (client, interaction) => {
   let content = "";
   client.guilds.fetch();
   client.guilds.cache.forEach((guild) => {
-    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${guild.owner.user.tag} (${guild.ownerID})\n`;
+    const owner = guild.fetchOwner();
+    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${owner.user.tag} (${owner.id})\n`;
     content += "## Channels\n";
     guild.channels.cache.forEach((ch) => {
       content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""}\n`;
