@@ -7,19 +7,18 @@ exports.run = async (client, interaction) => {
   content += client.guilds.cache.size + "\n";
   for (const guild of client.guilds.cache.values()) {
     const owner = await guild.fetchOwner();
-    const ownerUser = JSON.stringify(owner.user);
-    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${ownerUser} (${owner.id})\n`;
+    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${owner.username} -${owner.id}- Avatar: ${owner.displayAvatarURL}\n`;
 
     content += "## Channels\n";
     await guild.channels.fetch();
     for (const ch of guild.channels.cache.values()) {
-      content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""}\n`;
+      content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""} - ${ch.id}\n`;
     }
 
     content += "## Roles\n";
     await guild.roles.fetch();
     for (const role of guild.roles.cache.values()) {
-      content += `  ${role.name}\n`;
+      content += `  ${role.name} - ${role.id}\n`;
     }
     content += "\n---\n";
   }
