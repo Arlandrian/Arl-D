@@ -13,12 +13,12 @@ class TimeWindowedMessageThrottler {
 
   canSendMessage() {
     const now = Date.now();
-    const timePassed = now - this.windowStart
+    const timePassed = now - this.windowStart;
     // If we are outside the time window, reset the message count and start a new window
     if (timePassed > this.windowSize) {
-        this.windowStart = now;
-        this.messageCount = 0;
-        return true;
+      this.windowStart = now;
+      this.messageCount = 0;
+      return true;
     }
 
     // Check if we are within the time window, and if the message count is below the limit
@@ -33,9 +33,9 @@ class TimeWindowedMessageThrottler {
     if (this.canSendMessage()) {
       // Increment the message count
       this.messageCount++;
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 }
@@ -106,7 +106,7 @@ class UserMessageThrottler {
     if (throttler) {
       return throttler.onSendMessage();
     }
-    return true
+    return true;
   }
 }
 

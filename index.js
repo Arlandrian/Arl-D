@@ -142,7 +142,6 @@ async function onClientReady() {
   client.guilds.cache.forEach(async (guild) => {
     // if(guild.id === "996890388751208528"){
     //   members = await guild.members.fetch({ force: true });
-
     //   // console.log("size of guild members: " + JSON.stringify(members));
     //   console.log("size of guild members: " + members.size);
     // }
@@ -161,11 +160,12 @@ async function onClientReady() {
   });
 
   await registerApplicationCommands();
+  await registerAdminPanel();
 
   // notify owner that bot started
-  let user = await client.users.fetch(process.env.OWNER, false);
+  const user = await client.users.fetch(process.env.OWNER, false);
   if (user != null) {
-    user.send(`Hello I'm started :)`);
+    user.send("Hello I'm started :)");
   }
 }
 
@@ -174,8 +174,7 @@ async function registerApplicationCommands() {
     for (const command of client.container.slashcmds.filter(
       (x) => x.commandData.type != null
     )) {
-      commandName = command[0];
-      cmd = command[1];
+      const cmd = command[1];
       logger.log(
         `Registering Application Command: ${cmd.commandData.name}. 👌`,
         "log"
@@ -189,17 +188,41 @@ async function registerApplicationCommands() {
   }
 }
 
+async function registerAdminPanel() {
+  try {
+    const cmd = {
+      commandData: {
+        name: "guilds",
+        description: "Display a paginated list of guilds.",
+        // permissions: [
+        //   {
+        //     id: "role id",// replace this if you want to restrict this command to specific role
+        //     type: "ROLE",
+        //     permission: true,
+        //   },
+        // ],
+      },
+    };
+    logger.log(`Registering Admin Panel: ${cmd.commandData.name}. 👌`, "log");
+    client.container.appCommands.set(cmd.commandData.name, cmd);
+    client.application.commands.create(cmd.commandData);
+  } catch (error) {
+    // And of course, make sure you catch and log any errors!
+    console.error(error);
+  }
+}
+
 async function deleteApplicationCommand(name) {
   if (client.application.commands.cache.size() == 0) {
     await client.application.commands.fetch();
   }
-  let id = client.application.commands.cache.find((x) => x.name == name);
+  const id = client.application.commands.cache.find((x) => x.name == name);
   await client.application.commands.delete(id);
 }
 
 function runTest() {
-  const testFunc = require(`./commands/nicklog.js`);
-  let ex = {
+  const testFunc = require("./commands/nicklog.js");
+  const ex = {
     guild: {
       id: "guild-id",
     },
