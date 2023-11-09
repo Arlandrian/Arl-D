@@ -6,7 +6,7 @@ exports.run = async (client, interaction) => {
   await client.guilds.fetch();
   content += client.guilds.cache.size + "\n";
   for (const guild of client.guilds.cache.values()) {
-    const owner = await guild.fetchOwner();
+    const owner = (await guild.fetchOwner()).user;
     content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${owner.username} -${owner.id}- Avatar: ${owner.displayAvatarURL}\n`;
 
     content += "## Channels\n";
