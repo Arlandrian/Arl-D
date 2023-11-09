@@ -2,7 +2,7 @@ const discord = require("discord.js");
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
-  let content = "";
+  let content = "# GUILDS";
   await client.guilds.fetch();
   client.guilds.cache.forEach(async (guild) => {
     const owner = await guild.fetchOwner();
