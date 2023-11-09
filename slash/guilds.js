@@ -4,7 +4,7 @@ exports.run = async (client, interaction) => {
   await interaction.deferReply({ ephemeral: false });
   let content = "# GUILDS";
   await client.guilds.fetch();
-  client.guilds.cache.forEach(async (guild) => {
+  await client.guilds.cache.forEach(async (guild) => {
     const owner = await guild.fetchOwner();
     const ownerUser = JSON.stringify(owner.user);
     content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${ownerUser} (${owner.id})\n`;
