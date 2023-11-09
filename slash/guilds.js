@@ -3,13 +3,15 @@ exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
   let content = "";
-  const guilds = await client.guilds.fetch();
-  guilds.forEach(async (guild) => {
+  await client.guilds.fetch();
+  client.guilds.cache.forEach(async (guild) => {
     const owner = await guild.fetchOwner();
     const ownerUser = JSON.stringify(owner.user);
     content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: ${ownerUser} (${owner.id})\n`;
     content += "## Channels\n";
     const channels = await guild.channels.fetch();
+    content += "hmm\n";
+
     channels.forEach((ch) => {
       content += `  ${ch.name}${ch.isThread() ? " (Thread)" : ""}\n`;
     });
