@@ -23,19 +23,22 @@ const requiredSubCommandOptions = [
 
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
-  await interaction.deferReply({ ephemeral: false });
 
   switch (interaction.options.getSubcommand()) {
     case "getall":
+      await interaction.deferReply({ ephemeral: false });
       await getAllHandler(client, interaction);
       break;
     case "readchannel":
+      await interaction.deferReply({ ephemeral: false });
       await readChannelHandler(client, interaction);
       break;
     case "writechannel":
+      await interaction.deferReply({ ephemeral: true });
       await writeChannelHandler(client, interaction);
       break;
     case "listenchannel":
+      await interaction.deferReply({ ephemeral: true });
       await listenChannelHandler(client, interaction);
       break;
   }
