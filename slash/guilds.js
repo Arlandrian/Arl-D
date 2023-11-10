@@ -216,37 +216,53 @@ async function writeChannelHandler(client, interaction) {
   channel.send(messageContent);
 }
 
+const messageListenerRegistered = false;
+const listeningChannels = {};
+
 function listenChannelHandler(client, interaction) {
   const opts = interaction.options._hoistedOptions;
+  const guildId = opts[0].value;
+  const channelId = opts[1].value;
 
-  client.on("messageCreate", (message) => {
-    if (message.author.bot) {
-      return;
-    }
-    // you dont need to listen messages for the same channel, you are already see the messages on that channel
-    if (isSameChannel(message, interaction)) {
-      return;
-    }
-    const interaction = interaction;
-    const guildId = opts[0].value;
-    const channelId = opts[1].value;
-    if (guildId == "all") {
-      if (channelId == "all") {
-        interaction.channel.send(message);
-      } else if (channelId == message.channel.id) {
-        interaction.channel.send(message);
-      }
-      return;
-    } else if (message.guildId == guildId) {
-      if (channelId == "all") {
-        interaction.channel.send(message);
-      } else if (channelId == message.channel.id) {
-        interaction.channel.send(message);
-      }
-      return;
-    }
-  });
-  interaction.editReply("started listening channel - please dont abuse this");
+  if (!messageListenerRegistered) {
+    client.on("messageCreate", handleMessage);
+  }
+  const key = guildId + ":" + channelId;
+  const targetChannel = listeningChannels[key];
+  if (targetChannel != null) {
+    listeningChannels[key] = null;
+    interaction.editReply("stopped listening channel-" + key);
+  } else {
+    listeningChannels[key] = interaction.channel;
+    interaction.editReply(
+      "started listening channel-" + key + "- (please don't abuse this)"
+    );
+  }
+}
+
+function handleMessage(message) {
+  if (message.author.bot) {
+    return;
+  }
+
+  const targetChannel =
+    listeningChannels["all:all"] ??
+    listeningChannels[message.guildId + ":all"] ??
+    listeningChannels[message.guildId + ":" + message.channelId];
+  if (targetChannel == null) {
+    return;
+  }
+
+  // you dont need to listen messages for the same channel, you already see the messages on that channel
+  if (isSameChannel(message, targetChannel.id)) {
+    return;
+  }
+
+  targetChannel.send(createMessageContent(message));
+}
+
+function isSameChannel(message, targetChannelId) {
+  return message.channelId == targetChannelId;
 }
 
 const timeFormat = {
@@ -280,10 +296,6 @@ function createMessageContent(message) {
     content += "\n" + attachments;
   }
   return content;
-}
-
-function isSameChannel(message, interaction) {
-  return message.channel.id == interaction.channel.id;
 }
 
 function getOption(opts, name, defValue) {
