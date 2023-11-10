@@ -143,7 +143,7 @@ async function readChannelHandler(client, interaction) {
   const opts = interaction.options._hoistedOptions;
   const guildId = opts[0].value;
   const channelId = opts[1].value;
-  const messageCount = getOption(opts, "count", 100);
+  const messageCount = opts[1].value ?? 100;
   const guild = client.guilds.cache.get(guildId);
   if (guild == null) {
     interaction.editReply("Unknown guild id.");
@@ -297,15 +297,6 @@ function createMessageContent(message) {
     content += "\n" + attachments;
   }
   return content;
-}
-
-function getOption(opts, name, defValue) {
-  const provided = opts.find((x) => x.name == name);
-  if (provided == null) {
-    return defValue;
-  } else {
-    return provided.value;
-  }
 }
 
 exports.conf = {
