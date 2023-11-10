@@ -216,7 +216,7 @@ async function writeChannelHandler(client, interaction) {
   channel.send(messageContent);
 }
 
-const messageListenerRegistered = false;
+let messageListenerRegistered = false;
 const listeningChannels = {};
 
 function listenChannelHandler(client, interaction) {
@@ -226,6 +226,7 @@ function listenChannelHandler(client, interaction) {
 
   if (!messageListenerRegistered) {
     client.on("messageCreate", handleMessage);
+    messageListenerRegistered = true;
   }
   const key = guildId + ":" + channelId;
   const targetChannel = listeningChannels[key];
@@ -282,13 +283,13 @@ function createMessageContent(message) {
     message.files != null && message.files.size > 0
       ? Array.from(message.files.map((x) => x.proxyURL)).join("\n")
       : null;
-  const guildName = message.guild.name.slice(0, 12);
-  const channelName = message.channel.name.slice(0, 12);
+  const guildName = message.guild.name.slice(0, 16);
+  const channelName = message.channel.name.slice(0, 16);
   const formattedDate = message.createdAt.toLocaleDateString(
     "en-US",
     timeFormat
   );
-  let content = `${guildName}:${channelName}:${message.author.username}:${formattedDate}> ${message.content}`;
+  let content = `[${guildName}]:[${channelName}]:[${formattedDate}]${message.author.username} > ${message.content}`;
   if (files != null) {
     content += "\n" + files;
   }
