@@ -194,11 +194,23 @@ async function readChannelHandler(client, interaction) {
   interaction.editReply({ files: [atc] });
 }
 
-function writeChannelHandler(client, interaction) {
+async function writeChannelHandler(client, interaction) {
   const opts = interaction.options._hoistedOptions;
   const guildId = opts[0].value;
   const channelId = opts[1].value;
   const messageContent = opts[2].value;
+  const guild = client.guilds.cache.get(guildId);
+  if (guild == null) {
+    interaction.editReply("Unknown guild id.");
+    return;
+  }
+  let channel = guild.channels.cache.get(channelId);
+  channel = channel ?? (await guild.channels.fetch(channelId));
+  if (channel == null) {
+    interaction.editReply("Unknown channel id.");
+    return;
+  }
+  channel.send(messageContent);
 }
 
 function listenChannelHandler(client, interaction) {
