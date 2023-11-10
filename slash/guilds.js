@@ -242,7 +242,7 @@ function listenChannelHandler(client, interaction) {
 }
 
 function handleMessage(message) {
-  if (message.author.bot) {
+  if (message.author.bot || message.channel.type == "DM") {
     return;
   }
 

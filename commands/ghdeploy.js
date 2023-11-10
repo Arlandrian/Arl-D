@@ -1,5 +1,4 @@
 const axios = require("axios");
-const config = require("../config.js");
 exports.run = async (client, message, args, level) => {
   // eslint-disable-line no-unused-vars
   const replying = true;
@@ -39,7 +38,7 @@ async function githubWorkflowTrigger(branch) {
 
   try {
     const URL = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`;
-    const response = await axios.post(URL, JSON.stringify(data), {
+    await axios.post(URL, JSON.stringify(data), {
       headers: {
         Accept: "application/vnd.github+json",
         Authorization: "Bearer " + GITHUB_TOKEN,
