@@ -2,6 +2,12 @@ name: Build and Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      skip_node_install:
+        type: boolean
+        description: deployment don't need a node install and npm install
+        default: false
+        required: false
   pull_request:
   # push:
   #   branches:
@@ -14,7 +20,7 @@ permissions:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 env:
@@ -42,14 +48,16 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
         with:
-          clean: 'false'
+          clean: "false"
 
       - name: Setup node
+        if: ${{github.event.inputs.skip_node_install != 'true'}}
         uses: actions/setup-node@v3
         with:
           node-version: 17.3.1
 
       - name: Install dependencies
+        if: ${{github.event.inputs.skip_node_install != 'true'}}
         run: |
           npm i
 
