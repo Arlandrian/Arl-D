@@ -1,4 +1,26 @@
 const discord = require("discord.js");
+
+const requiredSubCommandOptions = [
+  {
+    name: "guildid",
+    description: "Id of guild.",
+    descriptionLocalizations: {
+      tr: "Server id",
+    },
+    type: 3,
+    required: true,
+  },
+  {
+    name: "channelid",
+    description: "Id of channel",
+    descriptionLocalizations: {
+      tr: "id channel",
+    },
+    type: 3,
+    required: true,
+  },
+];
+
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
@@ -84,27 +106,6 @@ exports.commandData = {
     },
   ],
 };
-
-const requiredSubCommandOptions = [
-  {
-    name: "guildid",
-    description: "Id of guild.",
-    descriptionLocalizations: {
-      tr: "Server id",
-    },
-    type: 3,
-    required: true,
-  },
-  {
-    name: "channelid",
-    description: "Id of channel",
-    descriptionLocalizations: {
-      tr: "id channel",
-    },
-    type: 3,
-    required: true,
-  },
-];
 
 async function getAllHandler(client, interaction) {
   let content = "# GUILDS";
