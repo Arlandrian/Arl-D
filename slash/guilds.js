@@ -234,6 +234,14 @@ function listenChannelHandler(client, interaction) {
   interaction.editReply("started listening channel - please dont abuse this");
 }
 
+const timeFormat = {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  hour12: false,
+};
 function createMessageContent(message) {
   const attachments =
     message.attachments != null && message.attachments.size > 0
@@ -245,10 +253,10 @@ function createMessageContent(message) {
       : null;
   const guildName = message.guild.name.slice(0, 12);
   const channelName = message.channel.name.slice(0, 12);
-  const formattedDate = message.createdAt.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const formattedDate = message.createdAt.toLocaleDateString(
+    "en-US",
+    timeFormat
+  );
   let content = `${guildName}:${channelName}:${message.author.username}:${formattedDate}> ${message.content}`;
   if (files != null) {
     content += "\n" + files;
