@@ -109,11 +109,11 @@ const requiredSubCommandOptions = [
 async function getAllHandler(client, interaction) {
   let content = "# GUILDS";
   await client.guilds.fetch();
-  content += client.guilds.cache.size + "\n";
+  content += " using " + client.guilds.cache.size + " guilds...\n";
   for (const guild of client.guilds.cache.values()) {
     const owner = (await guild.fetchOwner()).user;
     const displayAvatar = owner.displayAvatarURL();
-    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: \n\n\n${owner.username} -${owner.id}- ![](${displayAvatar})\n`;
+    content += `\n# ${guild.name}'${guild.id}'\nmembers:${guild.memberCount}, channels: ${guild.channels.cache.size} - Owner: \n\n${owner.username} -${owner.id}- \n![](${displayAvatar})\n`;
     content += "## Channels\n";
     await guild.channels.fetch();
     for (const ch of guild.channels.cache.values()) {
@@ -135,12 +135,62 @@ async function getAllHandler(client, interaction) {
   interaction.editReply({ files: [atc] });
 }
 
-function readChannelHandler(client, interaction) {
+async function readChannelHandler(client, interaction) {
   const opts = interaction.options._hoistedOptions;
   const guildId = opts[0].value;
   const channelId = opts[1].value;
-  const messageCount = getOption(opts, "count", "100");
-  interaction.editReply("not implemented");
+  const messageCount = getOption(opts, "count", 100);
+  const guild = client.guilds.cache.get(guildId);
+  if (guild == null) {
+    interaction.editReply("Unknown guild id.");
+    return;
+  }
+  let channel = guild.channels.cache.get(channelId);
+  channel = channel ?? (await guild.channels.fetch(channelId));
+  if (channel == null) {
+    interaction.editReply("Unknown channel id.");
+    return;
+  }
+
+  // Fetch messages in chunks of 100
+  let fetchedMessages = [];
+  let lastMessageId = null;
+
+  while (fetchedMessages.length < messageCount) {
+    // Fetch messages from the channel, starting from the last message ID
+    const messages = await channel.messages.fetch({
+      limit: Math.min(100, messageCount - fetchedMessages.length),
+      before: lastMessageId,
+    });
+
+    // If no more messages are available, break the loop
+    if (messages.size === 0) {
+      break;
+    }
+
+    // Update the last message ID for the next iteration
+    lastMessageId = messages.last().id;
+
+    // Concatenate the fetched messages
+    fetchedMessages = fetchedMessages.concat(Array.from(messages.values()));
+  }
+
+  let content =
+    "# " +
+    guild.name +
+    "-" +
+    channel.name +
+    " -> " +
+    messageCount +
+    " messages\n";
+  fetchedMessages.forEach((fetchedMessage) => {
+    content += createMessageContent(fetchedMessage) + "\n";
+  });
+  const atc = new discord.MessageAttachment(
+    Buffer.from(content),
+    "guilds_readchan.md"
+  );
+  interaction.editReply({ files: [atc] });
 }
 
 function writeChannelHandler(client, interaction) {
@@ -152,13 +202,18 @@ function writeChannelHandler(client, interaction) {
 
 function listenChannelHandler(client, interaction) {
   const opts = interaction.options._hoistedOptions;
-  const guildId = opts[0].value;
-  const channelId = opts[1].value;
+
   client.on("messageCreate", (message) => {
+    if (message.author.bot) {
+      return;
+    }
     // you dont need to listen messages for the same channel, you are already see the messages on that channel
     if (isSameChannel(message, interaction)) {
       return;
     }
+    const interaction = interaction;
+    const guildId = opts[0].value;
+    const channelId = opts[1].value;
     if (guildId == "all") {
       if (channelId == "all") {
         interaction.channel.send(message);
@@ -166,8 +221,7 @@ function listenChannelHandler(client, interaction) {
         interaction.channel.send(message);
       }
       return;
-    }
-    if (message.guildId == guildId) {
+    } else if (message.guildId == guildId) {
       if (channelId == "all") {
         interaction.channel.send(message);
       } else if (channelId == message.channel.id) {
@@ -177,6 +231,31 @@ function listenChannelHandler(client, interaction) {
     }
   });
   interaction.editReply("started listening channel - please dont abuse this");
+}
+
+function createMessageContent(message) {
+  const attachments =
+    message.attachments != null && message.attachments.size > 0
+      ? Array.from(message.attachments.map((x) => x.proxyURL)).join("\n")
+      : null;
+  const files =
+    message.files != null && message.files.size > 0
+      ? Array.from(message.files.map((x) => x.proxyURL)).join("\n")
+      : null;
+  const guildName = message.guild.name.slice(0, 12);
+  const channelName = message.channel.name.slice(0, 12);
+  const formattedDate = message.createdAt.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  let content = `${guildName}:${channelName}:${message.author.username}:${formattedDate}> ${message.content}`;
+  if (files != null) {
+    content += "\n" + files;
+  }
+  if (attachments != null) {
+    content += "\n" + attachments;
+  }
+  return content;
 }
 
 function isSameChannel(message, interaction) {
