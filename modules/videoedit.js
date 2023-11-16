@@ -67,7 +67,7 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try {
-    let promises = []
+    let promises = [];
     const isVideoTwitter = isTwitterStatusUrl(videoUrl);
     const isAudioTwitter = isTwitterStatusUrl(audioUrl);
 
@@ -87,9 +87,9 @@ async function downloadVideoAndAudio(
       videoPromise = downloadTwitterVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
       // this needs to be awaited because but only for url check
-      videoPromise = await downloadMp4UrlAsync(videoUrl, videoOutputPath)
+      videoPromise = await downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
-      videoPromise = downloadYoutubeVideoAsync(videoUrl, videoOutputPath)
+      videoPromise = downloadYoutubeVideoAsync(videoUrl, videoOutputPath);
     }
     log("video promise created");
 
@@ -98,9 +98,9 @@ async function downloadVideoAndAudio(
       audioPromise = downloadTwitterVideoAsync(audioUrl, videoOutputPath);
     } else if (isAudioTwitter) {
       // this needs to be awaited because but only for url check
-      audioPromise = await downloadMp4UrlAsync(audioUrl, videoOutputPath)
+      audioPromise = await downloadMp4UrlAsync(audioUrl, videoOutputPath);
     } else {
-      audioPromise = downloadYoutubeAudioAsync(audioUrl, videoOutputPath)
+      audioPromise = downloadYoutubeAudioAsync(audioUrl, videoOutputPath);
     }
     log("audio promise created");
 
@@ -161,7 +161,7 @@ async function downloadVideoAndAudio(
     log("final output ready");
     await callback(finalOutputPath);
   } catch (err) {
-    throw err;
+    throw new Error(err.name);
   } finally {
     // clean up files
     fs.unlink(videoOutputPath, function (err) {});
@@ -246,7 +246,7 @@ function removeAudio(inputFilePath, outputFilePath) {
 //////   Mp4Urls    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-function mediaStreamToFileAsync(stream, outputPath){
+function mediaStreamToFileAsync(stream, outputPath) {
   let videoSize = 0;
   stream.on("data", (chunk) => {
     videoSize += chunk.length;
@@ -264,7 +264,7 @@ function mediaStreamToFileAsync(stream, outputPath){
 
 async function downloadMp4UrlAsync(url, outputPath) {
   stream = (await axios.get(url, { responseType: "stream" })).data;
-  return mediaStreamToFileAsync(stream, outputPath)
+  return mediaStreamToFileAsync(stream, outputPath);
 }
 
 ////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ async function downloadYoutubeVideoAsync(url, outputPath) {
     },
   });
 
-  return mediaStreamToFileAsync(stream, outputPath)
+  return mediaStreamToFileAsync(stream, outputPath);
 }
 
 async function downloadYoutubeAudioAsync(url, outputPath) {
@@ -302,14 +302,14 @@ async function downloadYoutubeAudioAsync(url, outputPath) {
       );
     },
   });
-  return mediaStreamToFileAsync(stream, outputPath)
+  return mediaStreamToFileAsync(stream, outputPath);
 }
 
 ////////////////////////////////////////////////////////////
 //////   Twitter    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 function isTwitterStatusUrl(url) {
-  twitterStatusUrlRegex.test(url);
+  return twitterStatusUrlRegex.test(url);
 }
 
 async function downloadTwitterVideoAsync(url, outputPath) {
