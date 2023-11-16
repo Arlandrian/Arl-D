@@ -11,6 +11,7 @@ const os = require("os");
 const axios = require("axios");
 
 const https = require("https");
+const puppeteer = require("puppeteer");
 
 // get temp directory
 const tempDir = os.tmpdir();
