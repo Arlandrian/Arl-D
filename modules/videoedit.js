@@ -275,7 +275,7 @@ async function downloadMp4UrlAsync(url, outputPath) {
 
 async function downloadYoutubeVideoAsync(url, outputPath) {
   // Download video without audio
-  videoStream = ytdl(videoUrl, {
+  stream = ytdl(url, {
     filter: (format) => {
       // Filter out video formats with a height greater than 540 pixels
       return (
@@ -293,7 +293,7 @@ async function downloadYoutubeVideoAsync(url, outputPath) {
 
 async function downloadYoutubeAudioAsync(url, outputPath) {
   // Download audio only
-  audioStream = ytdl(audioUrl, {
+  stream = ytdl(url, {
     filter: (format) => {
       // Filter out video formats with a height greater than 540 pixels
       return (
@@ -304,7 +304,7 @@ async function downloadYoutubeAudioAsync(url, outputPath) {
       );
     },
   });
-  return mediaStreamToFileAsync(videoStream, outputPath)
+  return mediaStreamToFileAsync(audioStream, outputPath)
 }
 
 ////////////////////////////////////////////////////////////
