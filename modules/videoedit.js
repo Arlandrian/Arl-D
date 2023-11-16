@@ -317,10 +317,12 @@ async function downloadTwitterVideoAsync(url, outputPath) {
     throw new Error("url not a twitter status.");
   }
   const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
+  log("got the hls url")
   if (hlsUrl == null) {
     throw new Error("couldnt find the video on page.");
   }
-  return downloadHlsManifestAsVideo(hlsUrl, outputPath);
+  await downloadHlsManifestAsVideo(hlsUrl, outputPath);
+  log("twitter video downloaded")
 }
 
 async function getTwitterVideoHlsUrlFromStatusUrl(url) {
