@@ -323,9 +323,9 @@ function downloadTwitterVideoAsync(url, outputPath) {
     if (!isTwitterStatusUrl(url)) {
       throw new Error("url not a twitter status.");
     }
-    log("retrieving hls");
+    log("retrieving hls for "+url);
     const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
-    log("got the hls url");
+    log("got the hls url for "+url);
     if (hlsUrl == null) {
       throw new Error("couldnt find the video on page.");
     }
@@ -363,7 +363,7 @@ async function getTwitterVideoHlsUrlFromStatusUrl(url) {
     });
 
   // Navigate to the URL
-  await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
+  await page.goto(url, { waitUntil: "networkidle0", timeout: 120000 });
   await browser.close();
   return hlsManifest;
 }
@@ -389,35 +389,18 @@ function downloadHlsManifestAsVideo(hlsManifestUrl, outputFileName) {
 
 module.exports = { downloadVideoAndAudio };
 
-// async function init() {
-//   await downloadVideoAndAudio(
-//     "https://www.youtube.com/watch?v=c1HeRtKk86U",
-//     "https://www.youtube.com/watch?v=f0-RYStvdkc",
-//     0,
-//     25,
-//     120,
-//     160,
-//     (outputPath) => {
-//       console.log(fs.existsSync(outputPath));
-//     }
-//   );
-// }
-// init();
-
-// setTimeout(() => {}, 50000000);
 // (async () => {
-//   async function foo(path) {
-//     await downloadMp4UrlAsync(
-//       "https://cdn.discordapp.com/attachments/1008121612173848666/1169322667871043654/oof.darn-20220929-0002.mp4?ex=6554fb98&is=65428698&hm=6e7446543acb799b5b720ae328aaa9aa24da1549c9fdfa4fa19a0b6ec8979a49&",
-//       path
-//     );
-//     console.log(path, "finished");
-//   }
-
-//   const list = [];
-//   list.push(foo("1.mp4"));
-//   list.push(foo("2.mp4"));
-//   list.push(foo("3.mp4"));
-//   await Promise.all(list);
+// //   await downloadVideoAndAudio(
+// //     "https://www.youtube.com/watch?v=c1HeRtKk86U",
+// //     "https://www.youtube.com/watch?v=f0-RYStvdkc",
+// //     0,
+// //     25,
+// //     120,
+// //     160,
+// //     (outputPath) => {
+// //       console.log(fs.existsSync(outputPath));
+// //     }
+// //   );
+//   await downloadTwitterVideoAsync("https://twitter.com/ghiblipicture/status/1724241017757376856", path);
 //   console.log("all finished");
 // })();
