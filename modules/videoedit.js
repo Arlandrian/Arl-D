@@ -70,7 +70,7 @@ async function downloadVideoAndAudio(
     let promises = [];
     const isVideoTwitter = isTwitterStatusUrl(videoUrl);
     const isAudioTwitter = isTwitterStatusUrl(audioUrl);
-    log("isVideoTwitter", isVideoTwitter, "isAudioTwitter", isAudioTwitter);
+    log("isVideoTwitter:" + isVideoTwitter + ", isAudioTwitter:" + isAudioTwitter);
 
     let isVideoUrlMp4 = false;
     let isAudioUrlMp4 = false;
@@ -79,7 +79,7 @@ async function downloadVideoAndAudio(
       isVideoUrlMp4 = pRes[0];
       isAudioUrlMp4 = pRes[1];
     }
-    log("isVideoUrlMp4", isVideoUrlMp4, "isAudioUrlMp4", isAudioUrlMp4);
+    log("isVideoUrlMp4:" + isVideoUrlMp4 + ", isAudioUrlMp4:" + isAudioUrlMp4);
 
     let videoNeedsMidProcess = isVideoUrlMp4 || isVideoTwitter;
     let audioNeedsMidProcess = isAudioUrlMp4 || isAudioTwitter;
@@ -96,11 +96,11 @@ async function downloadVideoAndAudio(
 
     let audioPromise = null;
     if (isAudioTwitter) {
-      audioPromise = downloadTwitterVideoAsync(audioUrl, videoOutputPath);
+      audioPromise = downloadTwitterVideoAsync(audioUrl, audioOutputPath);
     } else if (isAudioUrlMp4) {
-      audioPromise = downloadMp4UrlAsync(audioUrl, videoOutputPath);
+      audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
-      audioPromise = downloadYoutubeAudioAsync(audioUrl, videoOutputPath);
+      audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
     }
     log("audio promise created");
 
@@ -316,14 +316,14 @@ async function downloadTwitterVideoAsync(url, outputPath) {
   if (!isTwitterStatusUrl(url)) {
     throw new Error("url not a twitter status.");
   }
-  log("retrieving hls")
+  log("retrieving hls");
   const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
-  log("got the hls url")
+  log("got the hls url");
   if (hlsUrl == null) {
     throw new Error("couldnt find the video on page.");
   }
   await downloadHlsManifestAsVideo(hlsUrl, outputPath);
-  log("twitter video downloaded")
+  log("twitter video downloaded");
 }
 
 async function getTwitterVideoHlsUrlFromStatusUrl(url) {
@@ -398,9 +398,11 @@ module.exports = { downloadVideoAndAudio };
 // setTimeout(() => {}, 50000000);
 (async () => {
   async function foo(path) {
-    await downloadMp4UrlAsync("https://cdn.discordapp.com/attachments/1008121612173848666/1169322667871043654/oof.darn-20220929-0002.mp4?ex=6554fb98&is=65428698&hm=6e7446543acb799b5b720ae328aaa9aa24da1549c9fdfa4fa19a0b6ec8979a49&",path)
-    console.log(path,"finished")
-  
+    await downloadMp4UrlAsync(
+      "https://cdn.discordapp.com/attachments/1008121612173848666/1169322667871043654/oof.darn-20220929-0002.mp4?ex=6554fb98&is=65428698&hm=6e7446543acb799b5b720ae328aaa9aa24da1549c9fdfa4fa19a0b6ec8979a49&",
+      path
+    );
+    console.log(path, "finished");
   }
 
   const list = [];
@@ -408,5 +410,5 @@ module.exports = { downloadVideoAndAudio };
   list.push(foo("2.mp4"));
   list.push(foo("3.mp4"));
   await Promise.all(list);
-  console.log("all finished")
+  console.log("all finished");
 })();
