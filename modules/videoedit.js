@@ -70,7 +70,9 @@ async function downloadVideoAndAudio(
     let promises = [];
     const isVideoTwitter = isTwitterStatusUrl(videoUrl);
     const isAudioTwitter = isTwitterStatusUrl(audioUrl);
-    log("isVideoTwitter:" + isVideoTwitter + ", isAudioTwitter:" + isAudioTwitter);
+    log(
+      "isVideoTwitter:" + isVideoTwitter + ", isAudioTwitter:" + isAudioTwitter
+    );
 
     let isVideoUrlMp4 = false;
     let isAudioUrlMp4 = false;
@@ -262,16 +264,19 @@ function mediaStreamToFileAsync(stream, outputPath) {
   });
 }
 
-async function downloadMp4UrlAsync(url, outputPath) {
-  stream = (await axios.get(url, { responseType: "stream" })).data;
-  await mediaStreamToFileAsync(stream, outputPath);
+function downloadMp4UrlAsync(url, outputPath) {
+  return new Promise(async (resolve)=>{
+    stream = (await axios.get(url, { responseType: "stream" })).data;
+    await mediaStreamToFileAsync(stream, outputPath);
+    resolve()
+  })
 }
 
 ////////////////////////////////////////////////////////////
 //////   Youtube    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-async function downloadYoutubeVideoAsync(url, outputPath) {
+function downloadYoutubeVideoAsync(url, outputPath) {
   // Download video without audio
   stream = ytdl(url, {
     filter: (format) => {
@@ -289,7 +294,7 @@ async function downloadYoutubeVideoAsync(url, outputPath) {
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
-async function downloadYoutubeAudioAsync(url, outputPath) {
+function downloadYoutubeAudioAsync(url, outputPath) {
   // Download audio only
   stream = ytdl(url, {
     filter: (format) => {
@@ -312,18 +317,21 @@ function isTwitterStatusUrl(url) {
   return twitterStatusUrlRegex.test(url);
 }
 
-async function downloadTwitterVideoAsync(url, outputPath) {
-  if (!isTwitterStatusUrl(url)) {
-    throw new Error("url not a twitter status.");
-  }
-  log("retrieving hls");
-  const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
-  log("got the hls url");
-  if (hlsUrl == null) {
-    throw new Error("couldnt find the video on page.");
-  }
-  await downloadHlsManifestAsVideo(hlsUrl, outputPath);
-  log("twitter video downloaded");
+function downloadTwitterVideoAsync(url, outputPath) {
+  return new Promise(async (resolve) => {
+    if (!isTwitterStatusUrl(url)) {
+      throw new Error("url not a twitter status.");
+    }
+    log("retrieving hls");
+    const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
+    log("got the hls url");
+    if (hlsUrl == null) {
+      throw new Error("couldnt find the video on page.");
+    }
+    await downloadHlsManifestAsVideo(hlsUrl, outputPath);
+    log("twitter video downloaded");
+    resolve()
+  });
 }
 
 async function getTwitterVideoHlsUrlFromStatusUrl(url) {
