@@ -336,7 +336,7 @@ function downloadTwitterVideoAsync(url, outputPath) {
 }
 
 async function getTwitterVideoHlsUrlFromStatusUrl(url) {
-  const browser = await puppeteer.launch({ headless: "new", timeout: 30000 });
+  const browser = await puppeteer.launch({ headless: "false", timeout: 120000 });
   const [page] = await browser.pages();
   let hlsManifest = null;
   await page.setRequestInterception(true);
