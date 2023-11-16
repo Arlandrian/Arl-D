@@ -86,8 +86,7 @@ async function downloadVideoAndAudio(
     if (isVideoTwitter) {
       videoPromise = downloadTwitterVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
-      // this needs to be awaited because but only for url check
-      videoPromise = await downloadMp4UrlAsync(videoUrl, videoOutputPath);
+      videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
       videoPromise = downloadYoutubeVideoAsync(videoUrl, videoOutputPath);
     }
@@ -97,8 +96,7 @@ async function downloadVideoAndAudio(
     if (isAudioTwitter) {
       audioPromise = downloadTwitterVideoAsync(audioUrl, videoOutputPath);
     } else if (isAudioTwitter) {
-      // this needs to be awaited because but only for url check
-      audioPromise = await downloadMp4UrlAsync(audioUrl, videoOutputPath);
+      audioPromise = downloadMp4UrlAsync(audioUrl, videoOutputPath);
     } else {
       audioPromise = downloadYoutubeAudioAsync(audioUrl, videoOutputPath);
     }
@@ -264,7 +262,7 @@ function mediaStreamToFileAsync(stream, outputPath) {
 
 async function downloadMp4UrlAsync(url, outputPath) {
   stream = (await axios.get(url, { responseType: "stream" })).data;
-  return mediaStreamToFileAsync(stream, outputPath);
+  await mediaStreamToFileAsync(stream, outputPath);
 }
 
 ////////////////////////////////////////////////////////////
@@ -316,6 +314,7 @@ async function downloadTwitterVideoAsync(url, outputPath) {
   if (!isTwitterStatusUrl(url)) {
     throw new Error("url not a twitter status.");
   }
+  log("retrieving hls")
   const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
   log("got the hls url")
   if (hlsUrl == null) {
