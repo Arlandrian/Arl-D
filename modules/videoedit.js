@@ -336,7 +336,7 @@ function downloadTwitterVideoAsync(url, outputPath) {
 }
 
 async function getTwitterVideoHlsUrlFromStatusUrl(url) {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: "new", timeout: 30000 });
   const [page] = await browser.pages();
   let hlsManifest = null;
   await page.setRequestInterception(true);
@@ -351,16 +351,16 @@ async function getTwitterVideoHlsUrlFromStatusUrl(url) {
   });
 
   // Wait for the page to load and the video element to be present
-  page
-    .waitForSelector("video")
-    .then((video) => {
-      video.click();
-    })
-    .catch((err) => {
-      if (err.name != "TargetCloseError") {
-        throw err;
-      }
-    });
+  // page
+  //   .waitForSelector("video")
+  //   .then((video) => {
+  //     video.click();
+  //   })
+  //   .catch((err) => {
+  //     if (err.name != "TargetCloseError") {
+  //       throw err;
+  //     }
+  //   });
 
   // Navigate to the URL
   await page.goto(url, { waitUntil: "networkidle0", timeout: 120000 });
