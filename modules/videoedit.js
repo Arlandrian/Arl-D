@@ -313,7 +313,7 @@ function isTwitterStatusUrl(url) {
 }
 
 async function downloadTwitterVideoAsync(url, outputPath) {
-  if (!isTwitterStatusUrl) {
+  if (!isTwitterStatusUrl(url)) {
     throw new Error("url not a twitter status.");
   }
   const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
