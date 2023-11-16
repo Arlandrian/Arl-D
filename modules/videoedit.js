@@ -15,6 +15,9 @@ const https = require("https");
 // get temp directory
 const tempDir = os.tmpdir();
 
+const twitterStatusUrlRegex =
+  /^https?:\/\/twitter|x\.com\/(\w+)\/status(es)?\/(\d+)/;
+
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
@@ -25,6 +28,7 @@ if ("win32" == os.platform()) {
       "/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-6.0-full_build/bin/ffmpeg.exe"
   );
 }
+
 const debugEnabled = true;
 log = (str) => {
   if (debugEnabled) console.debug("cmd::videoedit: " + str);
@@ -63,86 +67,42 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try {
-    const pRes = await Promise.all([isUrlMP4(videoUrl), isUrlMP4(audioUrl)]);
-    const isVideoUrlMp4 = pRes[0];
-    const isAudioUrlMp4 = pRes[1];
-    log(`1111 ${isVideoUrlMp4} ${isAudioUrlMp4}`);
+    const isVideoTwitter = isTwitterStatusUrl(videoUrl);
+    const isAudioTwitter = isTwitterStatusUrl(audioUrl);
 
-    let videoStream = null;
-    if (isVideoUrlMp4) {
-      videoStream = (await axios.get(videoUrl, { responseType: "stream" }))
-        .data;
-    } else {
-      // Download video without audio
-      videoStream = ytdl(videoUrl, {
-        filter: (format) => {
-          // Filter out video formats with a height greater than 540 pixels
-          return (
-            format.hasVideo &&
-            !format.hasAudio &&
-            format.height <= 540 &&
-            format.approxDurationMs != null &&
-            format.approxDurationMs < MAX_VIDEO_MS
-          );
-        },
-      });
+    let isVideoUrlMp4 = false;
+    let isAudioUrlMp4 = false;
+    let promises = []
+    if (!isVideoTwitter || !isAudioTwitter) {
+      const pRes = await Promise.all([isUrlMP4(videoUrl), isUrlMP4(audioUrl)]);
+      isVideoUrlMp4 = pRes[0];
+      isAudioUrlMp4 = pRes[1];
     }
 
-    log("2222");
-    let videoSize = 0;
-    videoStream.on("data", (chunk) => {
-      videoSize += chunk.length;
-      if (videoSize > MAX_VIDEO_BYTES) {
-        videoStream.destroy();
-        throw new Error("Video file too large");
-      }
-    });
-    const videoOutput = fs.createWriteStream(videoOutputPath);
-    videoStream.pipe(videoOutput);
-    const videoPromise = new Promise((resolve) => {
-      videoOutput.on("close", resolve);
-    });
+    let videoNeedsMidProcess = isVideoUrlMp4 || isVideoTwitter;
+    let audioNeedsMidProcess = isAudioUrlMp4 || isAudioTwitter;
 
-    log("3333");
-
-    let audioStream = null;
-    if (isAudioUrlMp4) {
-      audioStream = (await axios.get(audioUrl, { responseType: "stream" }))
-        .data;
+    let videoPromise = null;
+    if (isVideoTwitter) {
+      videoPromise = downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+    } else if (isVideoUrlMp4) {
+      // this needs to be awaited because but only for url check
+      videoPromise = await downloadMp4UrlAsync(videoUrl, videoOutputPath)
     } else {
-      // Download audio only
-      audioStream = ytdl(audioUrl, {
-        filter: (format) => {
-          // Filter out video formats with a height greater than 540 pixels
-          return (
-            !format.hasVideo &&
-            format.hasAudio &&
-            format.approxDurationMs != null &&
-            format.approxDurationMs < MAX_VIDEO_MS
-          );
-        },
-      });
+      videoPromise = downloadYoutubeVideoAsync(videoUrl, videoOutputPath)
     }
+    log("video promise created");
 
-    // Error: Only one input stream is supported so we have to write one of the input to file
-    // i chose audio
-    const audioOutput = fs.createWriteStream(audioOutputPath);
-    let audioSize = 0;
-    audioStream.on("data", (chunk) => {
-      audioSize += chunk.length;
-      if (audioSize > MAX_VIDEO_BYTES) {
-        audioStream.destroy();
-        throw new Error("Audio file too large");
-      }
-    });
-
-    log("5555");
-
-    audioStream.pipe(audioOutput);
-    const audioPromise = new Promise((resolve) => {
-      audioOutput.on("close", resolve);
-    });
-    log("6666");
+    let audioPromise = null;
+    if (isAudioTwitter) {
+      audioPromise = downloadTwitterVideoAsync(audioUrl, videoOutputPath);
+    } else if (isAudioTwitter) {
+      // this needs to be awaited because but only for url check
+      audioPromise = await downloadMp4UrlAsync(audioUrl, videoOutputPath)
+    } else {
+      audioPromise = downloadYoutubeAudioAsync(audioUrl, videoOutputPath)
+    }
+    log("audio promise created");
 
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
@@ -154,12 +114,12 @@ async function downloadVideoAndAudio(
     // 3. delete old file
     // 4. rename new file to old file
     // 5. vice-versa for audio file
-    const promises = [];
-    if (isVideoUrlMp4) {
+    promises = [];
+    if (videoNeedsMidProcess) {
       promises.push(removeAudio(videoOutputPath, midProcessVideoOutputPath));
     }
 
-    if (isAudioUrlMp4) {
+    if (audioNeedsMidProcess) {
       promises.push(removeVideo(audioOutputPath, midProcessAudioOutputPath));
     }
 
@@ -168,13 +128,13 @@ async function downloadVideoAndAudio(
       await Promise.all(promises);
       log("mid process ended");
 
-      if (isVideoUrlMp4) {
+      if (videoNeedsMidProcess) {
         fs.unlinkSync(videoOutputPath);
         fs.renameSync(midProcessVideoOutputPath, videoOutputPath);
         log("deleted unprocessed video");
       }
 
-      if (isAudioUrlMp4) {
+      if (audioNeedsMidProcess) {
         fs.unlinkSync(audioOutputPath);
         fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
@@ -240,6 +200,11 @@ async function isUrlMP4(url) {
   });
 }
 
+////////////////////////////////////////////////////////////
+//////   MidProccess  //////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+// turn video to audio only file
 function removeVideo(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
     ffmpeg()
@@ -271,6 +236,141 @@ function removeAudio(inputFilePath, outputFilePath) {
       })
       .on("error", (err) => {
         log("Error: " + err);
+        reject(err);
+      })
+      .run();
+  });
+}
+
+
+////////////////////////////////////////////////////////////
+//////   Mp4Urls    ////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+function mediaStreamToFileAsync(stream, outputPath){
+  let videoSize = 0;
+  stream.on("data", (chunk) => {
+    videoSize += chunk.length;
+    if (videoSize > MAX_VIDEO_BYTES) {
+      stream.destroy();
+      throw new Error("Video file too large");
+    }
+  });
+  const videoOutput = fs.createWriteStream(outputPath);
+  stream.pipe(videoOutput);
+  return new Promise((resolve) => {
+    videoOutput.on("close", resolve);
+  });
+}
+
+async function downloadMp4UrlAsync(url, outputPath) {
+  videoStream = (await axios.get(videoUrl, { responseType: "stream" })).data;
+  return mediaStreamToFileAsync(videoStream,outputPath)
+}
+
+
+////////////////////////////////////////////////////////////
+//////   Youtube    ////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+async function downloadYoutubeVideoAsync(url, outputPath) {
+  // Download video without audio
+  videoStream = ytdl(videoUrl, {
+    filter: (format) => {
+      // Filter out video formats with a height greater than 540 pixels
+      return (
+        format.hasVideo &&
+        !format.hasAudio &&
+        format.height <= 540 &&
+        format.approxDurationMs != null &&
+        format.approxDurationMs < MAX_VIDEO_MS
+      );
+    },
+  });
+
+  return mediaStreamToFileAsync(videoStream, outputPath)
+}
+
+async function downloadYoutubeAudioAsync(url, outputPath) {
+  // Download audio only
+  audioStream = ytdl(audioUrl, {
+    filter: (format) => {
+      // Filter out video formats with a height greater than 540 pixels
+      return (
+        !format.hasVideo &&
+        format.hasAudio &&
+        format.approxDurationMs != null &&
+        format.approxDurationMs < MAX_VIDEO_MS
+      );
+    },
+  });
+  return mediaStreamToFileAsync(videoStream, outputPath)
+}
+
+////////////////////////////////////////////////////////////
+//////   Twitter    ////////////////////////////////////////
+////////////////////////////////////////////////////////////
+function isTwitterStatusUrl(url) {
+  twitterStatusUrlRegex.test(url);
+}
+
+async function downloadTwitterVideoAsync(url, outputPath) {
+  if (!isTwitterStatusUrl) {
+    throw new Error("url not a twitter status.");
+  }
+  const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
+  if (hlsUrl == null) {
+    throw new Error("couldnt find the video on page.");
+  }
+  return downloadHlsManifestAsVideo(hlsUrl, outputPath);
+}
+
+async function getTwitterVideoHlsUrlFromStatusUrl(url) {
+  const browser = await puppeteer.launch({ headless: "new" });
+  const [page] = await browser.pages();
+  let hlsManifest = null;
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    const r_url = request.url();
+    if (r_url.includes("video.twimg.com/ext_tw_video")) {
+      hlsManifest = r_url;
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
+
+  // Wait for the page to load and the video element to be present
+  page
+    .waitForSelector("video")
+    .then((video) => {
+      video.click();
+    })
+    .catch((err) => {
+      if (err.name != "TargetCloseError") {
+        throw err;
+      }
+    });
+
+  // Navigate to the URL
+  await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
+  await browser.close();
+  return hlsManifest;
+}
+
+function downloadHlsManifestAsVideo(hlsManifestUrl, outputFileName) {
+  return new Promise((resolve, reject) => {
+    // Download and convert HLS stream to a local file
+    ffmpeg()
+      .addInput(hlsManifestUrl)
+      .addOptions("-c:v copy") // Copy video codec
+      .addOptions("-c:a copy") // Copy audio codec
+      .addOptions("-bsf:a aac_adtstoasc") // Convert AAC stream to ADTS format
+      .output(outputFileName)
+      .on("end", () => {
+        resolve();
+      })
+      .on("error", (err) => {
         reject(err);
       })
       .run();
