@@ -396,19 +396,19 @@ module.exports = { downloadVideoAndAudio };
 // init();
 
 // setTimeout(() => {}, 50000000);
-(async () => {
-  async function foo(path) {
-    await downloadMp4UrlAsync(
-      "https://cdn.discordapp.com/attachments/1008121612173848666/1169322667871043654/oof.darn-20220929-0002.mp4?ex=6554fb98&is=65428698&hm=6e7446543acb799b5b720ae328aaa9aa24da1549c9fdfa4fa19a0b6ec8979a49&",
-      path
-    );
-    console.log(path, "finished");
-  }
+// (async () => {
+//   async function foo(path) {
+//     await downloadMp4UrlAsync(
+//       "https://cdn.discordapp.com/attachments/1008121612173848666/1169322667871043654/oof.darn-20220929-0002.mp4?ex=6554fb98&is=65428698&hm=6e7446543acb799b5b720ae328aaa9aa24da1549c9fdfa4fa19a0b6ec8979a49&",
+//       path
+//     );
+//     console.log(path, "finished");
+//   }
 
-  const list = [];
-  list.push(foo("1.mp4"));
-  list.push(foo("2.mp4"));
-  list.push(foo("3.mp4"));
-  await Promise.all(list);
-  console.log("all finished");
-})();
+//   const list = [];
+//   list.push(foo("1.mp4"));
+//   list.push(foo("2.mp4"));
+//   list.push(foo("3.mp4"));
+//   await Promise.all(list);
+//   console.log("all finished");
+// })();
