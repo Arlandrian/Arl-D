@@ -67,12 +67,12 @@ async function downloadVideoAndAudio(
     throw new Error("Invalid time range");
   }
   try {
+    let promises = []
     const isVideoTwitter = isTwitterStatusUrl(videoUrl);
     const isAudioTwitter = isTwitterStatusUrl(audioUrl);
 
     let isVideoUrlMp4 = false;
     let isAudioUrlMp4 = false;
-    let promises = []
     if (!isVideoTwitter || !isAudioTwitter) {
       const pRes = await Promise.all([isUrlMP4(videoUrl), isUrlMP4(audioUrl)]);
       isVideoUrlMp4 = pRes[0];
@@ -242,7 +242,6 @@ function removeAudio(inputFilePath, outputFilePath) {
   });
 }
 
-
 ////////////////////////////////////////////////////////////
 //////   Mp4Urls    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -264,10 +263,9 @@ function mediaStreamToFileAsync(stream, outputPath){
 }
 
 async function downloadMp4UrlAsync(url, outputPath) {
-  videoStream = (await axios.get(videoUrl, { responseType: "stream" })).data;
-  return mediaStreamToFileAsync(videoStream,outputPath)
+  stream = (await axios.get(url, { responseType: "stream" })).data;
+  return mediaStreamToFileAsync(stream, outputPath)
 }
-
 
 ////////////////////////////////////////////////////////////
 //////   Youtube    ////////////////////////////////////////
@@ -288,7 +286,7 @@ async function downloadYoutubeVideoAsync(url, outputPath) {
     },
   });
 
-  return mediaStreamToFileAsync(videoStream, outputPath)
+  return mediaStreamToFileAsync(stream, outputPath)
 }
 
 async function downloadYoutubeAudioAsync(url, outputPath) {
@@ -304,7 +302,7 @@ async function downloadYoutubeAudioAsync(url, outputPath) {
       );
     },
   });
-  return mediaStreamToFileAsync(audioStream, outputPath)
+  return mediaStreamToFileAsync(stream, outputPath)
 }
 
 ////////////////////////////////////////////////////////////
