@@ -192,9 +192,9 @@ function downloadHlsManifestAsVideo(hlsManifestUrl, outputFileName) {
 
 module.exports = {downloadTwitterVideoAsync,isTwitterStatusUrl};
 
-(async ()=>{
-  console.time("total")
-  await downloadTwitterVideoAsync("https://x.com/animaIarmy/status/1725913900468556223", "10sec.mp4");
-  await downloadTwitterVideoAsync("https://x.com/ayiogluayi0/status/1725993560061653008?s=20", "30sec.mp4");
-  console.timeEnd("total")
-})()
+// (async ()=>{
+//   console.time("total")
+//   await downloadTwitterVideoAsync("https://x.com/animaIarmy/status/1725913900468556223", "10sec.mp4");
+//   await downloadTwitterVideoAsync("https://x.com/ayiogluayi0/status/1725993560061653008?s=20", "30sec.mp4");
+//   console.timeEnd("total")
+// })()
