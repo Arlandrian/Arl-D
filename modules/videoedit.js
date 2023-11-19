@@ -93,15 +93,21 @@ async function downloadVideoAndAudio(
     log("video promise created");
 
     let audioPromise = null;
-    if (isAudioTwitter) {
-      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
-    } else if (isAudioUrlMp4) {
-      audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
-    } else {
-      audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
+    let didAudioDownload = true
+    if (audioUrl==videoUrl){
+      // no need to download again
+      didAudioDownload = false
+    }else{
+      if (isAudioTwitter) {
+        audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
+      } else if (isAudioUrlMp4) {
+        audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
+      } else {
+        audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
+      }
+      log("audio promise created");
     }
-    log("audio promise created");
-
+    
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
@@ -118,7 +124,9 @@ async function downloadVideoAndAudio(
     }
 
     if (audioNeedsMidProcess) {
-      promises.push(removeVideo(audioOutputPath, midProcessAudioOutputPath));
+      // if there is no audio use video file
+      const processPath = didAudioDownload ? audioOutputPath : videoOutputPath;
+      promises.push(removeVideo(processPath, midProcessAudioOutputPath));
     }
 
     if (promises.length > 0) {
@@ -127,16 +135,29 @@ async function downloadVideoAndAudio(
       log("mid process ended");
 
       if (videoNeedsMidProcess) {
-        fs.unlinkSync(videoOutputPath);
+        fs.unlink(videoOutputPath, function (err) {});
         fs.renameSync(midProcessVideoOutputPath, videoOutputPath);
         log("deleted unprocessed video");
       }
 
       if (audioNeedsMidProcess) {
-        fs.unlinkSync(audioOutputPath);
+        // if we didnt downloaded the audioUrl, no need to delete
+        if (didAudioDownload){
+          fs.unlink(audioOutputPath, function (err) {});
+        }
         fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
+      }else{
+        audi
       }
+    }
+
+    if (!didAudioDownload){
+      if(!audioNeedsMidProcess){
+        // didnt download audio and mid process didnt happen
+        audioOutputPath = videoOutputPath
+      }
+      // if mid process happens we have a valid audioPathUrl
     }
 
     const videoDuration = videoEndTime - videoStartTime;
