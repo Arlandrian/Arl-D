@@ -74,15 +74,17 @@ async function getBrowserPuppeteer() {
     browser = await puppeteer.launch({
       headless: "new",
       timeout: 120000,
+      userDataDir: "/dev/null",
       args: [
         // "--no-sandbox", // Disable sandboxing (useful in some environments)
         // "--disable-gpu", // Disable GPU support
         // "--disable-software-rasterizer", // Disable software rasterizer
-        // "--disable-dev-shm-usage", // Disable /dev/shm usage (often needed in containerized environments)
+        "--disable-dev-shm-usage", // Disable /dev/shm usage (often needed in containerized environments)
         // "--no-zygote", // Disable the zygote process for forking
         // "--disable-javascript",
         // "--blink-settings=imagesEnabled=false", // Disable loading of images
         // "--blink-settings=styleSheetsEnabled=false", // Disable loading of stylesheets
+        '--incognito',
       ],
     });
 

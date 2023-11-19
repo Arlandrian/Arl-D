@@ -47,7 +47,7 @@ async function downloadVideoAndAudio(
 
   const timestamp = new Date().getTime();
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
-  const audioOutputPath = `${tempDir}/audio_${timestamp}.mp3`;
+  const audioOutputPath = `${tempDir}/audio_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
 
   const midProcessVideoOutputPath = `${tempDir}/video_mid_${timestamp}.mp4`;
@@ -307,3 +307,10 @@ function downloadYoutubeAudioAsync(url, outputPath) {
 }
 
 module.exports = { downloadVideoAndAudio };
+
+// (async ()=>{
+//   console.time("total")
+//   downloadVideoAndAudio("https://x.com/animaIarmy/status/1725913900468556223","https://x.com/animaIarmy/status/1725913900468556223",0,10,0,10,()=>{
+//     console.timeEnd("total")
+//   })
+// })()
