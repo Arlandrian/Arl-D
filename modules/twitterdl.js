@@ -190,7 +190,7 @@ function downloadHlsManifestAsVideo(hlsManifestUrl, outputFileName) {
 // const intervalId = setInterval(logMemoryUsage, 100);
 // logMemoryUsage();
 
-module.exports = downloadTwitterVideoAsync;
+module.exports = {downloadTwitterVideoAsync,isTwitterStatusUrl};
 
 (async ()=>{
   console.time("total")

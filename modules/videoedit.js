@@ -9,7 +9,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const os = require("os");
 const axios = require("axios");
 const https = require("https");
-const downloadTwitterVideoAsync = require("./twitterdl.js");
+const twitterdl = require("./twitterdl.js");
 
 // get temp directory
 const tempDir = os.tmpdir();
@@ -64,8 +64,8 @@ async function downloadVideoAndAudio(
   }
   try {
     let promises = [];
-    const isVideoTwitter = isTwitterStatusUrl(videoUrl);
-    const isAudioTwitter = isTwitterStatusUrl(audioUrl);
+    const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
+    const isAudioTwitter = twitterdl.isTwitterStatusUrl(audioUrl);
     log(
       "isVideoTwitter:" + isVideoTwitter + ", isAudioTwitter:" + isAudioTwitter
     );
@@ -84,7 +84,7 @@ async function downloadVideoAndAudio(
 
     let videoPromise = null;
     if (isVideoTwitter) {
-      videoPromise = downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
@@ -94,7 +94,7 @@ async function downloadVideoAndAudio(
 
     let audioPromise = null;
     if (isAudioTwitter) {
-      audioPromise = downloadTwitterVideoAsync(audioUrl, audioOutputPath);
+      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
     } else if (isAudioUrlMp4) {
       audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
