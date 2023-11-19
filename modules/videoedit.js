@@ -159,7 +159,7 @@ async function downloadVideoAndAudio(
     log("final output ready");
     await callback(finalOutputPath);
   } catch (err) {
-    throw new Error(err.name);
+    throw err;
   } finally {
     // clean up files
     fs.unlink(videoOutputPath, function (err) {});
