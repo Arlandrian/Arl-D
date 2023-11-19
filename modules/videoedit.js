@@ -6,18 +6,13 @@
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 const ffmpeg = require("fluent-ffmpeg");
-// const stream = require("stream");
 const os = require("os");
 const axios = require("axios");
-
 const https = require("https");
-const puppeteer = require("puppeteer");
+const downloadTwitterVideoAsync = require("./twitterdl.js");
 
 // get temp directory
 const tempDir = os.tmpdir();
-
-const twitterStatusUrlRegex =
-  /^https?:\/\/twitter|x\.com\/(\w+)\/status(es)?\/(\d+)/;
 
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
@@ -311,96 +306,4 @@ function downloadYoutubeAudioAsync(url, outputPath) {
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
-////////////////////////////////////////////////////////////
-//////   Twitter    ////////////////////////////////////////
-////////////////////////////////////////////////////////////
-function isTwitterStatusUrl(url) {
-  return twitterStatusUrlRegex.test(url);
-}
-
-function downloadTwitterVideoAsync(url, outputPath) {
-  return new Promise(async (resolve) => {
-    if (!isTwitterStatusUrl(url)) {
-      throw new Error("url not a twitter status.");
-    }
-    log("retrieving hls for "+url);
-    const hlsUrl = await getTwitterVideoHlsUrlFromStatusUrl(url);
-    log("got the hls url for "+url);
-    if (hlsUrl == null) {
-      throw new Error("couldnt find the video on page.");
-    }
-    await downloadHlsManifestAsVideo(hlsUrl, outputPath);
-    log("twitter video downloaded");
-    resolve()
-  });
-}
-
-async function getTwitterVideoHlsUrlFromStatusUrl(url) {
-  const browser = await puppeteer.launch({ headless: "false", timeout: 120000 });
-  const [page] = await browser.pages();
-  let hlsManifest = null;
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    const r_url = request.url();
-    if (r_url.includes("video.twimg.com/ext_tw_video")) {
-      hlsManifest = r_url;
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
-
-  // Wait for the page to load and the video element to be present
-  // page
-  //   .waitForSelector("video")
-  //   .then((video) => {
-  //     video.click();
-  //   })
-  //   .catch((err) => {
-  //     if (err.name != "TargetCloseError") {
-  //       throw err;
-  //     }
-  //   });
-
-  // Navigate to the URL
-  await page.goto(url, { waitUntil: "networkidle0", timeout: 120000 });
-  await browser.close();
-  return hlsManifest;
-}
-
-function downloadHlsManifestAsVideo(hlsManifestUrl, outputFileName) {
-  return new Promise((resolve, reject) => {
-    // Download and convert HLS stream to a local file
-    ffmpeg()
-      .addInput(hlsManifestUrl)
-      .addOptions("-c:v copy") // Copy video codec
-      .addOptions("-c:a copy") // Copy audio codec
-      .addOptions("-bsf:a aac_adtstoasc") // Convert AAC stream to ADTS format
-      .output(outputFileName)
-      .on("end", () => {
-        resolve();
-      })
-      .on("error", (err) => {
-        reject(err);
-      })
-      .run();
-  });
-}
-
 module.exports = { downloadVideoAndAudio };
-
-// (async () => {
-// //   await downloadVideoAndAudio(
-// //     "https://www.youtube.com/watch?v=c1HeRtKk86U",
-// //     "https://www.youtube.com/watch?v=f0-RYStvdkc",
-// //     0,
-// //     25,
-// //     120,
-// //     160,
-// //     (outputPath) => {
-// //       console.log(fs.existsSync(outputPath));
-// //     }
-// //   );
-//   await downloadTwitterVideoAsync("https://twitter.com/ghiblipicture/status/1724241017757376856", path);
-//   console.log("all finished");
-// })();
