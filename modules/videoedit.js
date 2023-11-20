@@ -98,15 +98,17 @@ async function downloadVideoAndAudio(
       // no need to download again
       didAudioDownload = false
     }else{
-      if (isAudioTwitter) {
-        audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
-      } else if (isAudioUrlMp4) {
-        audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
-      } else {
-        audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
-      }
-      log("audio promise created");
+      
     }
+
+    if (isAudioTwitter) {
+      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
+    } else if (isAudioUrlMp4) {
+      audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
+    } else {
+      audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
+    }
+    log("audio promise created");
     
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
@@ -142,23 +144,22 @@ async function downloadVideoAndAudio(
 
       if (audioNeedsMidProcess) {
         // if we didnt downloaded the audioUrl, no need to delete
-        if (didAudioDownload){
-          fs.unlink(audioOutputPath, function (err) {});
-        }
+        // if (didAudioDownload){
+        //   fs.unlink(audioOutputPath, function (err) {});
+        // }
+        fs.unlink(audioOutputPath, function (err) {});
         fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
-      }else{
-        audi
       }
     }
 
-    if (!didAudioDownload){
-      if(!audioNeedsMidProcess){
-        // didnt download audio and mid process didnt happen
-        audioOutputPath = videoOutputPath
-      }
-      // if mid process happens we have a valid audioPathUrl
-    }
+    // if (!didAudioDownload){
+    //   if(!audioNeedsMidProcess){
+    //     // didnt download audio and mid process didnt happen
+    //     audioOutputPath = videoOutputPath
+    //   }
+    //   // if mid process happens we have a valid audioPathUrl
+    // }
 
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;

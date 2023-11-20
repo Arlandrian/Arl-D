@@ -65,7 +65,7 @@ function downloadTwitterVideoAsync(url, outputPath) {
   });
 }
 
-const FREE_BROWSER_TIMEOUT = 5*60000;
+const FREE_BROWSER_TIMEOUT = 10*60000;
 let browser;
 let browserLastUsedTime;
 
@@ -200,3 +200,5 @@ module.exports = {downloadTwitterVideoAsync,isTwitterStatusUrl};
 //   await downloadTwitterVideoAsync("https://x.com/ayiogluayi0/status/1725993560061653008?s=20", "30sec.mp4");
 //   console.timeEnd("total")
 // })()
+
+// TODO: kill doesnt kill process in run.sh gracefull
