@@ -12,9 +12,9 @@ function isTwitterStatusUrl(url) {
 process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
 
-async function gracefulShutdown() {
+function gracefulShutdown() {
   if (browser != null) {
-    await browser.close()
+    browser.close()
     setTimeout(() => {
       console.error('Forcefully terminating after 10 seconds.');
       process.exit(1); 
