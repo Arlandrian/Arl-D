@@ -9,8 +9,8 @@ function isTwitterStatusUrl(url) {
   return twitterStatusUrlRegex.test(url);
 }
 
-process.on("SIGTERM", gracefulShutdown);
-process.on("SIGINT", gracefulShutdown);
+// process.on("SIGTERM", gracefulShutdown);
+// process.on("SIGINT", gracefulShutdown);
 
 async function gracefulShutdown() {
   browser != null ? await browser.close() : null;
@@ -41,7 +41,7 @@ async function initPuppeteerRequestConsumer() {
   }
 }
 
-initPuppeteerRequestConsumer();
+// initPuppeteerRequestConsumer();
 
 function downloadTwitterVideoAsync(url, outputPath) {
   return new Promise(async (resolve) => {
