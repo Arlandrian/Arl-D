@@ -10,7 +10,7 @@ function isTwitterStatusUrl(url) {
 }
 
 process.on("SIGTERM", ()=>gracefulShutdown("SIGTERM"));
-process.on("SIGINT", ()=>gracefulShutdown("SIGINT"));
+// process.on("SIGINT", ()=>gracefulShutdown("SIGINT"));
 
 function gracefulShutdown(cause) {
   console.log(cause, " 1");
