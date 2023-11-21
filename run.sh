@@ -1,8 +1,11 @@
 # kill running process if it exists
 ps aux | grep "node index.js" | grep -vE grep |  awk '{print $2}' | xargs -r kill
 
+# in case the chrome stujck open
+pkill chrome
+
 # wait for some time
-sleep 2
+sleep 1
 
 # start new process
 RUNNER_TRACKING_ID="" && nohup node index.js > arl_d.log 2>&1 & echo $! > pid

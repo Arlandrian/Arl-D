@@ -9,7 +9,8 @@ function isTwitterStatusUrl(url) {
   return twitterStatusUrlRegex.test(url);
 }
 
-process.on("SIGTERM", ()=>gracefulShutdown("SIGTERM"));
+// somehow causes application not being terminated
+// process.on("SIGTERM", ()=>gracefulShutdown("SIGTERM"));
 // process.on("SIGINT", ()=>gracefulShutdown("SIGINT"));
 
 function gracefulShutdown(cause) {
