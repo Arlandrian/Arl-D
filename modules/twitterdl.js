@@ -9,17 +9,21 @@ function isTwitterStatusUrl(url) {
   return twitterStatusUrlRegex.test(url);
 }
 
-// process.on("SIGTERM", gracefulShutdown);
-// process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", ()=>gracefulShutdown("SIGTERM"));
+process.on("SIGINT", ()=>gracefulShutdown("SIGINT"));
 
-function gracefulShutdown() {
+function gracefulShutdown(cause) {
+  console.log(cause, " 1");
   if (browser != null) {
+    console.log(cause, " 2");
+
     browser.close()
     setTimeout(() => {
       console.error('Forcefully terminating after 10 seconds.');
       process.exit(1); 
     }, 10000);
   }
+  console.log(cause, " 3");
   twitterHlsChan.close()
 }
 
@@ -51,7 +55,7 @@ async function initPuppeteerRequestConsumer() {
   }
 }
 
-// initPuppeteerRequestConsumer();
+initPuppeteerRequestConsumer();
 
 function downloadTwitterVideoAsync(url, outputPath) {
   return new Promise(async (resolve) => {
