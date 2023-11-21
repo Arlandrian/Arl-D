@@ -14,6 +14,10 @@ process.on("SIGINT", gracefulShutdown);
 
 async function gracefulShutdown() {
   browser != null ? await browser.close() : null;
+  setTimeout(() => {
+    console.error('Forcefully terminating after 10 seconds.');
+    process.exit(1); 
+  }, 10000);
 }
 
 class TwitterVideoTicket {
