@@ -13,11 +13,14 @@ process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
 
 async function gracefulShutdown() {
-  browser != null ? await browser.close() : null;
-  setTimeout(() => {
-    console.error('Forcefully terminating after 10 seconds.');
-    process.exit(1); 
-  }, 10000);
+  if (browser != null) {
+    await browser.close()
+    setTimeout(() => {
+      console.error('Forcefully terminating after 10 seconds.');
+      process.exit(1); 
+    }, 10000);
+  }
+  twitterHlsChan.close()
 }
 
 class TwitterVideoTicket {
@@ -30,8 +33,11 @@ class TwitterVideoTicket {
 
 const twitterHlsChan = new Channel();
 async function initPuppeteerRequestConsumer() {
-  while (true) {
+  while (twitterHlsChan.closed==null) {
     const ticket = await twitterHlsChan.receive();
+    if (ticket == null) {
+      continue
+    }
     console.log("retrieving hls for " + ticket.statusUrl)
     console.time("hls")
     const hlsUrl = await consumePuppeteerRequest(ticket.statusUrl, ticket.outputPath);
