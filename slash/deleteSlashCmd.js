@@ -37,7 +37,7 @@ exports.commandData = {
   options: [
     {
       "name": "cmdname",
-      "description": "name of the command (main name only! subcommands are not supported all or none)",
+      "description": "name of the command (main name only! subcommands are not supported, all or none)",
       "type": 3,
       "required": true
     }

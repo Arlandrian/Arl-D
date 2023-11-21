@@ -1,6 +1,9 @@
 // This will check if the node version you are running is the required
 // Node version, if it isn't it will throw the following error to inform
 // you.
+// require("./modules/videoedit.js")
+// require("./modules/twitterdl.js")
+// require("./modules/twdl.js")
 if (Number(process.version.slice(1).split(".")[0]) < 16)
   throw new Error(
     "Node 16.x or higher is required. Update Node on your system."
@@ -159,7 +162,6 @@ async function onClientReady() {
   });
 
   await registerApplicationCommands();
-  //await registerAdminPanel();
 
   // notify owner that bot started
   const user = await client.users.fetch(process.env.OWNER, false);
@@ -187,37 +189,7 @@ async function registerApplicationCommands() {
   }
 }
 
-async function registerAdminPanel() {
-  try {
-    const cmd = {
-      commandData: {
-        name: "guilds",
-        description: "Display a paginated list of guilds.",
-        // permissions: [
-        //   {
-        //     id: "role id",// replace this if you want to restrict this command to specific role
-        //     type: "ROLE",
-        //     permission: true,
-        //   },
-        // ],
-      },
-    };
-    logger.log(`Registering Admin Panel: ${cmd.commandData.name}. 👌`, "log");
-    client.container.appCommands.set(cmd.commandData.name, cmd);
-    client.application.commands.create(cmd.commandData);
-  } catch (error) {
-    // And of course, make sure you catch and log any errors!
-    console.error(error);
-  }
-}
 
-async function deleteApplicationCommand(name) {
-  if (client.application.commands.cache.size() == 0) {
-    await client.application.commands.fetch();
-  }
-  const id = client.application.commands.cache.find((x) => x.name == name);
-  await client.application.commands.delete(id);
-}
 
 function runTest() {
   const testFunc = require("./commands/nicklog.js");
