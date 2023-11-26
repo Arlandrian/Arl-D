@@ -5,8 +5,7 @@ ps aux | grep "node index.js" | grep -vE grep |  awk '{print $2}' | xargs -r kil
 pkill chrome
 
 # set cronjobs
-chmod +x cronjobs.sh
-sh cronjobs.sh
+chmod +x cronjobs.sh && ./cronjobs.sh
 
 # wait for some time
 sleep 1
