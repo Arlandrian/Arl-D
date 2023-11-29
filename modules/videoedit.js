@@ -58,7 +58,8 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
     } else {
       videoPromise = downloadYoutubeBothAsync(videoUrl, videoOutputPath);
     }
-    await videoPromise();
+
+    await Promise.all([videoPromise])
 
     log("video downloaded");
 
