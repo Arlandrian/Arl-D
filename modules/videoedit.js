@@ -14,6 +14,7 @@ const twitterdl = require("./twitterdl.js");
 // get temp directory
 const tempDir = os.tmpdir();
 
+const MAX_VIDEO_SEC = 20 * 60;
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
@@ -31,8 +32,61 @@ log = (str) => {
 };
 
 // final output will return a file path in the temp folder,
+async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
+  if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
+    throw new Error("Not enough memory available on the machine.");
+  }
+  videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime
+  const timestamp = new Date().getTime();
+  const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
+  if (videoStartTime < 0 || videoEndTime <= videoStartTime) {
+    throw new Error("Invalid time range");
+  }
+  try {
+    const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
+    let isVideoUrlMp4 = false;
+    if (!isVideoTwitter) {
+      isVideoUrlMp4 = await isUrlMP4(videoUrl)
+    }
+    let videoPromise = null;
+    if (isVideoTwitter) {
+      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+    } else if (isVideoUrlMp4) {
+      videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
+    } else {
+      videoPromise = downloadYoutubeBothAsync(videoUrl, videoOutputPath);
+    }
+    await videoPromise();
+
+    log("video downloaded");
+
+    const videoDuration = videoEndTime - videoStartTime;
+    // Use fluent-ffmpeg to merge the video and audio files
+    await new Promise((resolve) => {
+      ffmpeg()
+        .addInput(videoOutputPath)
+        .seekInput(videoStartTime) // start time in seconds
+        .addOptions(`-t ${videoDuration}`) // duration in seconds
+        .output(finalOutputPath)
+        .on("end", resolve)
+        .run();
+    });
+
+    log("final output ready");
+    await callback(finalOutputPath);
+  } catch (err) {
+    throw err;
+  } finally {
+    // clean up files
+    fs.unlink(videoOutputPath, function (err) {});
+    fs.unlink(finalOutputPath, function (err) {});
+    log("cleaned up files");
+  }
+}
+
+// final output will return a file path in the temp folder,
 // user of this function has to clean up the
-async function downloadVideoAndAudio(
+async function downloadVideoAndAudioEdit(
   videoUrl,
   audioUrl,
   videoStartTime,
@@ -84,7 +138,10 @@ async function downloadVideoAndAudio(
 
     let videoPromise = null;
     if (isVideoTwitter) {
-      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+      videoPromise = twitterdl.downloadTwitterVideoAsync(
+        videoUrl,
+        videoOutputPath
+      );
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
@@ -93,23 +150,25 @@ async function downloadVideoAndAudio(
     log("video promise created");
 
     let audioPromise = null;
-    let didAudioDownload = true
-    if (audioUrl==videoUrl){
+    let didAudioDownload = true;
+    if (audioUrl == videoUrl) {
       // no need to download again
-      didAudioDownload = false
-    }else{
-      
+      didAudioDownload = false;
+    } else {
     }
 
     if (isAudioTwitter) {
-      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
+      audioPromise = twitterdl.downloadTwitterVideoAsync(
+        audioUrl,
+        audioOutputPath
+      );
     } else if (isAudioUrlMp4) {
       audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
       audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
     }
     log("audio promise created");
-    
+
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
@@ -283,16 +342,32 @@ function mediaStreamToFileAsync(stream, outputPath) {
 }
 
 function downloadMp4UrlAsync(url, outputPath) {
-  return new Promise(async (resolve)=>{
+  return new Promise(async (resolve) => {
     stream = (await axios.get(url, { responseType: "stream" })).data;
     await mediaStreamToFileAsync(stream, outputPath);
-    resolve()
-  })
+    resolve();
+  });
 }
 
 ////////////////////////////////////////////////////////////
 //////   Youtube    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
+
+function downloadYoutubeBothAsync(url, outputPath) {
+  stream = ytdl(url, {
+    filter: (format) => {
+      return (
+        format.hasVideo &&
+        format.hasAudio &&
+        format.height <= 540 &&
+        format.approxDurationMs != null &&
+        format.approxDurationMs < MAX_VIDEO_MS
+      );
+    },
+  });
+
+  return mediaStreamToFileAsync(stream, outputPath);
+}
 
 function downloadYoutubeVideoAsync(url, outputPath) {
   // Download video without audio
@@ -328,7 +403,7 @@ function downloadYoutubeAudioAsync(url, outputPath) {
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
-module.exports = { downloadVideoAndAudio };
+module.exports = { downloadVideo, downloadVideoAndAudioEdit };
 
 // (async ()=>{
 //   console.time("total")
