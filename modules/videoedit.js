@@ -39,6 +39,8 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
   videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime
   const timestamp = new Date().getTime();
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
+  const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
+
   if (videoStartTime < 0 || videoEndTime <= videoStartTime) {
     throw new Error("Invalid time range");
   }
