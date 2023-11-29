@@ -12,7 +12,7 @@ exports.run = async (client, interaction) => {
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
   );
-  await videoedit.downloadVideoAndAudio(
+  await videoedit.downloadVideo(
     videoURL,
     videoStartSec,
     videoEndSec,
