@@ -31,6 +31,15 @@ const db = ({
 const client = new Client({ intents, partials });
 
 client.db = db;
+
+const promClient = require("prom-client");
+client.metrics = {
+  messageCounter: new promClient.Counter({
+    name: "message_total",
+    help: "Total number of messages received",
+    labelNames: ["user_type"],
+  }),
+};
 // Aliases, commands and slash commands are put in collections where they can be
 // read from, catalogued, listed, etc.
 const commands = new Collection();
@@ -168,6 +177,27 @@ async function onClientReady() {
   if (user != null) {
     user.send("Hello I'm started :)");
   }
+  
+  StartMetricServer()
+}
+
+const StartMetricServer = () => {
+  const http = require("http");
+  const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Hello, World!\n");
+  });
+  // Expose Prometheus metrics at /metrics endpoint
+  server.on("request", (req, res) => {
+    if (req.url === "/metrics") {
+      res.setHeader("Content-Type", promClient.register.contentType);
+      res.end(promClient.register.metrics());
+    }
+  });
+  const PORT = process.env.METRIC_PORT || 3000;
+  server.listen(PORT, () => {
+    logger.log(`Metric Server is running on http://localhost:${PORT}`);
+  });
 }
 
 async function registerApplicationCommands() {
@@ -188,8 +218,6 @@ async function registerApplicationCommands() {
     console.error(error);
   }
 }
-
-
 
 function runTest() {
   const testFunc = require("./commands/nicklog.js");

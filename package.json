@@ -31,12 +31,13 @@
     "discord.js": "^13.14.0",
     "dotenv": "^10.0.0",
     "enmap": "^5.9.2",
+    "fluent-ffmpeg": "^2.1.2",
     "googleapis": "^109.0.1",
+    "prom-client": "^15.0.0",
+    "puppeteer": "^21.5.2",
     "quickchart-js": "^3.1.2",
     "redis": "^4.5.1",
     "youtube-chat": "^2.1.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "puppeteer": "^21.5.2",
     "ytdl-core": "https://github.com/khlevon/node-ytdl-core.git#v4.11.3-patch.1"
   },
   "devDependencies": {

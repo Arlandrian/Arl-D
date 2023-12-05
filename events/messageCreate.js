@@ -10,7 +10,9 @@ const db = { getUserSlowdown } = require("../modules/database.js")
 
 module.exports = async (client, message) => {
   // Grab the container from the client to reduce line length.
-  const { container } = client;
+  const { container, metrics } = client;
+
+  metrics.messageCounter.inc({ user_type: message.author.bot?"bot":"human"})
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
