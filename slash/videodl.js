@@ -70,8 +70,8 @@ exports.commandData = {
       max_value: 7200,
     },
   ],
-  defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
-  dmPermission: false,
+  // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
+  dmPermission: true,
   type: 1,
 };
 
