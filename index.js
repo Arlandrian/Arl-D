@@ -183,11 +183,19 @@ async function onClientReady() {
 
 const StartMetricServer = () => {
   const http = require("http");
-  const server = http.createServer((req, res) => {
+  const server = http.createServer(async (req, res) => {
     // Expose Prometheus metrics at /metrics endpoint
     if (req.url === "/metrics") {
-      res.setHeader("Content-Type", promClient.register.contentType);
-      return res.end(promClient.register.metrics());
+      try {
+        res.setHeader("Content-Type", promClient.register.contentType);
+        const metrics = await promClient.register.metrics();
+        res.end(metrics);
+      }catch (err) {
+        logger.error("Error generating metrics:", err)
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
+      }
+      return;
     }
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("Hello, World!\n");
