@@ -1,4 +1,5 @@
 const { google } = require('googleapis');
+const axios = require('axios');
 const auth = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET
@@ -61,3 +62,15 @@ const validateChannelId = async (channelId) => {
 
 initAuth();
 module.exports = { validateChannelId, getActiveLiveChatId, sendLiveChatMessage }
+
+// can remove youtube-chat package with this
+const getLiveStreamId = async(channelId)=>{
+  const res = await axios.get(`https://www.youtube.com/channel/${channelId}/live`)
+  const data = res.data
+  let liveId;
+  const idResult = data.match(/<link rel="canonical" href="https:\/\/www.youtube.com\/watch\?v=(.+?)">/);
+  if (idResult) {
+      liveId = idResult[1];
+  }
+  return liveId
+}
