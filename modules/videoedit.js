@@ -247,7 +247,7 @@ async function downloadVideoAndAudioEdit(
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     const err = await ffmpegExec(
-      `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`
+      `-i ${videoOutputPath} -i ${audioOutputPath} -ss ${videoStartTime} -t ${videoDuration} -ss ${audioStartTime} -t ${audioDuration} -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
     );
     if (err != null) {
       throw err;
