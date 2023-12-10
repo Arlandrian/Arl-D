@@ -73,6 +73,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
           .seekInput(videoStartTime) // start time in seconds
           .addOptions(`-t ${videoDuration}`) // duration in seconds
           .output(finalOutputPath)
+          .addOption("-c copy") // no encoding!!
           .addOptions("-threads 4")
           .on("end", resolve)
           .run();
@@ -241,6 +242,8 @@ async function downloadVideoAndAudioEdit(
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
         .addOutputOption("-shortest")
+        .addOptions(`-c:v copy`) // copy video no encoding! 
+        .addOptions(`-c:a copy`) // copy audio no encoding! 
         .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
@@ -299,8 +302,8 @@ function removeVideo(inputFilePath, outputFilePath) {
     ffmpeg()
       .input(inputFilePath)
       .output(outputFilePath)
-      .audioCodec("libmp3lame") // Use the MP3 audio codec
-      .noVideo() // Remove video
+      .addOption("--vn") // Remove video
+      .addOption("-c:a copy") // copy audio
       .addOptions("-threads 4")
       .on("end", () => {
         log("Video removed, and audio extracted as MP3 successfully");
@@ -319,7 +322,8 @@ function removeAudio(inputFilePath, outputFilePath) {
     ffmpeg()
       .input(inputFilePath)
       .output(outputFilePath)
-      .noAudio() // Remove audio from the video
+      .addOptions("-c:v copy") // Copy video codec
+      .addOption("-an") // Remove audio from the video
       .addOptions("-threads 4")
       .on("end", () => {
         log("Audio removed successfully");
