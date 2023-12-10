@@ -96,6 +96,7 @@ async function downloadVideo(
             .run();
         } else {
           const isArgsValid = isValidFFmpegOpts(ffmpegOpts);
+          log("ffmpegOpts isValid:",isArgsValid)
           if(!isArgsValid){
             reject("invalid args\nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n")
             return;
@@ -106,6 +107,7 @@ async function downloadVideo(
             reject(err)
             return;
           }
+          resolve(finalOutputPath)
         }
       });
     } else {
