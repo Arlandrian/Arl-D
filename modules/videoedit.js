@@ -51,6 +51,7 @@ async function downloadVideo(
   }
   videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime;
   const timestamp = new Date().getTime();
+  const timeLogLabel = `ts_${timestamp}`;
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
 
@@ -75,8 +76,9 @@ async function downloadVideo(
       videoPromise = downloadYoutubeBothAsync(videoUrl, videoOutputPath);
     }
 
+    console.time(timeLogLabel)
     await Promise.all([videoPromise]);
-
+    console.time(timeLogLabel)
     log("video downloaded");
 
     const needsPostProcess = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
@@ -86,7 +88,7 @@ async function downloadVideo(
       const videoDuration = videoEndTime - videoStartTime;
       let args = ""
         if (ffmpegOpts == "") {
-          args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c copy -threads 4 ${finalOutputPath}`
+          args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c:v libx264 -preset ultrafast -c:a copy -threads 8 ${finalOutputPath}`
         } else {
           args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
         }
@@ -95,8 +97,11 @@ async function downloadVideo(
           throw err
         }
     }
+    console.time(timeLogLabel)
     log("final output ready");
     await callback(finalOutputPath);
+    log("callback called");
+    console.time(timeLogLabel)
   } catch (err) {
     throw err;
   } finally {
@@ -104,6 +109,7 @@ async function downloadVideo(
     fs.unlink(videoOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
+    console.timeEnd(timeLogLabel)
   }
 }
 
@@ -123,6 +129,7 @@ async function downloadVideoAndAudioEdit(
   }
 
   const timestamp = new Date().getTime();
+  const timeLogLabel = `ts_${timestamp}`;
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const audioOutputPath = `${tempDir}/audio_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
@@ -151,7 +158,7 @@ async function downloadVideoAndAudioEdit(
       isAudioUrlMp4 = pRes[1];
     }
     log("isVideoUrlMp4:" + isVideoUrlMp4 + ", isAudioUrlMp4:" + isAudioUrlMp4);
-
+    
     let videoPromise = null;
     if (isVideoTwitter) {
       videoPromise = twitterdl.downloadTwitterVideoAsync(
@@ -176,22 +183,25 @@ async function downloadVideoAndAudioEdit(
       audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
     }
     log("audio promise created");
-
+    console.time(timeLogLabel)
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
-
+    console.time(timeLogLabel)
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration,audioDuration)
     const err = await ffmpegExec(
-      `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
+      `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v libx264 -preset ultrafast -c:a copy -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 8 ${finalOutputPath}`
     );
     if (err != null) {
       throw err;
     }
     log("final output ready");
+    console.time(timeLogLabel)
     await callback(finalOutputPath);
+    log("callback called");
+    console.time(timeLogLabel)
   } catch (err) {
     throw err;
   } finally {
@@ -200,6 +210,7 @@ async function downloadVideoAndAudioEdit(
     fs.unlink(audioOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
+    console.time(timeLogLabel)
   }
 }
 

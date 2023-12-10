@@ -9,6 +9,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 16)
     "Node 16.x or higher is required. Update Node on your system."
   );
 require("dotenv").config();
+require("modules/global.js");
 
 // Load up the discord.js library
 const { Client, Collection } = require("discord.js");
