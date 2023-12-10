@@ -14,8 +14,8 @@ async function ffmpegExec(args) {
   const ffmpegCommand = `${ffmpegPath} ${args}`;
   try {
     console.log(ffmpegCommand)
-    // const { stdout, stderr } = await execPromise(ffmpegCommand);
-    await execPromise(ffmpegCommand);
+    const { stdout, stderr } = await execPromise(ffmpegCommand);
+    // await execPromise(ffmpegCommand);
   } catch (error) {
     return error
   }

@@ -82,7 +82,7 @@ async function downloadVideo(
     if (needsMidProcess) {
       const videoDuration = videoEndTime - videoStartTime;
       // Use fluent-ffmpeg to merge the video and audio files
-      await new Promise((resolve, reject) => {
+      await new Promise(async (resolve, reject) => {
         if (ffmpegOpts == "") {
           ffmpeg()
             .addInput(videoOutputPath)
@@ -95,17 +95,17 @@ async function downloadVideo(
             .on("error", reject)
             .run();
         } else {
-          // TODO: hayvan gibi güvnelik açığı lan bu, buna sonra bak
-          ffmpeg()
-            .addInput(videoOutputPath)
-            .seekInput(videoStartTime) // start time in seconds
-            .addOptions(`-t ${videoDuration}`) // duration in seconds
-            .output(finalOutputPath)
-            .addOption("-c copy") // no encoding!!
-            .addOptions("-threads 4")
-            .on("end", resolve)
-            .on("error", reject)
-            .run();
+          const isArgsValid = isValidFFmpegOpts(ffmpegOpts);
+          if(!isArgsValid){
+            reject("invalid args\nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n")
+            return;
+          }
+          const args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
+          const err = await ffmpegExec(args)
+          if (err!=null){
+            reject(err)
+            return;
+          }
         }
       });
     } else {
@@ -144,9 +144,6 @@ async function downloadVideoAndAudioEdit(
   const audioOutputPath = `${tempDir}/audio_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
 
-  const midProcessVideoOutputPath = `${tempDir}/video_mid_${timestamp}.mp4`;
-  const midProcessAudioOutputPath = `${tempDir}/audio_mid_${timestamp}.mp4`;
-
   // Validate time ranges
   if (
     videoStartTime < 0 ||
@@ -157,7 +154,6 @@ async function downloadVideoAndAudioEdit(
     throw new Error("Invalid time range");
   }
   try {
-    let promises = [];
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
     const isAudioTwitter = twitterdl.isTwitterStatusUrl(audioUrl);
     log(
@@ -172,9 +168,6 @@ async function downloadVideoAndAudioEdit(
       isAudioUrlMp4 = pRes[1];
     }
     log("isVideoUrlMp4:" + isVideoUrlMp4 + ", isAudioUrlMp4:" + isAudioUrlMp4);
-
-    let videoNeedsMidProcess = isVideoUrlMp4 || isVideoTwitter;
-    let audioNeedsMidProcess = isAudioUrlMp4 || isAudioTwitter;
 
     let videoPromise = null;
     if (isVideoTwitter) {
@@ -205,51 +198,11 @@ async function downloadVideoAndAudioEdit(
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
 
-    // middle processing
-    // 1. remove audio from the video
-    // 2. write it to a temp file
-    // 3. delete old file
-    // 4. rename new file to old file
-    // 5. vice-versa for audio file
-    promises = [];
-    if (videoNeedsMidProcess) {
-      promises.push(removeAudio(videoOutputPath, midProcessVideoOutputPath));
-    }
-
-    if (audioNeedsMidProcess) {
-      // if there is no audio use video file
-      // const processPath = didAudioDownload ? audioOutputPath : videoOutputPath;
-      promises.push(removeVideo(audioOutputPath, midProcessAudioOutputPath));
-    }
-
-    if (promises.length > 0) {
-      log("mid process start");
-      await Promise.all(promises);
-      log("mid process ended");
-
-      if (videoNeedsMidProcess) {
-        // delete unproccesed
-        await fs.unlink(videoOutputPath, fsErr);
-        // rename processed to orig
-        await fs.rename(midProcessVideoOutputPath, videoOutputPath, fsErr);
-        log("deleted unprocessed video");
-      }
-
-      if (audioNeedsMidProcess) {
-        // delete unproccesed
-        await fs.unlink(audioOutputPath, fsErr);
-        // rename processed to orig
-        await fs.rename(midProcessAudioOutputPath, audioOutputPath, fsErr);
-        log("deleted unprocessed audio");
-      }
-    }
-    // throw new Error("Debug "+videoOutputPath+" "+videoOutputPath);
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration,audioDuration)
     const err = await ffmpegExec(
-      //`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
-      ` -ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
+      `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
     );
     if (err != null) {
       throw err;
@@ -263,8 +216,6 @@ async function downloadVideoAndAudioEdit(
     fs.unlink(videoOutputPath, fsErr);
     fs.unlink(audioOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
-    fs.unlink(midProcessAudioOutputPath, fsErr);
-    fs.unlink(midProcessVideoOutputPath, fsErr);
     log("cleaned up files");
   }
 }
@@ -401,19 +352,27 @@ function downloadYoutubeAudioAsync(url, outputPath) {
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
+function isValidFFmpegOpts(opts) {
+  // Regex pattern for FFmpeg options
+  const ffmpegOptsRegex = /^[-a-zA-Z0-9:.-]+$/;
+  return ffmpegOptsRegex.test(opts);
+}
+
 module.exports = { downloadVideo, downloadVideoAndAudioEdit };
 // (async ()=>{
 //   console.time("total")
-//   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
-//   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
-//   const vs = 30
-//   const ve = 60
-//   const as = 5
-//   const ae = 15
-//   const err = await downloadVideoAndAudioEdit(vurl,aurl,vs,ve,as,ae,(final)=>{
-//     console.log("ready: ", final)
-//     fs.copyFile(final, "final.mp4", fsErr)
-//     console.timeEnd("total")
-//   })
-  
+// //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
+// //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
+//   const vurl = "https://x.com/onlineinsane/status/1733586584438522241?s=20"
+//   const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20"
+//   const vs = 5
+//   const ve = 15
+//   const as = 0
+//   const ae = 9
+//   // const err = await downloadVideoAndAudioEdit(vurl,aurl,vs,ve,as,ae,(final)=>{
+//   //   console.log("ready: ", final)
+//   //   fs.copyFile(final, "final.mp4", fsErr)
+//   //   console.timeEnd("total")
+//   // })
+//   await downloadVideo(vurl, vs, ve, "\" ls ")
 // })()

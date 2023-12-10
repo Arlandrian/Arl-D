@@ -1,5 +1,4 @@
 const discord = require("discord.js");
-const logger = require("../modules/logger");
 const videoedit = require("../modules/videoedit");
 exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars

@@ -19,7 +19,7 @@ async function downloadTwitterVideoAsync(url, outputFileName) {
   const tweetId = getTweetIdFromUrl(url)
   const tweetInfo = await scraper.getTweet(tweetId)
   const hlsManifestUrl = tweetInfo.videos[0].url;
-  return new Promise((resolve)=>{
+  return new Promise((resolve, reject)=>{
     // Download and convert HLS stream to a local file
     ffmpeg()
     .addInput(hlsManifestUrl)
