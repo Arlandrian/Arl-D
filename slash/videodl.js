@@ -8,6 +8,7 @@ exports.run = async (client, interaction) => {
   const videoURL = opts[0].value;
   const videoStartSec = getOption(opts, "videoStartSec", 0);
   const videoEndSec = getOption(opts, "videoEndSec", 0);
+  const ffmpegOpts = getOption(opts, "ffmpeg", "");
 
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
@@ -17,6 +18,7 @@ exports.run = async (client, interaction) => {
     videoURL,
     videoStartSec,
     videoEndSec,
+    ffmpegOpts,
     async (videoPath) => {
       console.debug("cmd::videold: sending attachment file " + videoPath);
       const videoAttachment = new discord.MessageAttachment(videoPath);
@@ -71,6 +73,15 @@ exports.commandData = {
       required: false,
       min_value: 0,
       max_value: 7200,
+    },
+    {
+      name: "ffmpeg",
+      description: "you can give custom ffmpeg options. (other args will be ignored)",
+      descriptionLocalizations: {
+        tr: "kendi ffmpeg ayarlarınızı verebilirsiniz. (diğer ayarlar görmezden gelinir)",
+      },
+      type: 3,
+      required: false,
     },
   ],
   // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
