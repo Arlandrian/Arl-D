@@ -78,7 +78,7 @@ async function downloadVideo(
 
     console.time(timeLogLabel)
     await Promise.all([videoPromise]);
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
     log("video downloaded");
 
     const needsPostProcess = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
@@ -97,11 +97,11 @@ async function downloadVideo(
           throw err
         }
     }
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
     log("final output ready");
     await callback(finalOutputPath);
     log("callback called");
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
   } catch (err) {
     throw err;
   } finally {
@@ -187,7 +187,7 @@ async function downloadVideoAndAudioEdit(
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration,audioDuration)
@@ -198,10 +198,10 @@ async function downloadVideoAndAudioEdit(
       throw err;
     }
     log("final output ready");
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
     await callback(finalOutputPath);
     log("callback called");
-    console.time(timeLogLabel)
+    console.timeLog(timeLogLabel)
   } catch (err) {
     throw err;
   } finally {
@@ -210,7 +210,7 @@ async function downloadVideoAndAudioEdit(
     fs.unlink(audioOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
-    console.time(timeLogLabel)
+    console.timeEnd(timeLogLabel)
   }
 }
 
