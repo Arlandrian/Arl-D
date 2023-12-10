@@ -14,13 +14,14 @@ async function ffmpegExec(args) {
   const ffmpegCommand = `${ffmpegPath} ${args}`;
   try {
     console.log(ffmpegCommand)
+    // const { stdout } = await execPromise(ffmpegCommand);
+    // console.log('ffmpeg stdout:', stdout);
     const { stdout, stderr } = await execPromise(ffmpegCommand);
-    console.log('ffmpeg stdout:', stdout);
     console.error('ffmpeg stderr:', stderr);
     console.log('Conversion finished');
   } catch (error) {
     console.error('Error:', error);
-    return err
+    return error
   }
 }
 
