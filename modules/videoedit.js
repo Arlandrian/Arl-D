@@ -79,38 +79,22 @@ async function downloadVideo(
 
     log("video downloaded");
 
-    const needsMidProcess = !(
-      videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC
-    );
-    if (needsMidProcess) {
-      const videoDuration = videoEndTime - videoStartTime;
-      // Use fluent-ffmpeg to merge the video and audio files
-      await new Promise(async (resolve, reject) => {
-        if (ffmpegOpts == "") {
-          ffmpeg()
-            .addInput(videoOutputPath)
-            .seekInput(videoStartTime) // start time in seconds
-            .addOptions(`-t ${videoDuration}`) // duration in seconds
-            .output(finalOutputPath)
-            .addOption("-c copy") // no encoding!!
-            .addOptions("-threads 4")
-            .on("end", resolve)
-            .on("error", reject)
-            .run();
-        } else {
-          const args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
-          const err = await ffmpegExec(args)
-          if (err!=null){
-            reject(err)
-            return;
-          }
-          resolve(finalOutputPath)
-        }
-      });
+    const needsPostProcess = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
+    if (!needsPostProcess) {
+      fs.renameSync(videoOutputPath, finalOutputPath);
     } else {
-      fs.rename(videoOutputPath, finalOutputPath, fsErr);
+      const videoDuration = videoEndTime - videoStartTime;
+      let args = ""
+        if (ffmpegOpts == "") {
+          args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c copy -threads 4 ${finalOutputPath}`
+        } else {
+          args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
+        }
+        const err = await ffmpegExec(args)
+        if (err!=null){
+          throw err
+        }
     }
-
     log("final output ready");
     await callback(finalOutputPath);
   } catch (err) {
