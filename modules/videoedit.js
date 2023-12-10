@@ -218,7 +218,7 @@ async function downloadVideoAndAudioEdit(
         log("deleted unprocessed audio");
       }
     }
-    
+
     //-i 1.mp4 -ss 0 -t 10 -i 2.mp4 -ss 0 -t 10 -c:v copy -c:a aac -map 0:v -map 1:a output.mp4
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
@@ -295,10 +295,10 @@ function removeVideo(inputFilePath, outputFilePath) {
       .input(inputFilePath)
       .output(outputFilePath)
       .addOption("-vn") // Remove video
-      .addOption("-c:a copy") // copy audio
+      .addOption("-c:a aac") // copy audio
       .addOption("-threads 4")
       .on("end", () => {
-        log("Video removed, and audio extracted as MP3 successfully");
+        log("Video removed, and audio extracted successfully");
         resolve();
       })
       .on("error", (err) => {
