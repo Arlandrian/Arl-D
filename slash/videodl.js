@@ -12,6 +12,7 @@ exports.run = async (client, interaction) => {
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
   );
+  const startTime = performance.now();
   await videoedit.downloadVideo(
     videoURL,
     videoStartSec,
@@ -19,7 +20,9 @@ exports.run = async (client, interaction) => {
     async (videoPath) => {
       console.debug("cmd::videold: sending attachment file " + videoPath);
       const videoAttachment = new discord.MessageAttachment(videoPath);
-      await interaction.editReply("video edit hazır:white_check_mark:");
+      const endTime = performance.now();
+      const elapsedTime = endTime - startTime;
+      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime}ms`);
       await interaction.editReply({ files: [videoAttachment] });
     }
   );
