@@ -163,10 +163,7 @@ async function downloadVideoAndAudioEdit(
 
     let videoPromise = null;
     if (isVideoTwitter) {
-      videoPromise = twitterdl.downloadTwitterVideoAsync(
-        videoUrl,
-        videoOutputPath
-      );
+      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
@@ -183,10 +180,7 @@ async function downloadVideoAndAudioEdit(
     }
 
     if (isAudioTwitter) {
-      audioPromise = twitterdl.downloadTwitterVideoAsync(
-        audioUrl,
-        audioOutputPath
-      );
+      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
     } else if (isAudioUrlMp4) {
       audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
@@ -252,14 +246,14 @@ async function downloadVideoAndAudioEdit(
     await new Promise((resolve, reject) => {
       const command = ffmpeg()
         //.addOptions(` -i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -map 1  -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
-        .addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
-        // .addInput(videoOutputPath)
-        // .seekInput(videoStartTime) // start time in seconds
-        // .addInputOptions(`-t ${shortest}`) // duration in seconds
-        // .addInput(audioOutputPath)
-        // .seekInput(audioStartTime) // start time in seconds
-        // .addInputOptions(`-t ${shortest}`) // duration in seconds
-        // .addOptions("-threads 4")
+        //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
+        .addInput(videoOutputPath)
+        .seekInput(videoStartTime) // start time in seconds
+        .addInputOptions(`-t ${shortest}`) // duration in seconds
+        .addInput(audioOutputPath)
+        .seekInput(audioStartTime) // start time in seconds
+        .addInputOptions(`-t ${shortest}`) // duration in seconds
+        .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
         .on("error", reject)
@@ -319,7 +313,7 @@ function removeVideo(inputFilePath, outputFilePath) {
     ffmpeg()
       .input(inputFilePath)
       .output(outputFilePath)
-      .addOption("--vn") // Remove video
+      .addOption("-vn") // Remove video
       .addOption("-c:a copy") // copy audio
       .addOptions("-threads 4")
       .on("end", () => {
