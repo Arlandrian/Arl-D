@@ -63,18 +63,23 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
 
     log("video downloaded");
 
-    const videoDuration = videoEndTime - videoStartTime;
-    // Use fluent-ffmpeg to merge the video and audio files
-    await new Promise((resolve) => {
-      ffmpeg()
-        .addInput(videoOutputPath)
-        .seekInput(videoStartTime) // start time in seconds
-        .addOptions(`-t ${videoDuration}`) // duration in seconds
-        .output(finalOutputPath)
-        .addOptions("-threads 4")
-        .on("end", resolve)
-        .run();
-    });
+    const needsMidProcess = videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC
+    if(needsMidProcess){
+      const videoDuration = videoEndTime - videoStartTime;
+      // Use fluent-ffmpeg to merge the video and audio files
+      await new Promise((resolve) => {
+        ffmpeg()
+          .addInput(videoOutputPath)
+          .seekInput(videoStartTime) // start time in seconds
+          .addOptions(`-t ${videoDuration}`) // duration in seconds
+          .output(finalOutputPath)
+          .addOptions("-threads 4")
+          .on("end", resolve)
+          .run();
+      });
+    }else {
+      fs.rename(videoOutputPath, finalOutputPath, (err)=>{})
+    }
 
     log("final output ready");
     await callback(finalOutputPath);
