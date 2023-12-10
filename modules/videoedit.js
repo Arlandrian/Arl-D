@@ -67,7 +67,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
     if(needsMidProcess){
       const videoDuration = videoEndTime - videoStartTime;
       // Use fluent-ffmpeg to merge the video and audio files
-      await new Promise((resolve) => {
+      await new Promise((resolve,reject) => {
         if(ffmpegOpts==""){
           ffmpeg()
           .addInput(videoOutputPath)
@@ -77,6 +77,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
           .addOption("-c copy") // no encoding!!
           .addOptions("-threads 4")
           .on("end", resolve)
+          .on("error", reject)
           .run();
         }else{
           // TODO: hayvan gibi güvnelik açığı lan bu, buna sonra bak
@@ -88,6 +89,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
           .addOption("-c copy") // no encoding!!
           .addOptions("-threads 4")
           .on("end", resolve)
+          .on("error", reject)
           .run();
         }
       });
@@ -245,22 +247,19 @@ async function downloadVideoAndAudioEdit(
 
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
+    const shortest = Math.min(videoDuration, audioDuration)
     // Use fluent-ffmpeg to merge the video and audio files
-
-    //-i final_1702167693159.mp4 -ss 0 -t 5 -i result.mp4 -ss 5 -t 5 -shortest -map 0:v -map 1:a -c:v copy -c:a copy -y -threads 4 result2323.mp4
     await new Promise((resolve, reject) => {
       const command = ffmpeg()
-        .addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
-        // .addInput(videoOutputPath)
-        // .seekInput(videoStartTime) // start time in seconds
-        // .addOptions(`-t ${videoDuration}`) // duration in seconds
-        // .input(audioOutputPath)
-        // .seekInput(audioStartTime) // start time in seconds
-        // .addOptions(`-t ${audioDuration}`) // duration in seconds
-        // .addOutputOption("-shortest")
-        // .addOptions(`-c:v copy`) // copy video no encoding! 
-        // .addOptions(`-c:a copy`) // copy audio no encoding! 
-        // .addOptions("-threads 4")
+        //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
+        .input(videoOutputPath)
+        .seekInput(videoStartTime) // start time in seconds
+        .addInputOptions(`-t ${shortest}`) // duration in seconds
+        .addInput(audioOutputPath)
+        .seekInput(audioStartTime) // start time in seconds
+        .addOptions(`-t ${shortest}`) // duration in seconds
+        .addOptions(` -map 0:v -map 1:a -c:v copy -c:a copy `) // copy video no encoding! 
+        .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
         .on("error", reject)
