@@ -296,6 +296,7 @@ async function removeVideo(inputFilePath, outputFilePath) {
   if (err!=null){
     return
   }
+  log("Video removed successfully");
   // return new Promise((resolve, reject) => {
   //   const command = ffmpeg()
   //     .input(inputFilePath)
