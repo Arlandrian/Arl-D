@@ -71,6 +71,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
         .output(finalOutputPath)
+        .addOptions("-threads 4")
         .on("end", resolve)
         .run();
     });
@@ -235,6 +236,7 @@ async function downloadVideoAndAudioEdit(
         .seekInput(audioStartTime) // start time in seconds
         .addOptions(`-t ${audioDuration}`) // duration in seconds
         .addOutputOption("-shortest")
+        .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
         .run();
@@ -294,6 +296,7 @@ function removeVideo(inputFilePath, outputFilePath) {
       .output(outputFilePath)
       .audioCodec("libmp3lame") // Use the MP3 audio codec
       .noVideo() // Remove video
+      .addOptions("-threads 4")
       .on("end", () => {
         log("Video removed, and audio extracted as MP3 successfully");
         resolve();
@@ -312,6 +315,7 @@ function removeAudio(inputFilePath, outputFilePath) {
       .input(inputFilePath)
       .output(outputFilePath)
       .noAudio() // Remove audio from the video
+      .addOptions("-threads 4")
       .on("end", () => {
         log("Audio removed successfully");
         resolve();
