@@ -17,7 +17,6 @@ async function ffmpegExec(args) {
     // const { stdout, stderr } = await execPromise(ffmpegCommand);
     await execPromise(ffmpegCommand);
   } catch (error) {
-    console.error(error);
     return error
   }
 }

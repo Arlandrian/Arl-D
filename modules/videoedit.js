@@ -31,6 +31,7 @@ const debugEnabled = true;
 log = (str) => {
   if (debugEnabled) console.debug("cmd::videoedit: " + str);
 };
+const fsErr = (err)=>console.error("fs-err:"+err)
 
 // final output will return a file path in the temp folder,
 async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts, callback) {
@@ -95,7 +96,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
         }
       });
     }else {
-      fs.rename(videoOutputPath, finalOutputPath, (err)=>{})
+      fs.rename(videoOutputPath, finalOutputPath, fsErr)
     }
 
     log("final output ready");
@@ -104,8 +105,8 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
     throw err;
   } finally {
     // clean up files
-    fs.unlink(videoOutputPath, function (err) {});
-    fs.unlink(finalOutputPath, function (err) {});
+    fs.unlink(videoOutputPath, fsErr);
+    fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
   }
 }
@@ -208,40 +209,24 @@ async function downloadVideoAndAudioEdit(
       log("mid process ended");
 
       if (videoNeedsMidProcess) {
-        await fs.unlink(videoOutputPath, (err)=>{});
-        fs.renameSync(midProcessVideoOutputPath, videoOutputPath);
+        // delete unproccesed
+        await fs.unlink(videoOutputPath, fsErr);
+        // rename processed to orig
+        await fs.rename(midProcessVideoOutputPath, videoOutputPath, fsErr);
         log("deleted unprocessed video");
       }
 
       if (audioNeedsMidProcess) {
-        await fs.unlink(audioOutputPath, (err)=>{});
-        fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
+        // delete unproccesed
+        await fs.unlink(audioOutputPath, fsErr);
+        // rename processed to orig
+        await fs.rename(midProcessAudioOutputPath, audioOutputPath, fsErr);
         log("deleted unprocessed audio");
       }
     }
-
-    //-i 1.mp4 -ss 0 -t 10 -i 2.mp4 -ss 0 -t 10 -c:v copy -c:a aac -map 0:v -map 1:a output.mp4
+    // throw new Error("Debug "+videoOutputPath+" "+videoOutputPath);
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
-    const shortest = Math.min(videoDuration, audioDuration)
-    // Use fluent-ffmpeg to merge the video and audio files
-    // await new Promise((resolve, reject) => {
-    //   const command = ffmpeg()
-    //     //.addOptions(` -i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -map 1  -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
-    //     //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
-    //     .addInput(videoOutputPath)
-    //     .seekInput(videoStartTime) // start time in seconds
-    //     .addInputOptions(`-t ${shortest}`) // duration in seconds
-    //     .addInput(audioOutputPath)
-    //     .seekInput(audioStartTime) // start time in seconds
-    //     .addInputOptions(`-t ${shortest}`) // duration in seconds
-    //     .addOptions("-threads 4")
-    //     .output(finalOutputPath)
-    //     .on("end", resolve)
-    //     .on("error", reject)
-    //   console.log(command._getArguments().join(' '));
-    //   command.run();
-    // });
     const err = await ffmpegExec(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
     if (err!=null){
       throw err
@@ -252,11 +237,11 @@ async function downloadVideoAndAudioEdit(
     throw err;
   } finally {
     // clean up files
-    fs.unlink(videoOutputPath, function (err) {});
-    fs.unlink(audioOutputPath, function (err) {});
-    fs.unlink(finalOutputPath, function (err) {});
-    fs.unlink(midProcessAudioOutputPath, function (err) {});
-    fs.unlink(midProcessVideoOutputPath, function (err) {});
+    fs.unlink(videoOutputPath, fsErr);
+    fs.unlink(audioOutputPath, fsErr);
+    fs.unlink(finalOutputPath, fsErr);
+    fs.unlink(midProcessAudioOutputPath, fsErr);
+    fs.unlink(midProcessVideoOutputPath, fsErr);
     log("cleaned up files");
   }
 }
@@ -300,24 +285,6 @@ async function removeVideo(inputFilePath, outputFilePath) {
     return
   }
   log("Video removed successfully");
-  // return new Promise((resolve, reject) => {
-  //   const command = ffmpeg()
-  //     .input(inputFilePath)
-  //     .output(outputFilePath)
-  //     .addOption("-vn") // Remove video
-  //     .addOption("-c:a aac") // copy audio
-  //     .addOption("-threads 4")
-  //     .on("end", () => {
-  //       log("Video removed, and audio extracted successfully");
-  //       resolve();
-  //     })
-  //     .on("error", (err) => {
-  //       log("Error on removeVideo: : " + err);
-  //       reject(err);
-  //     })
-  //   console.log(command._getArguments().join(' '));
-  //   command.run();
-  // });
 }
 
 async function removeAudio(inputFilePath, outputFilePath) {
@@ -327,24 +294,6 @@ async function removeAudio(inputFilePath, outputFilePath) {
     return
   }
   log("Audio removed successfully");
-  // return new Promise((resolve, reject) => {
-  //   const command = ffmpeg()
-  //     .input(inputFilePath)
-  //     .output(outputFilePath)
-  //     .addOption("-c:v copy") // Copy video codec
-  //     .addOption("-an") // Remove audio from the video
-  //     .addOption("-threads 4")
-  //     .on("end", () => {
-  //       log("Audio removed successfully");
-  //       resolve();
-  //     })
-  //     .on("error", (err) => {
-  //       log("Error on removeAudio: " + err);
-  //       reject(err);
-  //     });
-  //   console.log(command._getArguments().join(' '));
-  //   command.run();
-  // });
 }
 
 ////////////////////////////////////////////////////////////
