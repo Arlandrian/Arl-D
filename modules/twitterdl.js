@@ -11,7 +11,7 @@ function isTwitterStatusUrl(url) {
 function getTweetIdFromUrl(url) {
   const matches = twitterStatusUrlRegex.exec(url);
   if (matches != null) {
-    return matches[3];
+    return matches[4];
   }
 }
 
