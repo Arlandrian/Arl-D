@@ -244,22 +244,22 @@ async function downloadVideoAndAudioEdit(
     //   }
     //   // if mid process happens we have a valid audioPathUrl
     // }
-
+    //-i 1.mp4 -ss 0 -t 10 -i 2.mp4 -ss 0 -t 10 -c:v copy -c:a aac -map 0:v -map 1:a output.mp4
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration, audioDuration)
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise((resolve, reject) => {
       const command = ffmpeg()
-        //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
-        .input(videoOutputPath)
-        .seekInput(videoStartTime) // start time in seconds
-        .addInputOptions(`-t ${shortest}`) // duration in seconds
-        .addInput(audioOutputPath)
-        .seekInput(audioStartTime) // start time in seconds
-        .addInputOptions(`-t ${shortest}`) // duration in seconds
-        .addOptions(` -map 0:v -map 1:a -c:v copy -c:a copy `) // copy video no encoding! 
-        .addOptions("-threads 4")
+        //.addOptions(` -i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -map 1  -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
+        .addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
+        // .addInput(videoOutputPath)
+        // .seekInput(videoStartTime) // start time in seconds
+        // .addInputOptions(`-t ${shortest}`) // duration in seconds
+        // .addInput(audioOutputPath)
+        // .seekInput(audioStartTime) // start time in seconds
+        // .addInputOptions(`-t ${shortest}`) // duration in seconds
+        // .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
         .on("error", reject)
