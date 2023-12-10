@@ -22,7 +22,7 @@ exports.run = async (client, interaction) => {
       const videoAttachment = new discord.MessageAttachment(videoPath);
       const endTime = performance.now();
       const elapsedTime = endTime - startTime;
-      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime}ms`);
+      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime.toFixed(2)}ms`);
       await interaction.editReply({ files: [videoAttachment] });
     }
   );
