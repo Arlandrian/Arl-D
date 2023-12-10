@@ -247,12 +247,10 @@ async function downloadVideoAndAudioEdit(
     const audioDuration = audioEndTime - audioStartTime;
     // Use fluent-ffmpeg to merge the video and audio files
 
-    //-ss 20 -i /tmp/video_1702172994837.mp4 -ss 26 -i /tmp/audio_1702172994837.mp4 -y -t 30 -t 130 -shortest -c:v copy -c:a copy -threads 4 /tmp/final_1702172994837.mp4
-
-
-    await new Promise((resolve) => {
+    //-i final_1702167693159.mp4 -ss 0 -t 5 -i result.mp4 -ss 5 -t 5 -shortest -map 0:v -map 1:a -c:v copy -c:a copy -y -threads 4 result2323.mp4
+    await new Promise((resolve, reject) => {
       const command = ffmpeg()
-        .addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -c:v copy -c:a copy -threads 4`)
+        .addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
         // .addInput(videoOutputPath)
         // .seekInput(videoStartTime) // start time in seconds
         // .addOptions(`-t ${videoDuration}`) // duration in seconds
@@ -265,6 +263,7 @@ async function downloadVideoAndAudioEdit(
         // .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
+        .on("error", reject)
       console.log(command._getArguments().join(' '));
       command.run();
     });
