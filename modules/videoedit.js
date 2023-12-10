@@ -131,7 +131,7 @@ async function downloadVideoAndAudioEdit(
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
 
   const midProcessVideoOutputPath = `${tempDir}/video_mid_${timestamp}.mp4`;
-  const midProcessAudioOutputPath = `${tempDir}/audio_mid_${timestamp}.mp3`;
+  const midProcessAudioOutputPath = `${tempDir}/audio_mid_${timestamp}.mp4`;
 
   // Validate time ranges
   if (
