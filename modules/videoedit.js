@@ -246,18 +246,23 @@ async function downloadVideoAndAudioEdit(
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
     // Use fluent-ffmpeg to merge the video and audio files
+
+    //-ss 20 -i /tmp/video_1702172994837.mp4 -ss 26 -i /tmp/audio_1702172994837.mp4 -y -t 30 -t 130 -shortest -c:v copy -c:a copy -threads 4 /tmp/final_1702172994837.mp4
+
+
     await new Promise((resolve) => {
       const command = ffmpeg()
-        .addInput(videoOutputPath)
-        .seekInput(videoStartTime) // start time in seconds
-        .addOptions(`-t ${videoDuration}`) // duration in seconds
-        .input(audioOutputPath)
-        .seekInput(audioStartTime) // start time in seconds
-        .addOptions(`-t ${audioDuration}`) // duration in seconds
-        .addOutputOption("-shortest")
-        .addOptions(`-c:v copy`) // copy video no encoding! 
-        .addOptions(`-c:a copy`) // copy audio no encoding! 
-        .addOptions("-threads 4")
+        .addOption(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -c:v copy -c:a copy -threads 4`)
+        // .addInput(videoOutputPath)
+        // .seekInput(videoStartTime) // start time in seconds
+        // .addOptions(`-t ${videoDuration}`) // duration in seconds
+        // .input(audioOutputPath)
+        // .seekInput(audioStartTime) // start time in seconds
+        // .addOptions(`-t ${audioDuration}`) // duration in seconds
+        // .addOutputOption("-shortest")
+        // .addOptions(`-c:v copy`) // copy video no encoding! 
+        // .addOptions(`-c:a copy`) // copy audio no encoding! 
+        // .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
       console.log(command._getArguments().join(' '));
