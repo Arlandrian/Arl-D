@@ -242,7 +242,7 @@ async function downloadVideoAndAudioEdit(
     //   console.log(command._getArguments().join(' '));
     //   command.run();
     // });
-    const err = await ffmpegExec(`-i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -map 1 -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
+    const err = await ffmpegExec(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
     if (err!=null){
       throw err
     }
@@ -433,8 +433,16 @@ module.exports = { downloadVideo, downloadVideoAndAudioEdit };
 
 // (async ()=>{
 //   console.time("total")
-//   removeAudio("video_1702221583410.mp4","noA.mp4")
-//   console.timeLog("total")
-//   removeVideo("video_1702221583410.mp4","noV.mp4")
+//   const videoOutputPath = "noA.mp4"
+//   const audioOutputPath = "noV.mp4"
+//   const finalOutputPath = "final.mp4"
+//   const videoStartTime = 0
+//   const videoDuration = 20
+//   const audioStartTime = 0
+//   const audioDuration = 20
+//   const err = await ffmpegExec(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
+//   if (err!=null){
+//     throw err
+//   }
 //   console.timeEnd("total")
 // })()
