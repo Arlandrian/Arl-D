@@ -197,8 +197,8 @@ async function downloadVideoAndAudioEdit(
 
     if (audioNeedsMidProcess) {
       // if there is no audio use video file
-      const processPath = didAudioDownload ? audioOutputPath : videoOutputPath;
-      promises.push(removeVideo(processPath, midProcessAudioOutputPath));
+      // const processPath = didAudioDownload ? audioOutputPath : videoOutputPath;
+      promises.push(removeVideo(audioOutputPath, midProcessAudioOutputPath));
     }
 
     if (promises.length > 0) {
@@ -213,23 +213,12 @@ async function downloadVideoAndAudioEdit(
       }
 
       if (audioNeedsMidProcess) {
-        // if we didnt downloaded the audioUrl, no need to delete
-        // if (didAudioDownload){
-        //   fs.unlink(audioOutputPath, function (err) {});
-        // }
         await fs.unlink(audioOutputPath, (err)=>{});
         fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
       }
     }
-
-    // if (!didAudioDownload){
-    //   if(!audioNeedsMidProcess){
-    //     // didnt download audio and mid process didnt happen
-    //     audioOutputPath = videoOutputPath
-    //   }
-    //   // if mid process happens we have a valid audioPathUrl
-    // }
+    
     //-i 1.mp4 -ss 0 -t 10 -i 2.mp4 -ss 0 -t 10 -c:v copy -c:a aac -map 0:v -map 1:a output.mp4
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
