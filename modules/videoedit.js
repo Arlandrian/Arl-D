@@ -10,6 +10,7 @@ const os = require("os");
 const axios = require("axios");
 const https = require("https");
 const twitterdl = require("./twitterdl.js");
+const ffmpegExec = require("./ffmpeg.js");
 
 // get temp directory
 const tempDir = os.tmpdir();
@@ -289,46 +290,57 @@ function isUrlMP4(url) {
 ////////////////////////////////////////////////////////////
 
 // turn video to audio only file
-function removeVideo(inputFilePath, outputFilePath) {
-  return new Promise((resolve, reject) => {
-    const command = ffmpeg()
-      .input(inputFilePath)
-      .output(outputFilePath)
-      .addOption("-vn") // Remove video
-      .addOption("-c:a aac") // copy audio
-      .addOption("-threads 4")
-      .on("end", () => {
-        log("Video removed, and audio extracted successfully");
-        resolve();
-      })
-      .on("error", (err) => {
-        log("Error on removeVideo: : " + err);
-        reject(err);
-      })
-    console.log(command._getArguments().join(' '));
-    command.run();
-  });
+async function removeVideo(inputFilePath, outputFilePath) {
+  const args = `-y -i ${inputFilePath} -vn -c:a aac -threads 4 ${outputFilePath}`
+  const err = await ffmpegExec(args)
+  if (err!=null){
+    return
+  }
+  // return new Promise((resolve, reject) => {
+  //   const command = ffmpeg()
+  //     .input(inputFilePath)
+  //     .output(outputFilePath)
+  //     .addOption("-vn") // Remove video
+  //     .addOption("-c:a aac") // copy audio
+  //     .addOption("-threads 4")
+  //     .on("end", () => {
+  //       log("Video removed, and audio extracted successfully");
+  //       resolve();
+  //     })
+  //     .on("error", (err) => {
+  //       log("Error on removeVideo: : " + err);
+  //       reject(err);
+  //     })
+  //   console.log(command._getArguments().join(' '));
+  //   command.run();
+  // });
 }
 
-function removeAudio(inputFilePath, outputFilePath) {
-  return new Promise((resolve, reject) => {
-    const command = ffmpeg()
-      .input(inputFilePath)
-      .output(outputFilePath)
-      .addOption("-c:v copy") // Copy video codec
-      .addOption("-an") // Remove audio from the video
-      .addOption("-threads 4")
-      .on("end", () => {
-        log("Audio removed successfully");
-        resolve();
-      })
-      .on("error", (err) => {
-        log("Error on removeAudio: " + err);
-        reject(err);
-      });
-    console.log(command._getArguments().join(' '));
-    command.run();
-  });
+async function removeAudio(inputFilePath, outputFilePath) {
+  const args = `-y -i ${inputFilePath} -c:v copy -an -threads 4 ${outputFilePath}`
+  const err = await ffmpegExec(args)
+  if (err!=null){
+    return
+  }
+  log("Audio removed successfully");
+  // return new Promise((resolve, reject) => {
+  //   const command = ffmpeg()
+  //     .input(inputFilePath)
+  //     .output(outputFilePath)
+  //     .addOption("-c:v copy") // Copy video codec
+  //     .addOption("-an") // Remove audio from the video
+  //     .addOption("-threads 4")
+  //     .on("end", () => {
+  //       log("Audio removed successfully");
+  //       resolve();
+  //     })
+  //     .on("error", (err) => {
+  //       log("Error on removeAudio: " + err);
+  //       reject(err);
+  //     });
+  //   console.log(command._getArguments().join(' '));
+  //   command.run();
+  // });
 }
 
 ////////////////////////////////////////////////////////////
