@@ -429,7 +429,8 @@ module.exports = { downloadVideo, downloadVideoAndAudioEdit };
 
 // (async ()=>{
 //   console.time("total")
-//   downloadVideoAndAudio("https://x.com/animaIarmy/status/1725913900468556223","https://x.com/animaIarmy/status/1725913900468556223",0,10,0,10,()=>{
-//     console.timeEnd("total")
-//   })
+//   removeAudio("video_1702221583410.mp4","noA.mp4")
+//   console.timeLog("total")
+//   removeVideo("video_1702221583410.mp4","noV.mp4")
+//   console.timeEnd("total")
 // })()

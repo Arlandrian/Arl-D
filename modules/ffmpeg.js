@@ -1,5 +1,6 @@
 const { exec } = require("child_process");
 const { promisify } = require('util');
+const os = require("os");
 const execPromise = promisify(exec);
 
 var ffmpegPath = "ffmpeg";
