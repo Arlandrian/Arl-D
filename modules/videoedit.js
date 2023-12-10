@@ -246,8 +246,10 @@ async function downloadVideoAndAudioEdit(
     // throw new Error("Debug "+videoOutputPath+" "+videoOutputPath);
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
+    const shortest = Math.min(videoDuration,audioDuration)
     const err = await ffmpegExec(
-      `-i ${videoOutputPath} -i ${audioOutputPath} -ss ${videoStartTime} -t ${videoDuration} -ss ${audioStartTime} -t ${audioDuration} -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
+      //`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
+      ` -ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 4 ${finalOutputPath}`
     );
     if (err != null) {
       throw err;
@@ -400,19 +402,18 @@ function downloadYoutubeAudioAsync(url, outputPath) {
 }
 
 module.exports = { downloadVideo, downloadVideoAndAudioEdit };
-
 // (async ()=>{
 //   console.time("total")
-//   const videoOutputPath = "noA.mp4"
-//   const audioOutputPath = "noV.mp4"
-//   const finalOutputPath = "final.mp4"
-//   const videoStartTime = 0
-//   const videoDuration = 20
-//   const audioStartTime = 0
-//   const audioDuration = 20
-//   const err = await ffmpegExec(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
-//   if (err!=null){
-//     throw err
-//   }
-//   console.timeEnd("total")
+//   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
+//   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
+//   const vs = 30
+//   const ve = 60
+//   const as = 5
+//   const ae = 15
+//   const err = await downloadVideoAndAudioEdit(vurl,aurl,vs,ve,as,ae,(final)=>{
+//     console.log("ready: ", final)
+//     fs.copyFile(final, "final.mp4", fsErr)
+//     console.timeEnd("total")
+//   })
+  
 // })()
