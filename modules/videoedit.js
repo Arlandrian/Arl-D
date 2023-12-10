@@ -225,24 +225,27 @@ async function downloadVideoAndAudioEdit(
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration, audioDuration)
     // Use fluent-ffmpeg to merge the video and audio files
-    await new Promise((resolve, reject) => {
-      const command = ffmpeg()
-        //.addOptions(` -i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -map 1  -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
-        //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
-        .addInput(videoOutputPath)
-        .seekInput(videoStartTime) // start time in seconds
-        .addInputOptions(`-t ${shortest}`) // duration in seconds
-        .addInput(audioOutputPath)
-        .seekInput(audioStartTime) // start time in seconds
-        .addInputOptions(`-t ${shortest}`) // duration in seconds
-        .addOptions("-threads 4")
-        .output(finalOutputPath)
-        .on("end", resolve)
-        .on("error", reject)
-      console.log(command._getArguments().join(' '));
-      command.run();
-    });
-
+    // await new Promise((resolve, reject) => {
+    //   const command = ffmpeg()
+    //     //.addOptions(` -i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -map 1  -ss ${audioStartTime} -t ${shortest} -map 0:v -map 1:a -c:v copy -c:a copy -threads 4`)
+    //     //.addOptions(` -i ${videoOutputPath} -ss ${videoStartTime} -t ${shortest} -i ${audioOutputPath} -ss ${audioStartTime} -t ${shortest} -c:v copy -c:a aac -map 0:v -map 1:a -threads 4`)
+    //     .addInput(videoOutputPath)
+    //     .seekInput(videoStartTime) // start time in seconds
+    //     .addInputOptions(`-t ${shortest}`) // duration in seconds
+    //     .addInput(audioOutputPath)
+    //     .seekInput(audioStartTime) // start time in seconds
+    //     .addInputOptions(`-t ${shortest}`) // duration in seconds
+    //     .addOptions("-threads 4")
+    //     .output(finalOutputPath)
+    //     .on("end", resolve)
+    //     .on("error", reject)
+    //   console.log(command._getArguments().join(' '));
+    //   command.run();
+    // });
+    const err = await ffmpegExec(`-i ${videoOutputPath} -map 0  -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -map 1 -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
+    if (err!=null){
+      throw err
+    }
     log("final output ready");
     await callback(finalOutputPath);
   } catch (err) {
