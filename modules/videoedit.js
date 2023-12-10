@@ -252,7 +252,7 @@ async function downloadVideoAndAudioEdit(
 
     await new Promise((resolve) => {
       const command = ffmpeg()
-        .addOption(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -c:v copy -c:a copy -threads 4`)
+        .addOptions(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -y -shortest -c:v copy -c:a copy -threads 4`)
         // .addInput(videoOutputPath)
         // .seekInput(videoStartTime) // start time in seconds
         // .addOptions(`-t ${videoDuration}`) // duration in seconds
