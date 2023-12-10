@@ -63,7 +63,7 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
 
     log("video downloaded");
 
-    const needsMidProcess = videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC
+    const needsMidProcess = !(videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC)
     if(needsMidProcess){
       const videoDuration = videoEndTime - videoStartTime;
       // Use fluent-ffmpeg to merge the video and audio files
