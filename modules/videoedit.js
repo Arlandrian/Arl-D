@@ -354,7 +354,7 @@ function downloadYoutubeAudioAsync(url, outputPath) {
 
 function isValidFFmpegOpts(opts) {
   // Regex pattern for FFmpeg options
-  const ffmpegOptsRegex = /^[-a-zA-Z0-9:.-]+$/;
+  const ffmpegOptsRegex = /^[a-zA-Z0-9\[\]:-\s]+$/;
   return ffmpegOptsRegex.test(opts);
 }
 
