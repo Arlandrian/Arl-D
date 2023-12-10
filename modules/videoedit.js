@@ -257,7 +257,7 @@ async function downloadVideoAndAudioEdit(
         .addInputOptions(`-t ${shortest}`) // duration in seconds
         .addInput(audioOutputPath)
         .seekInput(audioStartTime) // start time in seconds
-        .addOptions(`-t ${shortest}`) // duration in seconds
+        .addInputOptions(`-t ${shortest}`) // duration in seconds
         .addOptions(` -map 0:v -map 1:a -c:v copy -c:a copy `) // copy video no encoding! 
         .addOptions("-threads 4")
         .output(finalOutputPath)
