@@ -17,7 +17,8 @@ function getTweetIdFromUrl(url) {
 
 async function downloadTwitterVideoAsync(url, outputFileName) {
   const tweetId = getTweetIdFromUrl(url)
-  await scraper.getTweet(tweetId)
+  const tweetInfo = await scraper.getTweet(tweetId)
+  const hlsManifestUrl = tweetInfo.videos[0].url;
   return new Promise((resolve)=>{
     // Download and convert HLS stream to a local file
     ffmpeg()
@@ -36,13 +37,13 @@ async function downloadTwitterVideoAsync(url, outputFileName) {
   })
 }
 
-// (async () => {
-//   console.time("total");
-//   await downloadTwitterVideoAsync(
-//     "https://x.com/ayiogluayi0/status/1725993560061653008?s=20",
-//     "30sec.mp4"
-//   );
-//   console.timeEnd("total");
-// })();
+(async () => {
+  console.time("total");
+  await downloadTwitterVideoAsync(
+    "https://x.com/ayiogluayi0/status/1725993560061653008?s=20",
+    "30sec.mp4"
+  );
+  console.timeEnd("total");
+})();
 
 module.exports = { downloadTwitterVideoAsync, isTwitterStatusUrl };
