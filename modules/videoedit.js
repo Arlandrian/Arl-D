@@ -171,14 +171,6 @@ async function downloadVideoAndAudioEdit(
     }
     log("video promise created");
 
-    let audioPromise = null;
-    let didAudioDownload = true;
-    if (audioUrl == videoUrl) {
-      // no need to download again
-      didAudioDownload = false;
-    } else {
-    }
-
     if (isAudioTwitter) {
       audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
     } else if (isAudioUrlMp4) {
@@ -310,41 +302,43 @@ function isUrlMP4(url) {
 // turn video to audio only file
 function removeVideo(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
-    ffmpeg()
+    const command = ffmpeg()
       .input(inputFilePath)
       .output(outputFilePath)
       .addOption("-vn") // Remove video
       .addOption("-c:a copy") // copy audio
-      .addOptions("-threads 4")
+      .addOption("-threads 4")
       .on("end", () => {
         log("Video removed, and audio extracted as MP3 successfully");
         resolve();
       })
       .on("error", (err) => {
-        log("Error: " + err);
+        log("Error on removeVideo: : " + err);
         reject(err);
       })
-      .run();
+    console.log(command._getArguments().join(' '));
+    command.run();
   });
 }
 
 function removeAudio(inputFilePath, outputFilePath) {
   return new Promise((resolve, reject) => {
-    ffmpeg()
+    const command = ffmpeg()
       .input(inputFilePath)
       .output(outputFilePath)
-      .addOptions("-c:v copy") // Copy video codec
+      .addOption("-c:v copy") // Copy video codec
       .addOption("-an") // Remove audio from the video
-      .addOptions("-threads 4")
+      .addOption("-threads 4")
       .on("end", () => {
         log("Audio removed successfully");
         resolve();
       })
       .on("error", (err) => {
-        log("Error: " + err);
+        log("Error on removeAudio: " + err);
         reject(err);
-      })
-      .run();
+      });
+    console.log(command._getArguments().join(' '));
+    command.run();
   });
 }
 
