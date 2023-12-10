@@ -51,30 +51,34 @@ module.exports = async (client, interaction) => {
     );
   } catch (e) {
     console.error(e);
+    let content = `There was a problem with your request.\n`;
+    let files = null;
+    if (e.length > 1900) {
+      atc = new discord.MessageAttachment(Buffer.from(output), "err.txt");
+      files = [atc];
+    } else {
+      content += e;
+    }
+    const resp = {
+      content: content,
+      ephemeral: true,
+      files: files,
+    }
     if (interaction.replied)
       interaction
-        .followUp({
-          content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\``,
-          ephemeral: true,
-        })
+        .followUp(resp)
         .catch((e) =>
           console.error("An error occurred following up on an error", e)
         );
     else if (interaction.deferred)
       interaction
-        .editReply({
-          content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\``,
-          ephemeral: true,
-        })
+        .editReply(resp)
         .catch((e) =>
           console.error("An error occurred following up on an error", e)
         );
     else
       interaction
-        .reply({
-          content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\``,
-          ephemeral: true,
-        })
+        .reply(resp)
         .catch((e) =>
           console.error("An error occurred replying on an error", e)
         );
