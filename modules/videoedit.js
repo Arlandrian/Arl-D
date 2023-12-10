@@ -31,14 +31,22 @@ const debugEnabled = true;
 log = (str) => {
   if (debugEnabled) console.debug("cmd::videoedit: " + str);
 };
-const fsErr = (err)=>console.error("fs-err:"+err)
+const fsErr = (err) => {
+  if (err != null) console.error("fs-err:" + err);
+};
 
 // final output will return a file path in the temp folder,
-async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts, callback) {
+async function downloadVideo(
+  videoUrl,
+  videoStartTime,
+  videoEndTime,
+  ffmpegOpts,
+  callback
+) {
   if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
     throw new Error("Not enough memory available on the machine.");
   }
-  videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime
+  videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime;
   const timestamp = new Date().getTime();
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.mp4`;
@@ -50,53 +58,58 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts,
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
     let isVideoUrlMp4 = false;
     if (!isVideoTwitter) {
-      isVideoUrlMp4 = await isUrlMP4(videoUrl)
+      isVideoUrlMp4 = await isUrlMP4(videoUrl);
     }
     let videoPromise = null;
     if (isVideoTwitter) {
-      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+      videoPromise = twitterdl.downloadTwitterVideoAsync(
+        videoUrl,
+        videoOutputPath
+      );
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
       videoPromise = downloadYoutubeBothAsync(videoUrl, videoOutputPath);
     }
 
-    await Promise.all([videoPromise])
+    await Promise.all([videoPromise]);
 
     log("video downloaded");
 
-    const needsMidProcess = !(videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC)
-    if(needsMidProcess){
+    const needsMidProcess = !(
+      videoStartTime == 0 && videoEndTime == MAX_VIDEO_SEC
+    );
+    if (needsMidProcess) {
       const videoDuration = videoEndTime - videoStartTime;
       // Use fluent-ffmpeg to merge the video and audio files
-      await new Promise((resolve,reject) => {
-        if(ffmpegOpts==""){
+      await new Promise((resolve, reject) => {
+        if (ffmpegOpts == "") {
           ffmpeg()
-          .addInput(videoOutputPath)
-          .seekInput(videoStartTime) // start time in seconds
-          .addOptions(`-t ${videoDuration}`) // duration in seconds
-          .output(finalOutputPath)
-          .addOption("-c copy") // no encoding!!
-          .addOptions("-threads 4")
-          .on("end", resolve)
-          .on("error", reject)
-          .run();
-        }else{
+            .addInput(videoOutputPath)
+            .seekInput(videoStartTime) // start time in seconds
+            .addOptions(`-t ${videoDuration}`) // duration in seconds
+            .output(finalOutputPath)
+            .addOption("-c copy") // no encoding!!
+            .addOptions("-threads 4")
+            .on("end", resolve)
+            .on("error", reject)
+            .run();
+        } else {
           // TODO: hayvan gibi güvnelik açığı lan bu, buna sonra bak
           ffmpeg()
-          .addInput(videoOutputPath)
-          .seekInput(videoStartTime) // start time in seconds
-          .addOptions(`-t ${videoDuration}`) // duration in seconds
-          .output(finalOutputPath)
-          .addOption("-c copy") // no encoding!!
-          .addOptions("-threads 4")
-          .on("end", resolve)
-          .on("error", reject)
-          .run();
+            .addInput(videoOutputPath)
+            .seekInput(videoStartTime) // start time in seconds
+            .addOptions(`-t ${videoDuration}`) // duration in seconds
+            .output(finalOutputPath)
+            .addOption("-c copy") // no encoding!!
+            .addOptions("-threads 4")
+            .on("end", resolve)
+            .on("error", reject)
+            .run();
         }
       });
-    }else {
-      fs.rename(videoOutputPath, finalOutputPath, fsErr)
+    } else {
+      fs.rename(videoOutputPath, finalOutputPath, fsErr);
     }
 
     log("final output ready");
@@ -165,7 +178,10 @@ async function downloadVideoAndAudioEdit(
 
     let videoPromise = null;
     if (isVideoTwitter) {
-      videoPromise = twitterdl.downloadTwitterVideoAsync(videoUrl, videoOutputPath);
+      videoPromise = twitterdl.downloadTwitterVideoAsync(
+        videoUrl,
+        videoOutputPath
+      );
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
@@ -174,7 +190,10 @@ async function downloadVideoAndAudioEdit(
     log("video promise created");
 
     if (isAudioTwitter) {
-      audioPromise = twitterdl.downloadTwitterVideoAsync(audioUrl, audioOutputPath);
+      audioPromise = twitterdl.downloadTwitterVideoAsync(
+        audioUrl,
+        audioOutputPath
+      );
     } else if (isAudioUrlMp4) {
       audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
@@ -227,9 +246,11 @@ async function downloadVideoAndAudioEdit(
     // throw new Error("Debug "+videoOutputPath+" "+videoOutputPath);
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
-    const err = await ffmpegExec(`-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`)
-    if (err!=null){
-      throw err
+    const err = await ffmpegExec(
+      `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -i ${audioOutputPath} -ss ${audioStartTime} -t ${audioDuration} -map 0:v -map 1:a -c:v copy -c:a aac -shortest -threads 4 ${finalOutputPath}`
+    );
+    if (err != null) {
+      throw err;
     }
     log("final output ready");
     await callback(finalOutputPath);
@@ -279,19 +300,19 @@ function isUrlMP4(url) {
 
 // turn video to audio only file
 async function removeVideo(inputFilePath, outputFilePath) {
-  const args = `-y -i ${inputFilePath} -vn -c:a aac -threads 4 ${outputFilePath}`
-  const err = await ffmpegExec(args)
-  if (err!=null){
-    return
+  const args = `-y -i ${inputFilePath} -vn -c:a aac -threads 4 ${outputFilePath}`;
+  const err = await ffmpegExec(args);
+  if (err != null) {
+    return;
   }
   log("Video removed successfully");
 }
 
 async function removeAudio(inputFilePath, outputFilePath) {
-  const args = `-y -i ${inputFilePath} -c:v copy -an -threads 4 ${outputFilePath}`
-  const err = await ffmpegExec(args)
-  if (err!=null){
-    return
+  const args = `-y -i ${inputFilePath} -c:v copy -an -threads 4 ${outputFilePath}`;
+  const err = await ffmpegExec(args);
+  if (err != null) {
+    return;
   }
   log("Audio removed successfully");
 }
