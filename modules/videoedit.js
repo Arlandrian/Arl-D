@@ -46,6 +46,9 @@ async function downloadVideo(
   if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
     throw new Error("Not enough memory available on the machine.");
   }
+  if(ffmpegOpts!="" && !isValidFFmpegOpts(ffmpegOpts)){
+    throw new Error(`Invalid ffmpeg options: ${ffmpegOpts} \nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n`)
+  }
   videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime;
   const timestamp = new Date().getTime();
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
@@ -95,12 +98,6 @@ async function downloadVideo(
             .on("error", reject)
             .run();
         } else {
-          const isArgsValid = isValidFFmpegOpts(ffmpegOpts);
-          log("ffmpegOpts isValid:",isArgsValid)
-          if(!isArgsValid){
-            reject("invalid args\nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n")
-            return;
-          }
           const args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
           const err = await ffmpegExec(args)
           if (err!=null){

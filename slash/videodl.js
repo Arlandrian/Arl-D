@@ -8,7 +8,7 @@ exports.run = async (client, interaction) => {
   const videoStartSec = getOption(opts, "videoStartSec", 0);
   const videoEndSec = getOption(opts, "videoEndSec", 0);
   const ffmpegOpts = getOption(opts, "ffmpeg", "");
-
+  console.log("before: ffmpegOpts"+ffmpegOpts)
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
   );
