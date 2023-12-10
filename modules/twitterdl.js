@@ -2,7 +2,7 @@ const { Scraper } = require("@the-convocation/twitter-scraper");
 const ffmpeg = require("fluent-ffmpeg");
 const scraper = new Scraper();
 const twitterStatusUrlRegex =
-  /^https?:\/\/twitter|x\.com\/(\w+)\/status(es)?\/(\d+)/;
+  /^https?:\/\/(twitter|x).com\/(\w+)\/status(es)?\/(\d+)/;
 
 function isTwitterStatusUrl(url) {
   return twitterStatusUrlRegex.test(url);
@@ -41,6 +41,7 @@ async function downloadTwitterVideoAsync(url, outputFileName) {
 //   console.time("total");
 //   await downloadTwitterVideoAsync(
 //     "https://x.com/ayiogluayi0/status/1725993560061653008?s=20",
+//     //"https://twitter.com/yscrsf/status/1733816205570420952",
 //     "30sec.mp4"
 //   );
 //   console.timeEnd("total");
