@@ -32,7 +32,7 @@ log = (str) => {
 };
 
 // final output will return a file path in the temp folder,
-async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
+async function downloadVideo(videoUrl, videoStartTime, videoEndTime, ffmpegOpts, callback) {
   if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
     throw new Error("Not enough memory available on the machine.");
   }
@@ -68,7 +68,8 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
       const videoDuration = videoEndTime - videoStartTime;
       // Use fluent-ffmpeg to merge the video and audio files
       await new Promise((resolve) => {
-        ffmpeg()
+        if(ffmpegOpts==""){
+          ffmpeg()
           .addInput(videoOutputPath)
           .seekInput(videoStartTime) // start time in seconds
           .addOptions(`-t ${videoDuration}`) // duration in seconds
@@ -77,6 +78,18 @@ async function downloadVideo(videoUrl, videoStartTime, videoEndTime, callback) {
           .addOptions("-threads 4")
           .on("end", resolve)
           .run();
+        }else{
+          // TODO: hayvan gibi güvnelik açığı lan bu, buna sonra bak
+          ffmpeg()
+          .addInput(videoOutputPath)
+          .seekInput(videoStartTime) // start time in seconds
+          .addOptions(`-t ${videoDuration}`) // duration in seconds
+          .output(finalOutputPath)
+          .addOption("-c copy") // no encoding!!
+          .addOptions("-threads 4")
+          .on("end", resolve)
+          .run();
+        }
       });
     }else {
       fs.rename(videoOutputPath, finalOutputPath, (err)=>{})
@@ -206,7 +219,7 @@ async function downloadVideoAndAudioEdit(
       log("mid process ended");
 
       if (videoNeedsMidProcess) {
-        fs.unlink(videoOutputPath, function (err) {});
+        await fs.unlink(videoOutputPath, (err)=>{});
         fs.renameSync(midProcessVideoOutputPath, videoOutputPath);
         log("deleted unprocessed video");
       }
@@ -216,7 +229,7 @@ async function downloadVideoAndAudioEdit(
         // if (didAudioDownload){
         //   fs.unlink(audioOutputPath, function (err) {});
         // }
-        fs.unlink(audioOutputPath, function (err) {});
+        await fs.unlink(audioOutputPath, (err)=>{});
         fs.renameSync(midProcessAudioOutputPath, audioOutputPath);
         log("deleted unprocessed audio");
       }
@@ -234,7 +247,7 @@ async function downloadVideoAndAudioEdit(
     const audioDuration = audioEndTime - audioStartTime;
     // Use fluent-ffmpeg to merge the video and audio files
     await new Promise((resolve) => {
-      ffmpeg()
+      const command = ffmpeg()
         .addInput(videoOutputPath)
         .seekInput(videoStartTime) // start time in seconds
         .addOptions(`-t ${videoDuration}`) // duration in seconds
@@ -247,7 +260,8 @@ async function downloadVideoAndAudioEdit(
         .addOptions("-threads 4")
         .output(finalOutputPath)
         .on("end", resolve)
-        .run();
+      console.log(command._getArguments().join(' '));
+      command.run();
     });
 
     log("final output ready");
