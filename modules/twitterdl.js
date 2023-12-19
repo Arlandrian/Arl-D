@@ -16,8 +16,9 @@ function getTweetIdFromUrl(url) {
 }
 
 async function downloadTwitterVideoAsync(url, outputFileName) {
-  const tweetId = getTweetIdFromUrl(url)
-  const tweetInfo = await scraper.getTweet(tweetId)
+  const tweetId = getTweetIdFromUrl(url);
+  await scraper.clearCookies();
+  const tweetInfo = await scraper.getTweet(tweetId);
   const hlsManifestUrl = tweetInfo.videos[0].url;
   return new Promise((resolve, reject)=>{
     // Download and convert HLS stream to a local file

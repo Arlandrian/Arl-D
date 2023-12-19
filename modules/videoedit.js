@@ -302,7 +302,7 @@ function downloadYoutubeBothAsync(url, outputPath) {
       return (
         format.hasVideo &&
         format.hasAudio &&
-        format.height <= 540 &&
+        format.quality == 'medium' &&
         format.approxDurationMs != null &&
         format.approxDurationMs < MAX_VIDEO_MS
       );
@@ -320,7 +320,7 @@ function downloadYoutubeVideoAsync(url, outputPath) {
       return (
         format.hasVideo &&
         !format.hasAudio &&
-        format.height <= 540 &&
+        format.quality == 'medium' &&
         format.approxDurationMs != null &&
         format.approxDurationMs < MAX_VIDEO_MS
       );
@@ -338,6 +338,7 @@ function downloadYoutubeAudioAsync(url, outputPath) {
       return (
         !format.hasVideo &&
         format.hasAudio &&
+        format.quality == 'medium' &&
         format.approxDurationMs != null &&
         format.approxDurationMs < MAX_VIDEO_MS
       );
