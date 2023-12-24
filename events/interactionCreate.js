@@ -43,10 +43,13 @@ module.exports = async (client, interaction) => {
   // If everything checks out, run the command
   try {
     const subCommand = interaction.options.getSubcommand()??""
+    const options = interaction.options.data.map(option => {
+      return `${option.name}: ${option.value}`;
+    }).join(', ');
     logger.log(
       `${config.permLevels.find((l) => l.level === level).name} ${
         interaction.user.id
-      } ran slash command ${interaction.commandName}${subCommand}`,
+      } ran slash command ${interaction.commandName}${subCommand} ${options}.`,
       "cmd"
     );
     await cmd.run(client, interaction);
