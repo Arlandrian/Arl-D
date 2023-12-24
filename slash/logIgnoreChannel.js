@@ -1,13 +1,21 @@
 const { codeBlock } = require("@discordjs/builders");
-const {removeItemOnce} = require("../modules/functions")
+const {removeItemOnce, isBotOwner} = require("../modules/functions")
 
 exports.run = async (client, interaction) => { // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: true });
   const {db} = client
 
-  let guildId = interaction.guild.id;
   let opts = interaction.options._hoistedOptions;
-  let targettedChannelId = opts.length > 0 ? opts[0].value : interaction.channel.id;
+  let targettedChannelId = getOption(opts, "channel", interaction.channel.id);
+  let guildId = getOption(opts, "guild", interaction.guild.id);
+
+  // only bot owner can provide guildId option
+  if (guildId != interaction.guild.id) {
+    if(!isBotOwner(interaction)){
+      await interaction.editReply("Only bow owner can provide the guild option.");
+      return;
+    }
+  }
 
   let channels = await db.getLogIgnoreChannels(guildId)
   if(channels.includes(targettedChannelId)){
@@ -37,11 +45,26 @@ exports.commandData = {
       "description": "Channel",
       "type": 7,
       "required": false
+    },
+    {
+      "name": "guild",
+      "description": "Guild ID",
+      "type": 3,
+      "required": false
     }
   ],
   defaultPermission: true,
   type: 1
 };
+
+function getOption(opts, name, defValue) {
+  const provided = opts.find((x) => x.name.toLowerCase() == name.toLowerCase());
+  if (provided == null) {
+    return defValue;
+  } else {
+    return provided.value;
+  }
+}
 
 // Set guildOnly to true if you want it to be available on guilds only.
 // Otherwise false is global.

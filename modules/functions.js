@@ -121,5 +121,9 @@ function removeItemOnce(arr, value) {
   return arr;
 }
 
+function isBotOwner(message) {
+  return config.permLevels[config.permLevels.length-1].check(message)
+}
 
-module.exports = { getSettings, permlevel, awaitReply, toProperCase, sendAMessageToNickLogChannels, removeItemOnce};
+
+module.exports = { getSettings, permlevel, awaitReply, toProperCase, sendAMessageToNickLogChannels, removeItemOnce, isBotOwner};
