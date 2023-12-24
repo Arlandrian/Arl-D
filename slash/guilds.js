@@ -214,6 +214,7 @@ async function writeChannelHandler(client, interaction) {
     return;
   }
   channel.send(messageContent);
+  interaction.editReply("Your message is sent to '"+channel.name+"' channel.");
 }
 
 let messageListenerRegistered = false;
