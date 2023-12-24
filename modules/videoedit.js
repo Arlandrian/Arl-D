@@ -65,7 +65,7 @@ async function downloadVideo(
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
     let isVideoUrlMp4 = false;
     if (!isVideoTwitter) {
-      isVideoUrlMp4 = await isUrlRawMedia(videoUrl);
+      isVideoUrlMp4 = await isUrlMP4(videoUrl);
     }
     let videoPromise = null;
     if (isVideoTwitter) {
@@ -101,88 +101,6 @@ async function downloadVideo(
         throw err;
       }
     }
-    console.timeLog(timeLogLabel);
-    log("final output ready");
-    await callback(finalOutputPath);
-    log("callback called");
-    console.timeLog(timeLogLabel);
-  } catch (err) {
-    throw err;
-  } finally {
-    // clean up files
-    fs.unlink(videoOutputPath, fsErr);
-    fs.unlink(finalOutputPath, fsErr);
-    log("cleaned up files");
-    console.timeEnd(timeLogLabel);
-  }
-}
-
-async function downloadVideoAsMp3(
-  videoUrl,
-  videoStartTime,
-  videoEndTime,
-  callback
-) {
-  if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
-    throw new Error("Not enough memory available on the machine.");
-  }
-
-  videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime;
-  const timestamp = new Date().getTime();
-  const timeLogLabel = `ts_${timestamp}`;
-  const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
-  const finalOutputPath = `${tempDir}/final_${timestamp}.aac`;
-  let needsEncoding = true;
-  if (videoStartTime < 0 || videoEndTime <= videoStartTime) {
-    throw new Error("Invalid time range");
-  }
-  try {
-    const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
-    let isVideoUrlRawMedia = false;
-    if (!isVideoTwitter) {
-      isVideoUrlRawMedia = await isUrlRawMedia(videoUrl);
-    }
-    let videoPromise = null;
-    if (isVideoTwitter) {
-      videoPromise = twitterdl.downloadTwitterVideoAsync(
-        videoUrl,
-        videoOutputPath
-      );
-    } else if (isVideoUrlRawMedia) {
-      videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
-    } else {
-      needsEncoding = false;
-      videoPromise = downloadYoutube(videoUrl, videoOutputPath, false, true);
-    }
-
-    console.time(timeLogLabel);
-    await Promise.all([videoPromise]);
-    console.timeLog(timeLogLabel);
-    log("video downloaded");
-
-    const needsCut = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC
-
-    let ffmpegArgs = "-i ${videoOutputPath}";
-    if (needsCut) {
-      const videoDuration = videoEndTime - videoStartTime;
-      ffmpegArgs += ` -ss ${videoStartTime} -t ${videoDuration}`;
-    }
-    if (needsEncoding){
-      const err = await ffmpegExec(`${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`);
-      if (err != null) {
-        throw err;
-      }
-    }else{
-      if(needsCut){
-        const err = await ffmpegExec(`${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`);
-        if (err != null) {
-          throw err;
-        }
-      }else{
-        fs.renameSync(videoOutputPath, finalOutputPath);
-      }
-    }
-
     console.timeLog(timeLogLabel);
     log("final output ready");
     await callback(finalOutputPath);
@@ -239,7 +157,7 @@ async function downloadVideoAndAudioEdit(
     let isVideoUrlMp4 = false;
     let isAudioUrlMp4 = false;
     if (!isVideoTwitter || !isAudioTwitter) {
-      const pRes = await Promise.all([isUrlRawMedia(videoUrl), isUrlRawMedia(audioUrl)]);
+      const pRes = await Promise.all([isUrlMP4(videoUrl), isUrlMP4(audioUrl)]);
       isVideoUrlMp4 = pRes[0];
       isAudioUrlMp4 = pRes[1];
     }
@@ -310,7 +228,7 @@ async function downloadVideoAndAudioEdit(
   }
 }
 
-function isUrlRawMedia(url) {
+function isUrlMP4(url) {
   return new Promise((resolve) => {
     https.get(url, (response) => {
       if (response.statusCode === 200) {
@@ -418,7 +336,7 @@ function isValidFFmpegOpts(opts) {
   return ffmpegOptsRegex.test(opts);
 }
 
-module.exports = { downloadVideo, downloadVideoAsMp3, downloadVideoAndAudioEdit };
+module.exports = { downloadVideo, downloadVideoAndAudioEdit };
 // (async ()=>{
 //   console.time("total")
 // //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
