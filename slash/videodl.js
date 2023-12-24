@@ -8,24 +8,46 @@ exports.run = async (client, interaction) => {
   const videoStartSec = getOption(opts, "videoStartSec", 0);
   const videoEndSec = getOption(opts, "videoEndSec", 0);
   const ffmpegOpts = getOption(opts, "ffmpeg", "");
+
+  const isMp3SubCommand = interaction.options.getSubcommand("mp3") ?? false;
   await interaction.editReply(
-    ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
+    `:factory_worker: => :cyclone:${isMp3SubCommand?"mp3":"video"} hazırlanıyor, lütfen bekleyin...:cyclone:`
   );
   const startTime = performance.now();
-  await videoedit.downloadVideo(
-    videoURL,
-    videoStartSec,
-    videoEndSec,
-    ffmpegOpts,
-    async (videoPath) => {
-      console.debug("cmd::videold: sending attachment file " + videoPath);
-      const videoAttachment = new discord.MessageAttachment(videoPath);
-      const endTime = performance.now();
-      const elapsedTime = endTime - startTime;
-      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime.TS()}`);
-      await interaction.editReply({ files: [videoAttachment] });
-    }
-  );
+  if (!isMp3SubCommand) {
+    await videoedit.downloadVideo(
+      videoURL,
+      videoStartSec,
+      videoEndSec,
+      ffmpegOpts,
+      async (videoPath) => {
+        console.debug("cmd::videodl: sending attachment file " + videoPath);
+        const videoAttachment = new discord.MessageAttachment(videoPath);
+        const endTime = performance.now();
+        const elapsedTime = endTime - startTime;
+        await interaction.editReply(
+          `video edit hazır:white_check_mark: ${elapsedTime.TS()}`
+        );
+        await interaction.editReply({ files: [videoAttachment] });
+      }
+    );
+  }else{
+    await videoedit.downloadVideoAsMp3(
+      videoURL,
+      videoStartSec,
+      videoEndSec,
+      async (videoPath) => {
+        console.debug("cmd::videodl mp3: sending attachment file " + videoPath);
+        const videoAttachment = new discord.MessageAttachment(videoPath);
+        const endTime = performance.now();
+        const elapsedTime = endTime - startTime;
+        await interaction.editReply(
+          `Mp3 hazır:white_check_mark: ${elapsedTime.TS()}`
+        );
+        await interaction.editReply({ files: [videoAttachment] });
+      }
+    );
+  }
 };
 
 function getOption(opts, name, defValue) {
@@ -74,12 +96,51 @@ exports.commandData = {
     },
     {
       name: "ffmpeg",
-      description: "you can give custom ffmpeg options. (other args will be ignored)",
+      description:
+        "you can give custom ffmpeg options. (other args will be ignored)",
       descriptionLocalizations: {
         tr: "kendi ffmpeg ayarlarınızı verebilirsiniz. (diğer ayarlar görmezden gelinir)",
       },
       type: 3,
       required: false,
+    },
+    {
+      type: "SUB_COMMAND",
+      name: "mp3",
+      description: "download video as mp3 file",
+      descriptionLocalizations: {
+        tr: "videoyu mp3 olarak indir.",
+      },
+      options: [
+        {
+          name: "url",
+          description: "url",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "videostartsec",
+          description: "audio start point for the cut",
+          descriptionLocalizations: {
+            tr: "ses dosyasının kesilmeye baslanacak noktanin saniyesi",
+          },
+          type: 4,
+          required: false,
+          min_value: 0,
+          max_value: 7200,
+        },
+        {
+          name: "videoendsec",
+          description: "audio end point for the cut",
+          descriptionLocalizations: {
+            tr: "ses dosyasının kesilmenin biteceği noktanin saniyesi",
+          },
+          type: 4,
+          required: false,
+          min_value: 0,
+          max_value: 7200,
+        },
+      ],
     },
   ],
   // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
