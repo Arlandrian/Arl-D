@@ -42,14 +42,14 @@ module.exports = async (client, interaction) => {
 
   // If everything checks out, run the command
   try {
-    const subCommand = interaction.options.getSubcommand()??""
+    const subCommand = interaction.options.type=="SUB_COMMAND"||interaction.options.type=="SUB_COMMAND_GROUP"?" "+interaction.options.name:"";
     const options = interaction.options?._hoistedOptions?.map(option => {
-      return option.value ?`${option.name}: ${option.value}`:null;
+      return option.value?`${option.name}: ${option.value}`:null;
     }).join(', ');
     logger.log(
       `${config.permLevels.find((l) => l.level === level).name} ${
         interaction.user.id
-      } ran slash command ${interaction.commandName} ${subCommand} ${options}.`,
+      } ran slash command ${interaction.commandName}${subCommand} ${options}.`,
       "cmd"
     );
     await cmd.run(client, interaction);
