@@ -42,13 +42,14 @@ module.exports = async (client, interaction) => {
 
   // If everything checks out, run the command
   try {
-    await cmd.run(client, interaction);
+    const subCommand = interaction.options.getSubcommand()??""
     logger.log(
       `${config.permLevels.find((l) => l.level === level).name} ${
         interaction.user.id
-      } ran slash command ${interaction.commandName}`,
+      } ran slash command ${interaction.commandName}${subCommand}`,
       "cmd"
     );
+    await cmd.run(client, interaction);
   } catch (e) {
     console.error(e);
     let content = `There was a problem with your request.\n`;
