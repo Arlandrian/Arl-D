@@ -49,7 +49,7 @@ module.exports = async (client, interaction) => {
     logger.log(
       `${config.permLevels.find((l) => l.level === level).name} ${
         interaction.user.id
-      } ran slash command ${interaction.commandName}${subCommand} ${options}.`,
+      } ran slash command ${interaction.commandName} ${subCommand} ${options}.`,
       "cmd"
     );
     await cmd.run(client, interaction);
