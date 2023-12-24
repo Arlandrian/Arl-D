@@ -19,6 +19,7 @@ const MAX_VIDEO_SEC = 20 * 60;
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
+const MAX_VIDEO_BITRATE = 440000;
 
 if ("win32" == os.platform()) {
   ffmpeg.setFfmpegPath(
@@ -46,8 +47,10 @@ async function downloadVideo(
   if (os.freemem() < MIN_REQ_MEMORY_BYTES) {
     throw new Error("Not enough memory available on the machine.");
   }
-  if(ffmpegOpts!="" && !isValidFFmpegOpts(ffmpegOpts)){
-    throw new Error(`Invalid ffmpeg options: ${ffmpegOpts} \nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n`)
+  if (ffmpegOpts != "" && !isValidFFmpegOpts(ffmpegOpts)) {
+    throw new Error(
+      `Invalid ffmpeg options: ${ffmpegOpts} \nhttps://tenor.com/view/kadir-hoca-kadir-hoca-amına-koyim-amına-koyayım-gif-16806695897421624124\n`
+    );
   }
   videoEndTime = videoEndTime == 0 ? MAX_VIDEO_SEC : videoEndTime;
   const timestamp = new Date().getTime();
@@ -73,35 +76,36 @@ async function downloadVideo(
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
-      videoPromise = downloadYoutubeBothAsync(videoUrl, videoOutputPath);
+      videoPromise = downloadYoutube(videoUrl, videoOutputPath);
     }
 
-    console.time(timeLogLabel)
+    console.time(timeLogLabel);
     await Promise.all([videoPromise]);
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
     log("video downloaded");
 
-    const needsPostProcess = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
+    const needsPostProcess =
+      videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
     if (!needsPostProcess) {
       fs.renameSync(videoOutputPath, finalOutputPath);
     } else {
       const videoDuration = videoEndTime - videoStartTime;
-      let args = ""
-        if (ffmpegOpts == "") {
-          args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c:v libx264 -preset ultrafast -c:a copy -threads 8 ${finalOutputPath}`
-        } else {
-          args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`
-        }
-        const err = await ffmpegExec(args)
-        if (err!=null){
-          throw err
-        }
+      let args = "";
+      if (ffmpegOpts == "") {
+        args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c:v libx264 -preset ultrafast -c:a copy -threads 8 ${finalOutputPath}`;
+      } else {
+        args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`;
+      }
+      const err = await ffmpegExec(args);
+      if (err != null) {
+        throw err;
+      }
     }
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
     log("final output ready");
     await callback(finalOutputPath);
     log("callback called");
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
   } catch (err) {
     throw err;
   } finally {
@@ -109,7 +113,7 @@ async function downloadVideo(
     fs.unlink(videoOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
-    console.timeEnd(timeLogLabel)
+    console.timeEnd(timeLogLabel);
   }
 }
 
@@ -158,7 +162,7 @@ async function downloadVideoAndAudioEdit(
       isAudioUrlMp4 = pRes[1];
     }
     log("isVideoUrlMp4:" + isVideoUrlMp4 + ", isAudioUrlMp4:" + isAudioUrlMp4);
-    
+
     let videoPromise = null;
     if (isVideoTwitter) {
       videoPromise = twitterdl.downloadTwitterVideoAsync(
@@ -168,7 +172,12 @@ async function downloadVideoAndAudioEdit(
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
-      videoPromise = downloadYoutubeVideoAsync(videoUrl, videoOutputPath);
+      videoPromise = downloadYoutube(
+        videoUrl,
+        videoOutputPath,
+        (hasAudio = true),
+        (hasVideo = false)
+      );
     }
     log("video promise created");
 
@@ -180,17 +189,22 @@ async function downloadVideoAndAudioEdit(
     } else if (isAudioUrlMp4) {
       audioPromise = downloadMp4UrlAsync(audioUrl, audioOutputPath);
     } else {
-      audioPromise = downloadYoutubeAudioAsync(audioUrl, audioOutputPath);
+      audioPromise = downloadYoutube(
+        audioUrl,
+        audioOutputPath,
+        (hasVideo = false),
+        (hasAudio = true)
+      );
     }
     log("audio promise created");
-    console.time(timeLogLabel)
+    console.time(timeLogLabel);
     // wait for the audio file download to finish
     await Promise.all([videoPromise, audioPromise]);
     log("videos are downloaded");
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
     const videoDuration = videoEndTime - videoStartTime;
     const audioDuration = audioEndTime - audioStartTime;
-    const shortest = Math.min(videoDuration,audioDuration)
+    const shortest = Math.min(videoDuration, audioDuration);
     const err = await ffmpegExec(
       `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v libx264 -preset ultrafast -c:a copy -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 8 ${finalOutputPath}`
     );
@@ -198,10 +212,10 @@ async function downloadVideoAndAudioEdit(
       throw err;
     }
     log("final output ready");
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
     await callback(finalOutputPath);
     log("callback called");
-    console.timeLog(timeLogLabel)
+    console.timeLog(timeLogLabel);
   } catch (err) {
     throw err;
   } finally {
@@ -210,7 +224,7 @@ async function downloadVideoAndAudioEdit(
     fs.unlink(audioOutputPath, fsErr);
     fs.unlink(finalOutputPath, fsErr);
     log("cleaned up files");
-    console.timeEnd(timeLogLabel)
+    console.timeEnd(timeLogLabel);
   }
 }
 
@@ -296,54 +310,23 @@ function downloadMp4UrlAsync(url, outputPath) {
 //////   Youtube    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-function downloadYoutubeBothAsync(url, outputPath) {
-  stream = ytdl(url, {
-    filter: (format) => {
-      return (
-        format.hasVideo &&
-        format.hasAudio &&
-        (format.quality == 'medium'|| format.quality == 'small'|| format.quality == 'tiny') &&
-        format.approxDurationMs != null &&
-        format.approxDurationMs < MAX_VIDEO_MS
-      );
-    },
+const chooseVideoFormat = async (url, hasVideo = true, hasAudio = true) => {
+  const info = await ytdl.getInfo(url);
+  const filtered = info.formats.filter((format) => {
+    return (
+      format.hasVideo == hasVideo &&
+      format.hasAudio == hasAudio &&
+      format.approxDurationMs < MAX_VIDEO_MS &&
+      format.bitrate < MAX_VIDEO_BITRATE
+    );
   });
+  // pick the element with the highest bitrate
+  return filtered.reduce((a, b) => (a && a.bitrate > b.bitrate ? a : b), null);
+};
 
-  return mediaStreamToFileAsync(stream, outputPath);
-}
-
-function downloadYoutubeVideoAsync(url, outputPath) {
-  // Download video without audio
-  stream = ytdl(url, {
-    filter: (format) => {
-      // Filter out video formats with a height greater than 540 pixels
-      return (
-        format.hasVideo &&
-        !format.hasAudio &&
-        (format.quality == 'medium' || format.quality == 'small'|| format.quality == 'tiny') &&
-        format.approxDurationMs != null &&
-        format.approxDurationMs < MAX_VIDEO_MS
-      );
-    },
-  });
-
-  return mediaStreamToFileAsync(stream, outputPath);
-}
-
-function downloadYoutubeAudioAsync(url, outputPath) {
-  // Download audio only
-  stream = ytdl(url, {
-    filter: (format) => {
-      // Filter out video formats with a height greater than 540 pixels
-      return (
-        !format.hasVideo &&
-        format.hasAudio &&
-        format.quality == 'medium' &&
-        format.approxDurationMs != null &&
-        format.approxDurationMs < MAX_VIDEO_MS
-      );
-    },
-  });
+async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
+  const format = await chooseVideoFormat(url, hasVideo, hasAudio);
+  stream = ytdl(url, { format: format });
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
