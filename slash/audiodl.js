@@ -4,26 +4,24 @@ exports.run = async (client, interaction) => {
   // eslint-disable-line no-unused-vars
   await interaction.deferReply({ ephemeral: false });
   const opts = interaction.options._hoistedOptions;
-  const videoURL = opts[0].value;
-  const videoStartSec = getOption(opts, "videoStartSec", 0);
-  const videoEndSec = getOption(opts, "videoEndSec", 0);
-  const ffmpegOpts = getOption(opts, "ffmpeg", "");
+  const url = opts[0].value;
+  const startSec = getOption(opts, "StartSec", 0);
+  const endSec = getOption(opts, "EndSec", 0);
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
   );
   const startTime = performance.now();
-  await videoedit.downloadVideo(
-    videoURL,
-    videoStartSec,
-    videoEndSec,
-    ffmpegOpts,
-    async (videoPath) => {
-      console.debug("cmd::videodl: sending attachment file " + videoPath);
-      const videoAttachment = new discord.MessageAttachment(videoPath);
+  await videoedit.downloadVideoAsMp3(
+    url,
+    startSec,
+    endSec,
+    async (audioPath) => {
+      console.debug("cmd::audiodl: sending attachment file " + audioPath);
+      const audioAttachment = new discord.MessageAttachment(audioPath);
       const endTime = performance.now();
       const elapsedTime = endTime - startTime;
-      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime.TS()}`);
-      await interaction.editReply({ files: [videoAttachment] });
+      await interaction.editReply(`audio hazır:white_check_mark: ${elapsedTime.TS()}`);
+      await interaction.editReply({ files: [audioAttachment] });
     }
   );
 };
@@ -38,10 +36,10 @@ function getOption(opts, name, defValue) {
 }
 
 exports.commandData = {
-  name: "videodl",
+  name: "audiodl",
   description: "Downloads the given url from the source.",
   descriptionLocalizations: {
-    tr: "Video indir.",
+    tr: "Audio indir.",
   },
   options: [
     {
@@ -51,10 +49,10 @@ exports.commandData = {
       required: true,
     },
     {
-      name: "videostartsec",
-      description: "video start point for the cut",
+      name: "startsec",
+      description: "audio start point for the cut",
       descriptionLocalizations: {
-        tr: "videoda kesilmeye baslanacak noktanin saniyesi",
+        tr: "ses dosyasının kesilmeye baslanacak noktanin saniyesi",
       },
       type: 4,
       required: false,
@@ -62,24 +60,15 @@ exports.commandData = {
       max_value: 7200,
     },
     {
-      name: "videoendsec",
-      description: "video end point for the cut",
+      name: "endsec",
+      description: "audio end point for the cut",
       descriptionLocalizations: {
-        tr: "videoda kesilmenin biteceği noktanin saniyesi",
+        tr: "ses dosyasının kesilmenin biteceği noktanin saniyesi",
       },
       type: 4,
       required: false,
       min_value: 0,
       max_value: 7200,
-    },
-    {
-      name: "ffmpeg",
-      description: "you can give custom ffmpeg options. (other args will be ignored)",
-      descriptionLocalizations: {
-        tr: "kendi ffmpeg ayarlarınızı verebilirsiniz. (diğer ayarlar görmezden gelinir)",
-      },
-      type: 3,
-      required: false,
     },
   ],
   // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
