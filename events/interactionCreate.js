@@ -43,7 +43,7 @@ module.exports = async (client, interaction) => {
   // If everything checks out, run the command
   try {
     const subCommand = interaction.options.getSubcommand()??""
-    const options = interaction.options.data.map(option => {
+    const options = interaction.options._hoistedOptions.map(option => {
       return `${option.name}: ${option.value}`;
     }).join(', ');
     logger.log(
