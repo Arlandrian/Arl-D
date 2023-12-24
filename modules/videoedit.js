@@ -302,7 +302,7 @@ function downloadYoutubeBothAsync(url, outputPath) {
       return (
         format.hasVideo &&
         format.hasAudio &&
-        format.quality == 'medium' &&
+        (format.quality == 'medium'|| format.quality == 'small'|| format.quality == 'tiny') &&
         format.approxDurationMs != null &&
         format.approxDurationMs < MAX_VIDEO_MS
       );
