@@ -43,8 +43,8 @@ module.exports = async (client, interaction) => {
   // If everything checks out, run the command
   try {
     const subCommand = interaction.options.getSubcommand()??""
-    const options = interaction.options._hoistedOptions.map(option => {
-      return `${option.name}: ${option.value}`;
+    const options = interaction.options?._hoistedOptions?.map(option => {
+      return option.value ?`${option.name}: ${option.value}`:null;
     }).join(', ');
     logger.log(
       `${config.permLevels.find((l) => l.level === level).name} ${
