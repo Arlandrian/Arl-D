@@ -439,7 +439,7 @@ async function downloadTiktokVideoAsync(url, outputPath) {
     version: "v1", //  version: "v1" | "v2" | "v3"
   });
   if (resp.status != "success") {
-    throw new Error("failed to download tiktok video. err: " + resp.status);
+    throw new Error("failed to download tiktok video. err: " + JSON.stringify(resp));
   } else {
     const mediaUrl = resp.result.video[0];
     stream = (await axios.get(mediaUrl, { responseType: "stream" })).data;
