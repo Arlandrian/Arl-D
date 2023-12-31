@@ -11,6 +11,10 @@ const axios = require("axios");
 const https = require("https");
 const twitterdl = require("./twitterdl.js");
 const ffmpegExec = require("./ffmpeg.js");
+const { TiktokDL } = require("@tobyg74/tiktok-api-dl");
+
+const tiktokUrlRegex =
+  /^.*https:\/\/(?:m|www|vm)?\.?tiktok\.com\/((?:.*\b(?:(?:usr|v|embed|user|video)\/|\?shareId=|\&item_id=)(\d+))|\w+)/;
 
 // get temp directory
 const tempDir = os.tmpdir();
@@ -63,8 +67,9 @@ async function downloadVideo(
   }
   try {
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
+    const isVideoTiktok = isTiktokMediaUrl(videoUrl);
     let isVideoUrlMp4 = false;
-    if (!isVideoTwitter) {
+    if (!isVideoTwitter && !isVideoTiktok) {
       isVideoUrlMp4 = await isUrlRawMedia(videoUrl);
     }
     let videoPromise = null;
@@ -73,6 +78,8 @@ async function downloadVideo(
         videoUrl,
         videoOutputPath
       );
+    } else if (isVideoTiktok) {
+      videoPromise = downloadTiktokVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
@@ -160,25 +167,29 @@ async function downloadVideoAsMp3(
     console.timeLog(timeLogLabel);
     log("video downloaded");
 
-    const needsCut = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC
+    const needsCut = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC;
 
     let ffmpegArgs = "-i ${videoOutputPath}";
     if (needsCut) {
       const videoDuration = videoEndTime - videoStartTime;
       ffmpegArgs += ` -ss ${videoStartTime} -t ${videoDuration}`;
     }
-    if (needsEncoding){
-      const err = await ffmpegExec(`${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`);
+    if (needsEncoding) {
+      const err = await ffmpegExec(
+        `${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`
+      );
       if (err != null) {
         throw err;
       }
-    }else{
-      if(needsCut){
-        const err = await ffmpegExec(`${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`);
+    } else {
+      if (needsCut) {
+        const err = await ffmpegExec(
+          `${ffmpegArgs} -vn -c:a aac ${finalOutputPath}`
+        );
         if (err != null) {
           throw err;
         }
-      }else{
+      } else {
         fs.renameSync(videoOutputPath, finalOutputPath);
       }
     }
@@ -239,7 +250,10 @@ async function downloadVideoAndAudioEdit(
     let isVideoUrlMp4 = false;
     let isAudioUrlMp4 = false;
     if (!isVideoTwitter || !isAudioTwitter) {
-      const pRes = await Promise.all([isUrlRawMedia(videoUrl), isUrlRawMedia(audioUrl)]);
+      const pRes = await Promise.all([
+        isUrlRawMedia(videoUrl),
+        isUrlRawMedia(audioUrl),
+      ]);
       isVideoUrlMp4 = pRes[0];
       isAudioUrlMp4 = pRes[1];
     }
@@ -412,27 +426,52 @@ async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
+////////////////////////////////////////////////////////////
+//////   Tiktok    ////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+function isTiktokMediaUrl(url) {
+  return tiktokUrlRegex.test(url);
+}
+
+async function downloadTiktokVideoAsync(url, outputPath) {
+  resp = await TiktokDL(url, {
+    version: "v1", //  version: "v1" | "v2" | "v3"
+  });
+  if (resp.status != "success") {
+    throw new Error("failed to download tiktok video. err: " + resp.status);
+  } else {
+    const mediaUrl = resp.result.video[0];
+    stream = (await axios.get(mediaUrl, { responseType: "stream" })).data;
+    await mediaStreamToFileAsync(stream, outputPath);
+  }
+}
+
 function isValidFFmpegOpts(opts) {
   // Regex pattern for FFmpeg options
   const ffmpegOptsRegex = /^[a-zA-Z0-9\[\]_:-\s]+$/;
   return ffmpegOptsRegex.test(opts);
 }
 
-module.exports = { downloadVideo, downloadVideoAsMp3, downloadVideoAndAudioEdit };
-// (async ()=>{
-//   console.time("total")
-// //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
-// //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
-//   const vurl = "https://x.com/onlineinsane/status/1733586584438522241?s=20"
-//   const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20"
-//   const vs = 5
-//   const ve = 15
-//   const as = 0
-//   const ae = 9
-//   // const err = await downloadVideoAndAudioEdit(vurl,aurl,vs,ve,as,ae,(final)=>{
-//   //   console.log("ready: ", final)
-//   //   fs.copyFile(final, "final.mp4", fsErr)
-//   //   console.timeEnd("total")
-//   // })
-//   await downloadVideo(vurl, vs, ve, "\" ls ")
-// })()
+module.exports = {
+  downloadVideo,
+  downloadVideoAsMp3,
+  downloadVideoAndAudioEdit,
+};
+(async () => {
+  console.time("total");
+  //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
+  //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
+  const vurl = "https://www.tiktok.com/@naturliflove/video/7300167273786903841";
+  const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
+  const vs = 0;
+  const ve = 0;
+  const as = 0;
+  const ae = 9;
+  const err = await downloadVideo(vurl, vs, ve, "",(final)=>{
+    console.log("ready: ", final)
+    fs.copyFile(final, "final.mp4", fsErr)
+    console.timeEnd("total")
+  })
+  // await downloadVideo(vurl, vs, ve, '" ls ');
+})();
