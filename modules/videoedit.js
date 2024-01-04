@@ -421,8 +421,13 @@ const chooseVideoFormat = (info, hasVideo = true, hasAudio = true) => {
 
 async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
   const info = await ytdl.getInfo(url);
-  console.log("info: " + JSON.stringify(info));
   const format = chooseVideoFormat(info, hasVideo, hasAudio);
+  if (format == null) {
+    throw new Error(
+      "Could not find a suitable video format for " + url
+    );
+  }
+  console.log("info: " + JSON.stringify(format));
   stream = ytdl.downloadFromInfo(info, { format: format });
   return mediaStreamToFileAsync(stream, outputPath);
 }
