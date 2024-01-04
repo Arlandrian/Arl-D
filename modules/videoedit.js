@@ -406,8 +406,7 @@ function downloadMp4UrlAsync(url, outputPath) {
 //////   Youtube    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-const chooseVideoFormat = async (url, hasVideo = true, hasAudio = true) => {
-  const info = await ytdl.getInfo(url);
+const chooseVideoFormat = (info, hasVideo = true, hasAudio = true) => {
   const filtered = info.formats.filter((format) => {
     return (
       format.hasVideo == hasVideo &&
@@ -421,8 +420,9 @@ const chooseVideoFormat = async (url, hasVideo = true, hasAudio = true) => {
 };
 
 async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
-  const format = await chooseVideoFormat(url, hasVideo, hasAudio);
-  stream = ytdl(url, { format: format });
+  const info = await ytdl.getInfo(url);
+  const format = await chooseVideoFormat(info, hasVideo, hasAudio);
+  stream = ytdl.downloadFromInfo(info, { format: format });
   return mediaStreamToFileAsync(stream, outputPath);
 }
 
