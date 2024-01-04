@@ -421,7 +421,8 @@ const chooseVideoFormat = (info, hasVideo = true, hasAudio = true) => {
 
 async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
   const info = await ytdl.getInfo(url);
-  const format = await chooseVideoFormat(info, hasVideo, hasAudio);
+  console.log("info: " + JSON.stringify(info));
+  const format = chooseVideoFormat(info, hasVideo, hasAudio);
   stream = ytdl.downloadFromInfo(info, { format: format });
   return mediaStreamToFileAsync(stream, outputPath);
 }
