@@ -461,16 +461,15 @@ async function downloadYoutube(
 ) {
   stream = ytdl(url, {
     filter: (format) => {
-      return format.hasVideo == hasVideo &&
-        format.hasAudio == hasAudio &&
-        format.height > format.width ? 
-          format.width <= 720 : format.height <= 720
-         &&
-        checkUploadLimit
+      return format.hasVideo == hasVideo
+        ? format.height > format.width
+          ? format.width <= 720
+          : format.height <= 720
+        : false && format.hasAudio == hasAudio && checkUploadLimit
         ? calculateFileSize(format.bitrate, format.approxDurationMs) <
-            MAX_SEND_VIDEO_BYTES
+          MAX_SEND_VIDEO_BYTES
         : format.approxDurationMs != null &&
-            format.approxDurationMs < MAX_VIDEO_MS;
+          format.approxDurationMs < MAX_VIDEO_MS;
     },
   });
 
