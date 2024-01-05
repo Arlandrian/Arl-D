@@ -23,7 +23,8 @@ const MAX_VIDEO_SEC = 20 * 60;
 const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
-const MAX_VIDEO_BITRATE = 440000;
+const MAX_VIDEO_BITRATE = 600000;
+const MAX_SEND_VIDEO_BYTES = ((25+25)*1024*1024); // default upload limit of the discord is 25 mb but compression might reduce it
 
 if ("win32" == os.platform()) {
   ffmpeg.setFfmpegPath(
@@ -83,7 +84,7 @@ async function downloadVideo(
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
-      videoPromise = downloadYoutube(videoUrl, videoOutputPath);
+      videoPromise = downloadYoutube(videoUrl, videoOutputPath, true);
     }
 
     console.time(timeLogLabel);
@@ -406,22 +407,51 @@ function downloadMp4UrlAsync(url, outputPath) {
 //////   Youtube    ////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-const chooseVideoFormat = (info, hasVideo = true, hasAudio = true) => {
+const isVideoOnly = (format) => format.mimeType.includes("video") && format.audioQuality == null;
+const isAudioOnly = (format) => format.mimeType.includes("audio");
+const hasBothVideoAndAudio = (format) => format.mimeType.includes("video") && format.audioQuality != null
+const filterFormat = (format,hasVideo,hasAudio) => {
+  if (hasVideo){
+    if(hasAudio){
+      return hasBothVideoAndAudio(format)
+    }else{
+      return isVideoOnly(format)
+    }
+  }else{
+    if(hasAudio){
+      return isAudioOnly(format)
+    }else{
+      throw new Error("requested no video and no audio format? wtf?")
+    }
+  }
+}
+
+function calculateFileSize(bitrate, durationMillis) {
+  // Convert duration to seconds
+  let durationInSeconds = durationMillis / 1000;
+  // Convert bitrate to bits per second
+  return (bitrate * durationInSeconds) / 8;
+}
+
+
+const chooseVideoFormat = (info, hasVideo = true, hasAudio = true, checkUploadLimit=false) => {
   const filtered = info.formats.filter((format) => {
     return (
-      format.hasVideo == hasVideo &&
-      format.hasAudio == hasAudio &&
-      format.approxDurationMs < MAX_VIDEO_MS &&
-      format.bitrate < MAX_VIDEO_BITRATE
+      filterFormat(format, hasVideo, hasAudio) &&
+      checkUploadLimit ? 
+        calculateFileSize(format.bitrate, format.approxDurationMs) < MAX_SEND_VIDEO_BYTES
+      :
+        format.approxDurationMs < MAX_VIDEO_MS &&
+        format.bitrate < MAX_VIDEO_BITRATE
     );
   });
   // pick the element with the highest bitrate
   return filtered.reduce((a, b) => (a && a.bitrate > b.bitrate ? a : b), null);
 };
 
-async function downloadYoutube(url, outputPath, hasVideo, hasAudio) {
+async function downloadYoutube(url, outputPath, hasVideo, hasAudio, checkUploadLimit=false) {
   const info = await ytdl.getInfo(url);
-  const format = chooseVideoFormat(info, hasVideo, hasAudio);
+  const format = chooseVideoFormat(info, hasVideo, hasAudio, checkUploadLimit);
   if (format == null) {
     throw new Error(
       "Could not find a suitable video format for " + url
