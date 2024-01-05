@@ -24,7 +24,7 @@ const MAX_VIDEO_MS = 20 * 60 * 1000;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const MIN_REQ_MEMORY_BYTES = 64 * 1024 * 1024;
 const MAX_VIDEO_BITRATE = 600000;
-const MAX_SEND_VIDEO_BYTES = (25 + 25) * 1024 * 1024; // default upload limit of the discord is 25 mb but compression might reduce it
+const MAX_SEND_VIDEO_BYTES = (25+2) * 1024 * 1024; // default upload limit of the discord is 25 mb but compression might reduce it
 
 if ("win32" == os.platform()) {
   ffmpeg.setFfmpegPath(
@@ -463,8 +463,8 @@ async function downloadYoutube(
     filter: (format) => {
       return format.hasVideo == hasVideo
         ? format.height > format.width
-          ? format.width <= 720
-          : format.height <= 720
+          ? format.width <= 540
+          : format.height <= 540
         : false && format.hasAudio == hasAudio && checkUploadLimit
         ? calculateFileSize(format.bitrate, format.approxDurationMs) <
           MAX_SEND_VIDEO_BYTES
