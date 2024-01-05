@@ -66,6 +66,9 @@ async function downloadVideo(
   if (videoStartTime < 0 || videoEndTime <= videoStartTime) {
     throw new Error("Invalid time range");
   }
+
+  const needsPostProcess =
+      videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
   try {
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
     const isVideoTiktok = isTiktokMediaUrl(videoUrl);
@@ -84,7 +87,7 @@ async function downloadVideo(
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
-      videoPromise = downloadYoutube(videoUrl, videoOutputPath, true);
+      videoPromise = downloadYoutube(videoUrl, videoOutputPath, true, true, !needsPostProcess);
     }
 
     console.time(timeLogLabel);
@@ -92,8 +95,6 @@ async function downloadVideo(
     console.timeLog(timeLogLabel);
     log("video downloaded");
 
-    const needsPostProcess =
-      videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC || ffmpegOpts != "";
     if (!needsPostProcess) {
       fs.renameSync(videoOutputPath, finalOutputPath);
     } else {
@@ -140,10 +141,13 @@ async function downloadVideoAsMp3(
   const timeLogLabel = `ts_${timestamp}`;
   const videoOutputPath = `${tempDir}/video_${timestamp}.mp4`;
   const finalOutputPath = `${tempDir}/final_${timestamp}.aac`;
-  let needsEncoding = true;
+  
   if (videoStartTime < 0 || videoEndTime <= videoStartTime) {
     throw new Error("Invalid time range");
   }
+
+  const needsCut = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC;
+  let needsEncoding = true;
   try {
     const isVideoTwitter = twitterdl.isTwitterStatusUrl(videoUrl);
     let isVideoUrlRawMedia = false;
@@ -160,7 +164,7 @@ async function downloadVideoAsMp3(
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
     } else {
       needsEncoding = false;
-      videoPromise = downloadYoutube(videoUrl, videoOutputPath, false, true);
+      videoPromise = downloadYoutube(videoUrl, videoOutputPath, false, true, !needsCut);
     }
 
     console.time(timeLogLabel);
@@ -168,7 +172,6 @@ async function downloadVideoAsMp3(
     console.timeLog(timeLogLabel);
     log("video downloaded");
 
-    const needsCut = videoStartTime != 0 || videoEndTime != MAX_VIDEO_SEC;
 
     let ffmpegArgs = "-i ${videoOutputPath}";
     if (needsCut) {
@@ -435,23 +438,6 @@ function calculateFileSize(bitrate, durationMillis) {
   return (bitrate * durationInSeconds) / 8;
 }
 
-const chooseVideoFormat = (
-  info,
-  hasVideo = true,
-  hasAudio = true,
-  checkUploadLimit = false
-) => {
-  const filtered = info.formats.filter((format) => {
-    return filterFormat(format, hasVideo, hasAudio) && checkUploadLimit
-      ? calculateFileSize(format.bitrate, format.approxDurationMs) <
-          MAX_SEND_VIDEO_BYTES
-      : format.approxDurationMs < MAX_VIDEO_MS &&
-          format.bitrate < MAX_VIDEO_BITRATE;
-  });
-  // pick the element with the highest bitrate
-  return filtered.reduce((a, b) => (a && a.bitrate > b.bitrate ? a : b), null);
-};
-
 async function downloadYoutube(
   url,
   outputPath,
@@ -462,10 +448,15 @@ async function downloadYoutube(
   stream = ytdl(url, {
     filter: (format) => {
       return format.hasVideo == hasVideo
-        ? format.height > format.width
+      // check if vertical video
+        ? (format.height > format.width
           ? format.width <= 540
-          : format.height <= 540
-        : true && format.hasAudio == hasAudio && checkUploadLimit
+          : format.height <= 540)
+        : true &&
+        // check if has audio
+        format.hasAudio == hasAudio && 
+        // upload limit should be checked
+        checkUploadLimit
         ? calculateFileSize(format.bitrate, format.approxDurationMs) < MAX_SEND_VIDEO_BYTES
         : format.approxDurationMs != null &&
           format.approxDurationMs < MAX_VIDEO_MS;
