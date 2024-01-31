@@ -19,10 +19,11 @@ exports.run = async (client, interaction) => {
   for (const emoji of emojis) {
     console.log(emoji);
     interaction.guild.emojis
-      .create(emoji)
+      .create(emoji.attachment, emoji.name)
       .then((em) =>
         interaction.channel.send(`**${emoji.name}** added successfully!`)
-      );
+      )
+      .catch(console.error);
   }
 
   interaction.editReply({
@@ -32,7 +33,7 @@ exports.run = async (client, interaction) => {
 };
 
 const emojiRegex = /<a?:.+?:\d{16,20}>/gu;
-const emojiPartRegex = /^<([^:]*):([^:]+):([^>]+)>$/
+const emojiPartRegex = /^<([^:]*):([^:]+):([^>]+)>$/;
 
 const url = "https://cdn.discordapp.com/emojis/";
 
@@ -63,7 +64,8 @@ exports.commandData = {
   name: "Emoji Steal",
   options: [],
   defaultPermission: true,
-  defaultMemberPermissions: discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS,
+  defaultMemberPermissions:
+    discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS,
   type: 3, //ApplicationCommandTypes.USER
 };
 
