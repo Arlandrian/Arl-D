@@ -25,7 +25,7 @@ exports.run = async (client, interaction) => {
   }
 
   interaction.reply({
-    content: `${matches.length} emojis added.`,
+    content: `${emojis.length} emojis added.`,
     ephemeral: true,
   });
 };
@@ -39,7 +39,7 @@ function extractEmojis(message) {
   let results = [];
   let matches = message.match(emojiRegex);
   if (matches == null || matches.length == 0) {
-    return result;
+    return results;
   }
 
   for (const match of matches) {
@@ -73,5 +73,5 @@ exports.conf = {
   guildOnly: true,
 };
 
-const testText = "//<a:pepeD:816110289409409034> for gifs OR<:bc:1013596306360508506> for images"
-console.log(extractEmojis(testText));
+// const testText = "//<a:pepeD:816110289409409034> for gifs OR<:bc:1013596306360508506> for images"
+// console.log(extractEmojis(testText));
