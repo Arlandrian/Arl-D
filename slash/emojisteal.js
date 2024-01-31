@@ -8,7 +8,7 @@ exports.run = async (client, interaction) => {
   // extract emojis
   let emojis = extractEmojis(message);
   if (emojis.length == 0) {
-    interaction.reply({
+    interaction.editReply({
       content: "No emoji found in the message.",
       ephemeral: true,
     });
@@ -17,6 +17,7 @@ exports.run = async (client, interaction) => {
 
   // add emojis to the server
   for (const emoji of emojis) {
+    console.log(emoji);
     interaction.guild.emojis
       .create(emoji)
       .then((em) =>
@@ -24,7 +25,7 @@ exports.run = async (client, interaction) => {
       );
   }
 
-  interaction.reply({
+  interaction.editReply({
     content: `${emojis.length} emojis added.`,
     ephemeral: true,
   });
