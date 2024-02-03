@@ -29,8 +29,20 @@ exports.run = async (client, interaction) => {
     return;
   }
   const stickerURL = `https://cdn.discordapp.com/stickers/${fetchedSticker.id}.${urlExt}`;
+
+  let tags = "";
+  if (fetchedSticker.tags) {
+    if (typeof fetchedSticker.tags === "string") {
+      tags = fetchedSticker.tags
+    }else {
+      if (fetchedSticker.tags.length > 0) {
+        tags = fetchedSticker.tags[0]
+      }
+    }
+  }
+
   interaction.guild.stickers
-    .create(stickerURL, fetchedSticker.name, fetchedSticker.tags.first())
+    .create(stickerURL, fetchedSticker.name, tags)
     .then((sticker) => {
       console.log(`**${sticker.name}** added successfully!`);
       interaction.editReply({
