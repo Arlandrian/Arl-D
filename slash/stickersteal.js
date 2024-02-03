@@ -19,11 +19,9 @@ exports.run = async (client, interaction) => {
         }else {
           throw new Error("Unsupported sticker format: " + fetchedSticker.format);
         }
-
         const stickerURL = `https://cdn.discordapp.com/stickers/${fetchedSticker.id}.${urlExt}`;
-        // Add the fetched sticker to the guild
         message.guild.stickers
-          .create(stickerURL, fetchedSticker.name, fetchedSticker.tags)
+          .create(stickerURL, fetchedSticker.name, fetchedSticker.tags.first())
           .then((sticker) =>
             interaction.channel.send(
               `**${sticker.name}** added successfully!`
