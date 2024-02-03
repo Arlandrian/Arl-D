@@ -6,46 +6,45 @@ exports.run = async (client, interaction) => {
   let message = interaction.targetMessage;
   const stickers = message.stickers;
   const sticker = stickers.first();
-  if (sticker) {
-    sticker
-      .fetch()
-      .then((fetchedSticker) => {
-        // fetch only retrieves tags... :sadge:
-        let urlExt = ""
-        if (fetchedSticker.format == "PNG") {
-          urlExt = "png";
-        } else if (fetchedSticker.format == "APNG") {
-          urlExt = "png";
-        }else {
-          throw new Error("Unsupported sticker format: " + fetchedSticker.format);
-        }
-        const stickerURL = `https://cdn.discordapp.com/stickers/${fetchedSticker.id}.${urlExt}`;
-        message.guild.stickers
-          .create(stickerURL, fetchedSticker.name, fetchedSticker.tags.first())
-          .then((sticker) =>
-            interaction.channel.send(
-              `**${sticker.name}** added successfully!`
-            )
-          )
-          .catch((error) => {
-            console.error(`Error adding sticker to the guild: ${error}`);
-            interaction.channel.send(
-              `cant add **${sticker.name}**! error: ${error}`
-            );
-          });
-      })
-      .catch((error) => {
-        console.error(`Error fetching sticker: ${error}`);
-        interaction.channel.send(
-          `cant add **${sticker.name}**! error: ${error}`
-        );
-      });
-  } else {
+  if (sticker == null) {
     interaction.editReply({
       content: "No stickers found in the message.",
       ephemeral: true,
     });
+    return;
   }
+
+  const fetchedSticker = await sticker.fetch();
+  // fetch only retrieves tags... :sadge:
+  let urlExt = "";
+  if (fetchedSticker.format == "PNG") {
+    urlExt = "png";
+  } else if (fetchedSticker.format == "APNG") {
+    urlExt = "png";
+  } else {
+    interaction.editReply({
+      content: "Unsupported sticker format: " + fetchedSticker.format,
+      ephemeral: true,
+    });
+    return;
+  }
+  const stickerURL = `https://cdn.discordapp.com/stickers/${fetchedSticker.id}.${urlExt}`;
+  interaction.guild.stickers
+    .create(stickerURL, fetchedSticker.name, fetchedSticker.tags.first())
+    .then((sticker) => {
+      console.log(`**${sticker.name}** added successfully!`);
+      interaction.editReply({
+        content: `Successfully added **${sticker.name}**`,
+        ephemeral: true,
+      });
+    })
+    .catch((error) => {
+      console.error(`Error adding sticker to the guild: ${error}`);
+      interaction.editReply({
+        content: `Unable to add **${sticker.name}**! error: ${error}`,
+        ephemeral: true,
+      });
+    });
 };
 
 exports.commandData = {
