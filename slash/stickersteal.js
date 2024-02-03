@@ -5,18 +5,22 @@ exports.run = async (client, interaction) => {
   await interaction.deferReply({ ephemeral: false });
   let message = interaction.targetMessage;
   const stickers = message.stickers;
-  console.log("Stickers:"+JSON.stringify(stickers))
   const firstSticker = stickers.first();
-  
   if (firstSticker) {
-    console.log(firstSticker)
-    const namee = firstSticker.name;
-    message.guild.stickers.create(firstSticker.url, firstSticker.name, firstSticker.tags)
-      .then(sticker => interaction.channel.send(`**${namee}** added successfully!`))
-      .catch(error => {
-        console.error(`Error adding sticker to the guild: ${error}`)
-        interaction.channel.send(`cant add **${namee}**! error: ${error}`)
-      });
+    firstSticker.fetch()
+    .then(fetchedSticker => {
+      // Add the fetched sticker to the guild
+      message.guild.stickers.create(fetchedSticker.url, fetchedSticker.name)
+        .then(sticker => interaction.channel.send(`**${firstSticker.name}** added successfully!`))
+        .catch(error => {
+          console.error(`Error adding sticker to the guild: ${error}`)
+          interaction.channel.send(`cant add **${namee}**! error: ${error}`)
+        });
+    })
+    .catch(error => {
+      console.error(`Error fetching sticker: ${error}`)
+      interaction.channel.send(`cant add **${namee}**! error: ${error}`)
+    });
   } else {
     interaction.editReply({
       content: "No stickers found in the message.",
