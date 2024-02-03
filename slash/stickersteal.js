@@ -10,6 +10,7 @@ exports.run = async (client, interaction) => {
     firstSticker
       .fetch()
       .then((fetchedSticker) => {
+        console.log(JSON.stringify(fetchedSticker))
         // Add the fetched sticker to the guild
         message.guild.stickers
           .create(fetchedSticker.url, fetchedSticker.name)
