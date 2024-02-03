@@ -8,8 +8,10 @@ exports.run = async (client, interaction) => {
   const firstSticker = stickers.first();
 
   if (firstSticker) {
-    message.guild.stickers.create(firstSticker.url, firstSticker.name)
-      .then(sticker => interaction.channel.send(`**${firstSticker.name}** added successfully!`))
+    console.log(firstSticker)
+    const namee = firstSticker.name;
+    message.guild.stickers.create(firstSticker.url, firstSticker.name, firstSticker.tags)
+      .then(sticker => interaction.channel.send(`**${namee}** added successfully!`))
       .catch(error => console.error(`Error adding sticker to the guild: ${error}`));
   } else {
     interaction.editReply({
