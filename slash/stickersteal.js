@@ -5,31 +5,41 @@ exports.run = async (client, interaction) => {
   await interaction.deferReply({ ephemeral: false });
   let message = interaction.targetMessage;
   const stickers = message.stickers;
-  const firstSticker = stickers.first();
-  if (firstSticker) {
-    firstSticker
+  const sticker = stickers.first();
+  if (sticker) {
+    sticker
       .fetch()
       .then((fetchedSticker) => {
-        console.log(JSON.stringify(fetchedSticker))
+        // fetch only retrieves tags... :sadge:
+        let urlExt = ""
+        if (fetchedSticker.format == "PNG") {
+          urlExt = "png";
+        } else if (fetchedSticker.format == "APNG") {
+          urlExt = "png";
+        }else {
+          throw new Error("Unsupported sticker format: " + fetchedSticker.format);
+        }
+
+        const stickerURL = `https://cdn.discordapp.com/stickers/${fetchedSticker.id}.${urlExt}`;
         // Add the fetched sticker to the guild
         message.guild.stickers
-          .create(fetchedSticker.url, fetchedSticker.name)
+          .create(stickerURL, fetchedSticker.name, fetchedSticker.tags)
           .then((sticker) =>
             interaction.channel.send(
-              `**${firstSticker.name}** added successfully!`
+              `**${sticker.name}** added successfully!`
             )
           )
           .catch((error) => {
             console.error(`Error adding sticker to the guild: ${error}`);
             interaction.channel.send(
-              `cant add **${firstSticker.name}**! error: ${error}`
+              `cant add **${sticker.name}**! error: ${error}`
             );
           });
       })
       .catch((error) => {
         console.error(`Error fetching sticker: ${error}`);
         interaction.channel.send(
-          `cant add **${firstSticker.name}**! error: ${error}`
+          `cant add **${sticker.name}**! error: ${error}`
         );
       });
   } else {
