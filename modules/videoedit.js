@@ -101,7 +101,7 @@ async function downloadVideo(
       const videoDuration = videoEndTime - videoStartTime;
       let args = "";
       if (ffmpegOpts == "") {
-        args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c:v libx264 -preset ultrafast -c:a copy -threads 8 ${finalOutputPath}`;
+        args = `-i ${videoOutputPath} -ss ${videoStartTime} -t ${videoDuration} -c:v libx264 -preset fast -c:a aac -threads 8 ${finalOutputPath}`;
       } else {
         args = `-i ${videoOutputPath} ${ffmpegOpts} -threads 4 ${finalOutputPath}`;
       }
@@ -306,7 +306,7 @@ async function downloadVideoAndAudioEdit(
     const audioDuration = audioEndTime - audioStartTime;
     const shortest = Math.min(videoDuration, audioDuration);
     const err = await ffmpegExec(
-      `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v libx264 -preset ultrafast -c:a copy -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 8 ${finalOutputPath}`
+      `-ss ${videoStartTime} -t ${shortest} -i ${videoOutputPath} -ss ${audioStartTime} -t ${shortest} -i ${audioOutputPath} -c:v libx264 -preset fast -c:a aac -map 0:v:0 -map 1:a:0 -map 1:a:0 -shortest -threads 8 ${finalOutputPath}`
     );
     if (err != null) {
       throw err;
@@ -447,19 +447,16 @@ async function downloadYoutube(
 ) {
   stream = ytdl(url, {
     filter: (format) => {
-      return format.hasVideo == hasVideo
-      // check if vertical video
-        ? (format.height > format.width
-          ? format.width <= 540
-          : format.height <= 540)
-        : true &&
-        // check if has audio
+      return format.hasVideo == hasVideo &&
         format.hasAudio == hasAudio && 
-        // upload limit should be checked
-        checkUploadLimit
-        ? calculateFileSize(format.bitrate, format.approxDurationMs) < MAX_SEND_VIDEO_BYTES
-        : format.approxDurationMs != null &&
-          format.approxDurationMs < MAX_VIDEO_MS;
+        format.quality == 'medium'
+        // // check if vertical video
+        // (format.height > format.width ? format.width <= 540 : format.height <= 540 ) &&
+        // // upload limit should be checked
+        // checkUploadLimit
+        // ? calculateFileSize(format.bitrate, format.approxDurationMs) < MAX_SEND_VIDEO_BYTES
+        // : format.approxDurationMs != null &&
+        //   format.approxDurationMs < MAX_VIDEO_MS;
     },
   });
 
@@ -511,10 +508,12 @@ module.exports = {
 //   console.time("total");
 //   //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
 //   //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
-//   const vurl = "https://www.tiktok.com/@naturliflove/video/7300167273786903841";
+//   const vurl = "https://www.youtube.com/watch?v=gtgMAWWflEs";
+
+//   // const vurl = "https://www.tiktok.com/@naturliflove/video/7300167273786903841";
 //   const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
 //   const vs = 0;
-//   const ve = 0;
+//   const ve = 10;
 //   const as = 0;
 //   const ae = 9;
 //   const err = await downloadVideo(vurl, vs, ve, "",(final)=>{
