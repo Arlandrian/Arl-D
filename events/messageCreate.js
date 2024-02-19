@@ -110,7 +110,7 @@ async function checkForSlowdown(message) {
   if (slowdown != null) {
     // console.log(`slowdown: ${slowdown.timeSec} ${slowdown.msgCount}`)
     if (!userMessageThrottler.exists(message.guildId, message.author.id) ){
-      // console.log(`userMessageThrottler.exists: false`)
+      console.log(`userMessageThrottler.exists: false. setting slowdown to ${slowdown.timeSec} with limit ${slowdown.msgCount}`)
       userMessageThrottler.addUser(message.guildId, message.author.id, slowdown.msgCount, slowdown.timeSec*1000)
     }
 
