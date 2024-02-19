@@ -38,7 +38,7 @@ class TimeWindowedMessageThrottler {
   onSendMessage() {
     if (this.canSendMessage()) {
       // Increment the message count
-      console.log("increasing the message count, current:", messageCount)
+      console.log("increasing the message count, current:", this.messageCount)
       this.messageCount++;
       return true;
     } else {
