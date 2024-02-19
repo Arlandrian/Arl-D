@@ -83,6 +83,7 @@ exports.commandData = {
     },
   ],
   // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
+  defaultMemberPermissions: 1 << 46, // SEND_VOICE_MESSAGES
   dmPermission: true,
   type: 1,
 };
@@ -90,6 +91,6 @@ exports.commandData = {
 // Set guildOnly to true if you want it to be available on guilds only.
 // Otherwise false is global.
 exports.conf = {
-  permLevel: "Moderator",
+  permLevel: "User",
   guildOnly: false,
 };
