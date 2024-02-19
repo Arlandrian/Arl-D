@@ -6,6 +6,7 @@ class TimeWindowedMessageThrottler {
     this.windowStart = Date.now(); // Initialize the start of the time window
     this.messageCount = 0; // Initialize message count to 0
     console.log('throtter created:', this)
+    console.log('throtter created:','windowStart', this.windowStart,'windowSize',this.windowSize)
   }
 
   windowEnd() {
@@ -15,7 +16,7 @@ class TimeWindowedMessageThrottler {
   canSendMessage() {
     const now = Date.now();
     const timePassed = now - this.windowStart;
-    console.log("timePassed", timePassed,'windowStart',this.windowStart)
+    console.log("timePassed", timePassed,'windowStart',this.windowStart,'windowSize',this.windowSize)
 
     // If we are outside the time window, reset the message count and start a new window
     if (timePassed > this.windowSize) {
