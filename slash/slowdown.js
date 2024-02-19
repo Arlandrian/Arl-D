@@ -23,7 +23,7 @@ exports.run = async (client, interaction) => { // eslint-disable-line no-unused-
     await interaction.editReply(`Error: ${result}`);
   } else {
     userMessageThrottler.removeUser(interaction.guild.id, member.id)
-    userMessageThrottler.addUser(interaction.guild.id, member.id)
+    userMessageThrottler.addUser(interaction.guild.id, member.id, msgCount, timeSec*1000)
     await interaction.editReply(`User can only send ${msgCount} messages in ${timeSec} seconds.`);
   }
 };
