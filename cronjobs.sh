@@ -3,7 +3,7 @@
 # Define an array of cron jobs with versioning
 CRON_JOBS=(
     "# v1 - Cleanup audio and video files in /tmp older than 1 hour"
-    "0 0 * * * find /tmp -maxdepth 1 -type f -mmin +60 -name 'audio_*' -o -name 'video_*' -exec rm {} +"
+    "0 0 * * * find /tmp -maxdepth 1 \( -name 'audio_*' -o -name 'video_*' \) -type f -mmin +60 -delete"
     "# Add more cron jobs here if needed"
 )
 
