@@ -19,7 +19,7 @@ exports.run = async (client, interaction) => {
 };
 
 async function deleteApplicationCommand(client, name) {
-  if (client.application.commands.cache.size() == 0) {
+  if (client.application.commands.cache.size == 0) {
     await client.application.commands.fetch();
   }
   const id = client.application.commands.cache.find((x) => x.name == name);
