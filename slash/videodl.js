@@ -8,6 +8,7 @@ exports.run = async (client, interaction) => {
   const videoStartSec = getOption(opts, "videoStartSec", 0);
   const videoEndSec = getOption(opts, "videoEndSec", 0);
   const ffmpegOpts = getOption(opts, "ffmpeg", "");
+  const title = getOption(opts, "title", "");
   await interaction.editReply(
     ":factory_worker: => :cyclone:video düzenleniyor, lütfen bekleyin...:cyclone:"
   );
@@ -22,7 +23,7 @@ exports.run = async (client, interaction) => {
       const videoAttachment = new discord.MessageAttachment(videoPath);
       const endTime = performance.now();
       const elapsedTime = endTime - startTime;
-      await interaction.editReply(`video edit hazır:white_check_mark: ${elapsedTime.TS()}`);
+      await interaction.editReply(`${title} :white_check_mark: ${elapsedTime.TS()}`);
       await interaction.editReply({ files: [videoAttachment] });
     }
   );
@@ -77,6 +78,15 @@ exports.commandData = {
       description: "you can give custom ffmpeg options. (other args will be ignored)",
       descriptionLocalizations: {
         tr: "kendi ffmpeg ayarlarınızı verebilirsiniz. (diğer ayarlar görmezden gelinir)",
+      },
+      type: 3,
+      required: false,
+    },
+    {
+      name: "title",
+      description: "you can give a title so discord search can index the message.",
+      descriptionLocalizations: {
+        tr: "discord aramasında gözükebilmesi için videoya başlık verebilirsiniz",
       },
       type: 3,
       required: false,
