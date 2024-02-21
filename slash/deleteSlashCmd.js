@@ -9,7 +9,7 @@ exports.run = async (client, interaction) => {
   }
   let name = opts[0].value
 
-  const id = await deleteApplicationCommand(name)
+  const id = await deleteApplicationCommand(client, name)
   if(id){
     await interaction.editReply("Successfully deleted the command: "+name)
     logger.log(`Command is deleted :${name}`)
@@ -18,7 +18,7 @@ exports.run = async (client, interaction) => {
   }
 };
 
-async function deleteApplicationCommand(name) {
+async function deleteApplicationCommand(client, name) {
   if (client.application.commands.cache.size() == 0) {
     await client.application.commands.fetch();
   }
