@@ -219,14 +219,14 @@ async function registerApplicationCommands() {
         "log"
       );
       client.container.appCommands.set(cmd.commandData.name, cmd);
-      client.application.commands.create(cmd.commandData);
+      // client.application.commands.create(cmd.commandData);
     }
+    client.application.commands.set([...client.extraCommands.values()]);
   } catch (error) {
     // And of course, make sure you catch and log any errors!
     console.error(error);
   }
 }
-
 function runTest() {
   const testFunc = require("./commands/nicklog.js");
   const ex = {
