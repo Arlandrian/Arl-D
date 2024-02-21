@@ -93,7 +93,7 @@ exports.commandData = {
     },
   ],
   // defaultMemberPermissions: discord.Permissions.FLAGS.BAN_MEMBERS,
-  defaultMemberPermissions: 0x0000400000000000, // SEND_VOICE_MESSAGES
+  defaultMemberPermissions: BigInt("0x0000400000000000"), // SEND_VOICE_MESSAGES
   dmPermission: true,
   type: 1,
 };
