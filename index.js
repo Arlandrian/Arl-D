@@ -221,7 +221,7 @@ async function registerApplicationCommands() {
       client.container.appCommands.set(cmd.commandData.name, cmd);
       // client.application.commands.create(cmd.commandData);
     }
-    client.application.commands.set([...client.extraCommands.values()]);
+    client.application.commands.set([...client.container.appCommands.values()]);
   } catch (error) {
     // And of course, make sure you catch and log any errors!
     console.error(error);
