@@ -494,11 +494,12 @@ function isValidFFmpegOpts(opts) {
   return ffmpegOptsRegex.test(opts);
 }
 
-// module.exports = {
-//   downloadVideo,
-//   downloadVideoAsMp3,
-//   downloadVideoAndAudioEdit,
-// };
+module.exports = {
+  downloadVideo,
+  downloadVideoAsMp3,
+  downloadVideoAndAudioEdit,
+};
+
 // (async () => {
 //   console.time("total");
 //   // const vurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
