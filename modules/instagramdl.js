@@ -17,12 +17,12 @@ function getFileName(disposition){
     }
     return filename;
 }
-async function downloadInstagramContent(url) {
+async function downloadInstagramContent(url,path) {
 
     const dataList = instagramDl(url).then(veri => {
         const request = https.get(veri[0].download_link, async function(response) {
     
-           const file = fs.createWriteStream(getFileName(response.headers['content-disposition']));
+           const file = fs.createWriteStream(`${path}/${getFileName(response.headers['content-disposition'])}`);
            await response.pipe(file);
         
            // after download completed close filestream
