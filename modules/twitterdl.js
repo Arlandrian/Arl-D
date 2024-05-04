@@ -1,5 +1,6 @@
 const { Scraper } = require("@the-convocation/twitter-scraper");
 const ffmpeg = require("fluent-ffmpeg");
+const axios = require("axios");
 
 const twitterStatusUrlRegex =
   /^https?:\/\/(twitter|x).com\/(\w+)\/status(es)?\/(\d+)/;
@@ -16,10 +17,7 @@ function getTweetIdFromUrl(url) {
 }
 
 async function downloadTwitterVideoAsync(url, outputFileName) {
-  const tweetId = getTweetIdFromUrl(url);
-  const scraper = new Scraper();
-  const tweetInfo = await scraper.getTweet(tweetId);
-  const hlsManifestUrl = tweetInfo.videos[0].url;
+  
   return new Promise((resolve, reject)=>{
     // Download and convert HLS stream to a local file
     ffmpeg()
@@ -38,6 +36,15 @@ async function downloadTwitterVideoAsync(url, outputFileName) {
   })
 }
 
+async function getVideoStream(url) {
+  const tweetId = getTweetIdFromUrl(url);
+  const scraper = new Scraper();
+  const tweetInfo = await scraper.getTweet(tweetId);
+  const hlsManifestUrl = tweetInfo.videos[0].url;
+  const resp = await axios.get(hlsManifestUrl, { responseType: "stream" })
+  return resp.data
+}
+
 // (async () => {
 //   console.time("total");
 //   await downloadTwitterVideoAsync(
@@ -48,4 +55,4 @@ async function downloadTwitterVideoAsync(url, outputFileName) {
 //   console.timeEnd("total");
 // })();
 
-module.exports = { downloadTwitterVideoAsync, isTwitterStatusUrl };
+module.exports = { getVideoStream, downloadTwitterVideoAsync, isTwitterStatusUrl };
