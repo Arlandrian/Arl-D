@@ -19,17 +19,26 @@ function getFileName(disposition){
 }
 async function downloadInstagramContent(url,path) {
 
-    const dataList = instagramDl(url).then(veri => {
-        const request = https.get(veri[0].download_link, async function(response) {
-    
-           const file = fs.createWriteStream(`${path}/${getFileName(response.headers['content-disposition'])}`);
-           await response.pipe(file);
+     return new Promise ((resolve,reject) =>{
+        try{
+
+        instagramDl(url).then(veri => {
+            const request = https.get(veri[0].download_link,async function(response) {
         
-           // after download completed close filestream
-           await file.on("finish", () => {
-               file.close();
-           });
+                const file = fs.createWriteStream(`${path}/${getFileName(response.headers['content-disposition'])}`);
+                await response.pipe(file);
+            
+               // after download completed close filestream
+                await file.on("finish", () => {
+                   file.close();
+                   resolve();
+               });
+            });
         });
-    });
+    }
+    catch (err){
+       reject(err);
+    }
+    })
 }
 module.exports = { downloadInstagramContent, isInstagramUrl}
