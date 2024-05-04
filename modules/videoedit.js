@@ -494,29 +494,29 @@ function isValidFFmpegOpts(opts) {
   return ffmpegOptsRegex.test(opts);
 }
 
-module.exports = {
-  downloadVideo,
-  downloadVideoAsMp3,
-  downloadVideoAndAudioEdit,
-};
-(async () => {
-  console.time("total");
-  // const vurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
-  // const vurl = "https://www.instagram.com/reel/CmPP1OXDSwa/?igsh=djN5cmVyYnphNGEw"
-  //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
-  //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
-  // const vurl = "https://www.youtube.com/watch?v=gtgMAWWflEs";
+// module.exports = {
+//   downloadVideo,
+//   downloadVideoAsMp3,
+//   downloadVideoAndAudioEdit,
+// };
+// (async () => {
+//   console.time("total");
+//   // const vurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
+//   // const vurl = "https://www.instagram.com/reel/CmPP1OXDSwa/?igsh=djN5cmVyYnphNGEw"
+//   //   const vurl = "https://www.youtube.com/watch?v=YrtCnL62pB8"
+//   //   const aurl = "https://www.youtube.com/watch?v=f0-RYStvdkc"
+//   // const vurl = "https://www.youtube.com/watch?v=gtgMAWWflEs";
 
-  const vurl = "https://www.tiktok.com/@musiqilrimiz/video/7348807738652200193";
-  // const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
-  const vs = 0;
-  const ve = 10;
-  const as = 0;
-  const ae = 9;
-  const err = await downloadVideo(vurl, vs, ve, "", (final) => {
-    console.log("ready: ", final);
-    fs.copyFile(final, "final.mp4", fsErr);
-    console.timeEnd("total");
-  });
-  // await downloadVideo(vurl, vs, ve, '" ls ');
-})();
+//   const vurl = "https://www.tiktok.com/@musiqilrimiz/video/7348807738652200193";
+//   // const aurl = "https://x.com/ME_1948_Updates/status/1733687260678128025?s=20";
+//   const vs = 0;
+//   const ve = 10;
+//   const as = 0;
+//   const ae = 9;
+//   const err = await downloadVideo(vurl, vs, ve, "", (final) => {
+//     console.log("ready: ", final);
+//     fs.copyFile(final, "final.mp4", fsErr);
+//     console.timeEnd("total");
+//   });
+//   // await downloadVideo(vurl, vs, ve, '" ls ');
+// })();
