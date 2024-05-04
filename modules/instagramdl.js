@@ -3,7 +3,7 @@ const instagramDl = require("@sasmeee/igdl");
 
 // Instagram URL'sini kontrol etmek için regex
 const instagramUrlRegex =
-  /((?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel)\/([^/?#&]+)).*/g;
+  /https?:\/\/(?:www.)?instagram.com\/reel\/([^\/?#&]+).*/;
 
 function isInstagramUrl(url) {
   return instagramUrlRegex.test(url);
