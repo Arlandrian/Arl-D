@@ -10,6 +10,7 @@ const os = require("os");
 const axios = require("axios");
 const https = require("https");
 const twitterdl = require("./twitterdl.js");
+const {downloadInstagramContent, isInstagramUrl} = require("./instagramdl.js")
 const ffmpegExec = require("./ffmpeg.js");
 const { TiktokDL } = require("@tobyg74/tiktok-api-dl");
 
@@ -86,6 +87,9 @@ async function downloadVideo(
       videoPromise = downloadTiktokVideoAsync(videoUrl, videoOutputPath);
     } else if (isVideoUrlMp4) {
       videoPromise = downloadMp4UrlAsync(videoUrl, videoOutputPath);
+    } else if (isInstagramUrl) {
+      videoPromise = downloadInstagramContent(videoUrl, tempDir);
+    }
     } else {
       videoPromise = downloadYoutube(videoUrl, videoOutputPath, true, true, !needsPostProcess);
     }
