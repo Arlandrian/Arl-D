@@ -1,44 +1,18 @@
-const https = require('https'); // or 'https' for https:// URLs
-const fs = require('fs');
+const axios = require("axios");
 const instagramDl = require("@sasmeee/igdl");
 
 // Instagram URL'sini kontrol etmek için regex
-const instagramUrlRegex = /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/[a-zA-Z0-9_.]+\/?$/;
+const instagramUrlRegex =
+  /((?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel)\/([^/?#&]+)).*/g;
 
 function isInstagramUrl(url) {
-    return instagramUrlRegex.test(url)
+  return instagramUrlRegex.test(url);
 }
-function getFileName(disposition){
-    const filenameRegex = /filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/g;
-    let match = filenameRegex.exec(disposition);
-    let filename = match[1];
-    if (filename.endsWith('.webp')) {
-        filename = filename.replace(/\.webp$/, '.jpg');
-    }
-    return filename;
-}
-async function downloadInstagramContent(url,path) {
 
-     return new Promise ((resolve,reject) =>{
-        try{
-
-        instagramDl(url).then(veri => {
-            const request = https.get(veri[0].download_link,async function(response) {
-        
-                const file = fs.createWriteStream(`${path}/${getFileName(response.headers['content-disposition'])}`);
-                await response.pipe(file);
-            
-               // after download completed close filestream
-                await file.on("finish", () => {
-                   file.close();
-                   resolve();
-               });
-            });
-        });
-    }
-    catch (err){
-       reject(err);
-    }
-    })
+async function getVideoStream(url) {
+  const mediaInfo = await instagramDl(url)
+  const resp = await axios.get(mediaInfo[0].download_link, { responseType: "stream" })
+  return resp.data
 }
-module.exports = { downloadInstagramContent, isInstagramUrl}
+
+module.exports = { getVideoStream, isInstagramUrl };
