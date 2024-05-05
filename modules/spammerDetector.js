@@ -24,7 +24,7 @@ function detectAndHandleSpam(message) {
     if (recentMessages.length >= SPAM_THRESHOLD) {
         console.log("1:",recentMessages.length)
         const distinctChannels = new Set(recentMessages.map(msg => msg.channel));
-        console.log("2:",distinctChannels.length)
+        console.log("2:",distinctChannels.size)
         if (distinctChannels.size >= SPAM_THRESHOLD) {
             const member = message.guild.members.cache.get(message.author.id);
             member.ban({ reason: 'Spamming detected', deleteMessageSeconds: 7200 })// delete last 2 hours messages
