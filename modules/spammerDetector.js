@@ -2,7 +2,7 @@
 const guildMessages = new Map();
 
 // Constant for spam threshold
-const SPAM_THRESHOLD = 4; // Number of same messages send to detect the user as a spammer
+const SPAM_THRESHOLD = 6; // Number of same messages send to detect the user as a spammer
 const MAX_MESSAGES = 32; // Constant for the maximum number of kept messages
 
 // Function to check for spamming behavior and take action
