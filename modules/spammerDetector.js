@@ -22,7 +22,8 @@ function detectAndHandleSpam(message) {
 
     const recentMessages = messages.filter(msg => msg.author === message.author.id && msg.content === message.content);
     if (recentMessages.length >= SPAM_THRESHOLD) {
-        const distinctChannels = new Set(recentMessages.map(msg => msg.channel));
+        console.log("1:",recentMessages.map(msg => msg.channelId))
+        const distinctChannels = new Set(recentMessages.map(msg => msg.channelId));
         console.log("2:",distinctChannels)
         if (distinctChannels.size >= SPAM_THRESHOLD) {
             const member = message.guild.members.cache.get(message.author.id);
