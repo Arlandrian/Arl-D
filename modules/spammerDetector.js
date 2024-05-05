@@ -3,7 +3,7 @@
 const guildMessages = new Map();
 
 // Constant for spam threshold
-const SPAM_THRESHOLD = 8; // Number of same messages send to detect the user as a spammer
+const SPAM_THRESHOLD = 4; // Number of same messages send to detect the user as a spammer
 const MAX_MESSAGES = 32; // Constant for the maximum number of kept messages
 
 // Function to check for spamming behavior and take action
@@ -13,7 +13,6 @@ function detectAndHandleSpam(message) {
     if (!guildMessages.has(guildId)) {
         guildMessages.set(guildId, []);
     }
-
     const messages = guildMessages.get(guildId);
 
     // Trim the messages array if it exceeds the maximum length
@@ -23,7 +22,9 @@ function detectAndHandleSpam(message) {
 
     const recentMessages = messages.filter(msg => msg.author === message.author.id && msg.content === message.content);
     if (recentMessages.length >= SPAM_THRESHOLD) {
+        console.log("1:",recentMessages.length)
         const distinctChannels = new Set(recentMessages.map(msg => msg.channel));
+        console.log("2:",distinctChannels.length)
         if (distinctChannels.size >= SPAM_THRESHOLD) {
             const member = message.guild.members.cache.get(message.author.id);
             member.ban({ reason: 'Spamming detected', deleteMessageSeconds: 7200 })// delete last 2 hours messages
