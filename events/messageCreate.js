@@ -2,6 +2,7 @@ const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
 const userMessageThrottler = require("../modules/throttler.js");
+const spammerDetector = require("../modules/spammerDetector.js");
 const db = { getUserSlowdown } = require("../modules/database.js")
 
 // The MESSAGE event runs anytime a message is received
@@ -27,6 +28,9 @@ module.exports = async (client, message) => {
   }else{
     if (!await checkForSlowdown(message)) return;
   }
+
+  // check if the this is a spammer
+  if (spammerDetector.detectAndHandleSpam(message)) return;
 
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
