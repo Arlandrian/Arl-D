@@ -27,10 +27,9 @@ module.exports = async (client, message) => {
     onDMReceived(message);
   }else{
     if (!await checkForSlowdown(message)) return;
+     // check if the this is a spammer
+    if (spammerDetector.detectAndHandleSpam(message)) return;
   }
-
-  // check if the this is a spammer
-  if (spammerDetector.detectAndHandleSpam(message)) return;
 
   // Checks if the bot was mentioned via regex, with no message after it,
   // returns the prefix. The reason why we used regex here instead of
