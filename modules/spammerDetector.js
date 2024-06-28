@@ -19,14 +19,16 @@ function detectAndHandleSpam(message) {
     messages.shift();
   }
 
+  enoughContent = message.content.slice(0, 64), // no need to save all the content
   messages.push({
     author: message.author.id,
-    content: message.content.slice(0, 64), // no need to save all the content
+    content: enoughContent,
     channelId: message.channelId,
   });
 
+
   const recentMessages = messages.filter(
-    (msg) => msg.author === message.author.id && msg.content === message.content
+    (msg) => msg.author == message.author.id && msg.content == enoughContent
   );
   if (recentMessages.length >= SPAM_THRESHOLD) {
     const distinctChannels = new Set(
