@@ -174,12 +174,9 @@ async function onClientReady() {
   await registerApplicationCommands();
 
   // notify owner that bot started
-  const user = await client.users.fetch(process.env.OWNER, false);
-  if (user != null) {
-    user.send("Hello I'm started :)");
-  }
+  logger.notifyBotOwner(client, "Hello I'm started :)");
 
-  StartMetricServer()
+  StartMetricServer();
 }
 
 const StartMetricServer = () => {
@@ -191,10 +188,10 @@ const StartMetricServer = () => {
         res.setHeader("Content-Type", promClient.register.contentType);
         const metrics = await promClient.register.metrics();
         res.end(metrics);
-      }catch (err) {
-        logger.error("Error generating metrics:", err)
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Internal Server Error');
+      } catch (err) {
+        logger.error("Error generating metrics:", err);
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end("Internal Server Error");
       }
       return;
     }
@@ -206,7 +203,7 @@ const StartMetricServer = () => {
   server.listen(PORT, () => {
     logger.log(`Metric Server is running on http://localhost:${PORT}`);
   });
-}
+};
 
 async function registerApplicationCommands() {
   try {

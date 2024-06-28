@@ -6,7 +6,7 @@ const SPAM_THRESHOLD = 6; // Number of same messages send to detect the user as 
 const MAX_MESSAGES = 32; // Constant for the maximum number of kept messages
 
 // Function to check for spamming behavior and take action
-function detectAndHandleSpam(message) {
+function detectAndHandleSpam(message, onMemberBanned) {
   const guildId = message.guild.id;
 
   if (!guildMessages.has(guildId)) {
@@ -19,7 +19,7 @@ function detectAndHandleSpam(message) {
     messages.shift();
   }
 
-  enoughContent = message.content.slice(0, 64), // no need to save all the content
+  enoughContent = message.content.slice(0, 64) // no need to save all the content
   messages.push({
     author: message.author.id,
     content: enoughContent,
@@ -40,6 +40,9 @@ function detectAndHandleSpam(message) {
         .ban({ reason: "Spamming detected", deleteMessageSeconds: 7200 }) // delete last 2 hours messages
         .then(() => {
           console.log(`${message.author.tag} has been banned for spamming.`);
+          if (onMemberBanned != null) {
+            onMemberBanned(member)
+          }
         })
         .catch(console.error);
       return true;

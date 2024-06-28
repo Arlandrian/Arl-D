@@ -5,6 +5,9 @@ const userMessageThrottler = require("../modules/throttler.js");
 const spammerDetector = require("../modules/spammerDetector.js");
 const db = { getUserSlowdown } = require("../modules/database.js")
 
+const userBannedGifUrl = "https://tenor.com/view/basketball-blocked-gif-12894880"
+const userBannedNotification = (member) => `User has been banned.\nReason: Spam\nGuild Id-Name: ${member.guild.id}-${member.guild.name}\nUser Id-Tag: ${member.user.id}-${member.user.tag}\n`+userBannedGifUrl
+
 // The MESSAGE event runs anytime a message is received
 // Note that due to the binding of client to every event, every event
 // goes `client, other, args` when this function is run.
@@ -28,7 +31,9 @@ module.exports = async (client, message) => {
   }else{
     if (!await checkForSlowdown(message)) return;
      // check if the this is a spammer
-    if (spammerDetector.detectAndHandleSpam(message)) return;
+    if (spammerDetector.detectAndHandleSpam(message, (member) => {
+      logger.notifyBotOwner(client, userBannedNotification(member))
+    })) return;
   }
 
   // Checks if the bot was mentioned via regex, with no message after it,
