@@ -29,6 +29,6 @@ exports.cmd = (...args) => this.log(...args, "cmd");
 exports.notifyBotOwner = async (client, msg) => {
   const user = await client.users.fetch(process.env.OWNER, false);
   if (user != null) {
-    user.send(msg);
+    await user.send(msg);
   }  
 }
