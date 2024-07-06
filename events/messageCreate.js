@@ -31,8 +31,8 @@ module.exports = async (client, message) => {
   }else{
     if (!await checkForSlowdown(message)) return;
      // check if the this is a spammer
-    if (spammerDetector.detectAndHandleSpam(message, (member) => {
-      logger.notifyBotOwner(client, userBannedNotification(member))
+    if (spammerDetector.detectAndHandleSpam(message, async (member) => {
+      await logger.notifyBotOwner(client, userBannedNotification(member))
     })) return;
   }
 

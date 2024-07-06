@@ -38,10 +38,10 @@ function detectAndHandleSpam(message, onMemberBanned) {
       const member = message.guild.members.cache.get(message.author.id);
       member
         .ban({ reason: "Spamming detected", deleteMessageSeconds: 7200 }) // delete last 2 hours messages
-        .then(() => {
-          console.log(`${message.author.tag} has been banned for spamming.`);
+        .then(async () => {
+          console.log(`${message.author.tag} has been banned for spamming. ${onMemberBanned!=null}`);
           if (onMemberBanned != null) {
-            onMemberBanned(member)
+            await onMemberBanned(member)
           }
         })
         .catch(console.error);
