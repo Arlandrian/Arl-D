@@ -407,6 +407,7 @@ function mediaStreamToFileAsync(stream, outputPath) {
       throw new Error("Video file too large");
     }
   });
+  stream.on("error", (err) => {console.error(err);});
   const videoOutput = fs.createWriteStream(outputPath);
   stream.pipe(videoOutput);
   return new Promise((resolve) => {
