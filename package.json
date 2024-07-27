@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "engines": {
-    "node": "17.3.1"
+    "node": "20.0.0"
   },
   "repository": {
     "type": "git",
