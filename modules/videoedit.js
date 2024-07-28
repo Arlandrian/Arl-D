@@ -402,7 +402,6 @@ function mediaStreamToFileAsync(stream, outputPath) {
   let videoSize = 0;
   stream.on("data", (chunk) => {
     videoSize += chunk.length;
-    throw new Error("Video file too large");
     if (videoSize > MAX_VIDEO_BYTES) {
       stream.destroy();
       throw new Error("Video file too large");
